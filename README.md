@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Graha Kavach Frontend
 
-## Getting Started
+Next.js storefront for `grahakavach.in` with WordPress and WooCommerce running at `admin.grahakavach.in`.
 
-First, run the development server:
+## Architecture
+
+- Frontend: `https://grahakavach.in`
+- Backend: `https://admin.grahakavach.in`
+- GraphQL: `https://admin.grahakavach.in/graphql`
+- WordPress REST: `https://admin.grahakavach.in/wp-json/wp/v2/`
+- Woo Store API: `https://admin.grahakavach.in/wp-json/wc/store/v1/`
+- Woo REST: `https://admin.grahakavach.in/wp-json/wc/v3/`
+
+## Backend Plugins
+
+- WooCommerce
+- Advanced Custom Fields Pro
+- WPGraphQL
+- WPGraphQL for ACF
+- Yoast SEO
+- Advanced Shipment Tracking for WooCommerce
+
+## Decisions
+
+- My Account stays on native WooCommerce.
+- Cart and checkout currently link to native WooCommerce pages.
+- Public products use WooCommerce Store API.
+- Server-only order/admin operations use WooCommerce REST API.
+- CMS content prefers WPGraphQL and falls back to WordPress REST.
+- SEO metadata maps from Yoast REST fields when available.
+- Backend ACF field expectations are documented in `docs/backend-content-model.md`.
+
+## Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copy `.env.example` to `.env.local` and fill private values where needed. Public endpoint defaults are already in `src/lib/site-config.ts`.

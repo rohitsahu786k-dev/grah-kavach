@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local content backups (Phase 1 audit)
+backups/
+
+# Editor / MCP configuration.
+# .cursor/mcp.json holds live API tokens (Hostinger, WordPress MCP, 21st.dev),
+# so the whole directory stays out of version control.
+.cursor/
+
+# The example env file is a template with empty values and is safe to commit,
+# unlike the .env* rule above which would otherwise exclude it.
+!.env.example

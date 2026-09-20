@@ -1,26 +1,374 @@
 @import "tailwindcss";
 
+/*
+ * Graha Kavach design tokens.
+ *
+ * The brand colours are sampled from the supplied logo, not invented:
+ *   #E01820  the shield red, the single most common non-neutral colour
+ *   #F87818  the flame orange
+ *   #F8C000  the flame amber
+ *   #1A1A1A  the wordmark charcoal
+ *
+ * The palette is deliberately light. White and near-white carry the layout;
+ * red is reserved for the one action that matters in a section, and the fire
+ * accents appear only in small quantities. On a fire-safety site, red used
+ * everywhere would stop reading as urgent and start reading as decoration.
+ */
+
 :root {
+  /* Surfaces */
   --background: #ffffff;
-  --foreground: #171717;
+  --background-subtle: #faf9f7;
+  --foreground: #1a1a1a;
+  --foreground-muted: #57534e;
+
+  /* Brand red — sampled #E01820 */
+  --primary: #e01820;
+  --primary-hover: #b8131a;
+  --primary-active: #940f15;
+  --primary-foreground: #ffffff;
+  --primary-subtle: #fef2f2;
+
+  /* Fire accents — sampled #F87818 / #F8C000 */
+  --secondary: #f87818;
+  --secondary-hover: #dd6410;
+  --secondary-foreground: #1a1a1a;
+  --secondary-subtle: #fff7ed;
+  --accent: #f8c000;
+
+  /* Neutrals */
+  --muted: #f5f4f2;
+  --muted-foreground: #78716c;
+  --border: #e7e5e4;
+  --border-strong: #d6d3d1;
+
+  /* Status. `danger` is deliberately a cooler, deeper red than `primary`,
+     so a destructive message never looks like a brand call to action. */
+  --warning: #b45309;
+  --warning-subtle: #fffbeb;
+  --success: #15803d;
+  --success-subtle: #f0fdf4;
+  --danger: #b91c1c;
+  --danger-subtle: #fef2f2;
+
+  --ring: #e01820;
+  --radius: 10px;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-subtle: var(--background-subtle);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-subtle: var(--primary-subtle);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-subtle: var(--secondary-subtle);
+  --color-accent: var(--accent);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-manrope);
+
+  /*
+   * Breakpoints are named for the devices they serve rather than t-shirt
+   * sizes, because the mobile layouts here are not scaled-down desktop ones.
+   *   xs  360  small Android
+   *   sm  390  iPhone 14/15/16
+   *   md  430  iPhone Pro Max, large Android
+   *   lg  768  tablet portrait
+   *   xl  1024 laptop
+   *   2xl 1280 desktop
+   *   3xl 1536 large desktop
+   * Everything below 360 is handled by the base styles, which must stay
+   * readable at 320px with no horizontal scroll.
+   */
+  --breakpoint-xs: 360px;
+  --breakpoint-sm: 390px;
+  --breakpoint-md: 430px;
+  --breakpoint-lg: 768px;
+  --breakpoint-xl: 1024px;
+  --breakpoint-2xl: 1280px;
+  --breakpoint-3xl: 1536px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Stops iOS enlarging text on rotation without disabling user zoom. */
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 400;
+  /*
+   * Only Manrope 400 and 500 are loaded. Synthesised bold is switched off so
+   * the browser cannot fake a 600/700 by smearing the 500 outline — a faked
+   * weight looks muddy next to the real one and shifts metrics.
+   */
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+ * A visible focus ring on keyboard navigation only. Never remove this: it is
+ * the only way a keyboard user can tell where they are.
+ */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a {
+  text-underline-offset: 4px;
+}
+
+/* Images should never be able to force a horizontal scrollbar. */
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Layout rhythm
+ * ---------------------------------------------------------------------------
+ * The header is fixed, so its height has to be a number the rest of the layout
+ * can read: the spacer under the header on ordinary pages, the top padding of
+ * the hero that sits *behind* the header, and the scroll-margin of anchor
+ * targets all derive from it. Hard-coding 72px in three places is how a header
+ * and its spacer drift apart.
+ */
+:root {
+  --gk-header-h: 64px;
+  --gk-announcement-h: 0px;
+  --gk-bottom-nav-h: 64px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gk-header-h: 76px;
+  }
+}
+
+/* Anchor links must not land under the fixed header. */
+[id] {
+  scroll-margin-top: calc(var(--gk-header-h) + var(--gk-announcement-h) + 16px);
+}
+
+/*
+ * The mobile tab bar is fixed over the page, so every page reserves its height
+ * plus the iPhone home-indicator inset. Without this the footer's last row and
+ * any bottom-of-page button sit permanently underneath the bar.
+ */
+.gk-bottom-nav-offset {
+  padding-bottom: calc(var(--gk-bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .gk-bottom-nav-offset {
+    padding-bottom: 0;
+  }
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Motion
+ * ---------------------------------------------------------------------------
+ * Short, single-purpose keyframes. Everything here is opacity/transform only,
+ * which the compositor can run without laying out the page again, and all of
+ * it is switched off by the prefers-reduced-motion block above.
+ */
+@keyframes gk-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gk-slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes gk-slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes gk-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gk-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+@keyframes gk-flash {
+  0% { background-color: var(--primary-subtle); }
+  100% { background-color: transparent; }
+}
+
+.gk-anim-fade-in { animation: gk-fade-in 220ms ease-out both; }
+.gk-anim-slide-right { animation: gk-slide-in-right 300ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.gk-anim-slide-left { animation: gk-slide-in-left 280ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.gk-anim-rise { animation: gk-rise 400ms ease-out both; }
+.gk-anim-pop { animation: gk-pop 340ms ease-out; }
+.gk-anim-flash { animation: gk-flash 1200ms ease-out; }
+
+@keyframes gk-gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gk-brand-gradient {
+  background-image: linear-gradient(110deg, #9d0c13 0%, #e01820 38%, #ff3b1f 62%, #f87818 100%);
+}
+
+.gk-button-gradient {
+  background-image: linear-gradient(110deg, #b30f16 0%, #e01820 34%, #ff3b1f 62%, #f87818 100%);
+  background-size: 220% 220%;
+  animation: gk-gradient-flow 5.5s ease infinite;
+}
+
+.gk-button-gradient:hover {
+  box-shadow: 0 12px 26px rgba(224, 24, 32, 0.24);
+}
+
+.gk-text-gradient,
+.gk-gradient-hover:hover {
+  background-image: linear-gradient(110deg, #b30f16 0%, #e01820 38%, #ff3b1f 64%, #f87818 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/*
+ * The footer gradient: white at the top so the page transitions into it without
+ * a seam, warming through the logo's flame amber into the shield red at the
+ * very bottom. Kept far below the opacity where body copy would lose contrast —
+ * the darkest point here is still a ~2% tint.
+ */
+.gk-footer-surface {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(90rem 40rem at 78% 108%, rgba(224, 24, 32, 0.10), transparent 62%),
+    radial-gradient(70rem 32rem at 8% 100%, rgba(248, 120, 24, 0.09), transparent 58%),
+    linear-gradient(180deg, #ffffff 0%, #fffcf8 42%, #fef7f4 100%);
+}
+
+/* Hides a scrollbar on a deliberately swipeable row without disabling scroll. */
+.gk-scroll-x {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+}
+
+.gk-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Header surface
+ * ---------------------------------------------------------------------------
+ * Driven by a data attribute rather than conditional Tailwind classes.
+ *
+ * Toggling between `lg:bg-transparent` and `lg:bg-white/95` would put two
+ * competing background utilities on the same element, and which one won would
+ * depend on their order in the generated stylesheet — not on the order they
+ * appear in the class list. That is a coin toss, and losing it means
+ * unreadable navigation over the hero. Two explicit states settle it.
+ *
+ * Below 1024px the header is always solid white: a translucent bar over
+ * photography is hard to read on a phone, especially outdoors.
+ */
+@media (min-width: 1024px) {
+  [data-header="transparent"] {
+    background-color: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+  }
+
+  [data-header="solid"] {
+    background-color: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.05);
+  }
+
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-header="solid"] {
+      background-color: rgba(255, 255, 255, 0.72);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      backdrop-filter: blur(18px) saturate(140%);
+    }
+  }
+}
+
+/*
+ * ---------------------------------------------------------------------------
+ * Banner carousel
+ * ---------------------------------------------------------------------------
+ * Each slide carries its own aspect ratio for both breakpoints as custom
+ * properties, set inline from the dimensions WordPress reports. This rule
+ * picks which of the two applies, so the banner reserves exactly its own
+ * height at full width before the file has loaded — no fixed height anywhere,
+ * and no layout shift when the image arrives.
+ */
+.gk-banner-slide img {
+  --gk-banner-ar: var(--gk-ar-m);
+}
+
+@media (min-width: 1024px) {
+  .gk-banner-slide img {
+    --gk-banner-ar: var(--gk-ar-d);
+  }
 }
