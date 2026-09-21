@@ -6,14 +6,11 @@ import type { Size } from "@/types";
 type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "gk-button-gradient text-primary-foreground shadow-sm shadow-primary/20",
-  secondary:
-    "bg-secondary text-secondary-foreground hover:bg-secondary-hover",
-  outline:
-    "border border-border-strong bg-background text-foreground hover:border-primary hover:bg-primary-subtle",
+  primary: "gk-action-button gk-action-button-primary text-primary-foreground",
+  secondary: "gk-action-button gk-action-button-secondary text-secondary-foreground",
+  outline: "gk-action-button gk-action-button-outline text-foreground",
   ghost: "text-foreground hover:bg-muted",
-  danger: "bg-danger text-white hover:brightness-110",
+  danger: "gk-action-button gk-action-button-danger text-white",
 };
 
 const sizes: Record<Size, string> = {
@@ -24,7 +21,7 @@ const sizes: Record<Size, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center rounded-[var(--radius)] font-medium " +
+  "inline-flex items-center justify-center font-medium " +
   "transition-[transform,box-shadow,background-position,color,border-color] duration-200 select-none " +
   "hover:-translate-y-0.5 active:translate-y-0 " +
   "disabled:pointer-events-none disabled:opacity-50 " +

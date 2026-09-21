@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { ArrowRightIcon, CheckIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, CheckIcon, FlameIcon, ShieldIcon } from "@/components/ui/icons";
 import { MediaPlaceholder } from "@/components/ui/media-placeholder";
 import type { Media } from "@/types";
 
@@ -37,6 +37,37 @@ export function TrustBar({ items }: { items: Array<{ title: string; text: string
           ))}
         </ul>
       </Container>
+    </section>
+  );
+}
+
+export function HomeTextMarquee() {
+  const messages = [
+    "Kitchen ready",
+    "Electrical panel ready",
+    "Exit route ready",
+    "One box, three responses",
+    "Made for Indian homes",
+    "Mount it before you need it",
+  ];
+  const track = [...messages, ...messages, ...messages];
+
+  return (
+    <section className="overflow-hidden border-b border-border bg-foreground text-white">
+      <div className="gk-text-marquee-mask">
+        <div className="gk-text-marquee-track flex w-max items-center gap-6 py-4">
+          {track.map((item, index) => (
+            <span
+              key={`${item}-${index}`}
+              aria-hidden={index >= messages.length ? "true" : undefined}
+              className="flex shrink-0 items-center gap-6 text-sm font-medium tracking-[0.22em] uppercase text-white/85"
+            >
+              {item}
+              <span className="size-1.5 rounded-full bg-secondary" />
+            </span>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
@@ -154,13 +185,18 @@ export function CompleteKit({
   contents: Array<{ title: string; summary: string }>;
 }) {
   return (
-    <section className="bg-foreground py-16 text-white lg:py-24">
+    <section className="relative overflow-hidden bg-foreground py-16 text-white lg:py-24">
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
+      />
       <Container width="wide">
-        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-16">
           <div className="order-2 lg:order-1">
-            <p className="text-xs font-medium tracking-[0.18em] text-white/55 uppercase">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1.5 text-xs font-medium tracking-[0.16em] text-white/70 uppercase">
+              <ShieldIcon className="size-4 text-secondary" />
               One complete kit
-            </p>
+            </span>
             <h2 className="mt-4 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-balance lg:text-[42px]">
               Everything has a role when seconds matter.
             </h2>
@@ -171,9 +207,12 @@ export function CompleteKit({
             </p>
 
             {contents.length > 0 ? (
-              <ul className="mt-8 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
                 {contents.map((item) => (
-                  <li key={item.title} className="flex items-start gap-2.5">
+                  <li
+                    key={item.title}
+                    className="flex min-h-16 items-start gap-3 rounded-[8px] border border-white/10 bg-white/[0.06] p-3"
+                  >
                     <CheckIcon className="mt-0.5 size-4 shrink-0 text-secondary" />
                     <div className="min-w-0">
                       <span className="text-sm leading-6 text-white/90">{item.title}</span>
@@ -193,7 +232,11 @@ export function CompleteKit({
           </div>
 
           <div className="order-1 lg:order-2">
-            <div className="rounded-[var(--radius)] bg-white p-4 lg:p-6">
+            <div className="relative overflow-hidden rounded-[8px] bg-white p-4 shadow-2xl shadow-black/30 lg:p-6">
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-8 top-0 h-14 bg-gradient-to-b from-secondary/20 to-transparent blur-2xl"
+              />
               {image?.url ? (
                 <div className="relative aspect-[16/9] w-full">
                   <Image
@@ -207,6 +250,20 @@ export function CompleteKit({
               ) : (
                 <MediaPlaceholder label="Complete Kit Image" aspect="16/9" />
               )}
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {["Manual", "Automatic", "Smother"].map((label) => (
+                <div
+                  key={label}
+                  className="rounded-[8px] border border-white/10 bg-white/[0.06] px-3 py-4 text-center"
+                >
+                  <FlameIcon className="mx-auto size-5 text-secondary" />
+                  <p className="mt-2 text-xs font-medium tracking-[0.12em] text-white/70 uppercase">
+                    {label}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

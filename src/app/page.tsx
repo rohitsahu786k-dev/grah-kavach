@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import { BrandStory, Quality, ReviewsOrCommitment } from "@/components/home/brand-trust";
+import { BrandStory, ReviewsOrCommitment } from "@/components/home/brand-trust";
+import { CertificationMarquee } from "@/components/home/certification-marquee";
+import { ProductBento, type BentoItem } from "@/components/home/product-bento";
+import { SafetyGuides } from "@/components/home/safety-guides";
 import { BuySection, FaqSection, FinalCta } from "@/components/home/conversion";
 import { Hero } from "@/components/home/hero";
 import { HeroBanners } from "@/components/home/hero-banners";
-import { CompleteKit, ProductRoles, TrustBar, type ProductRole } from "@/components/home/product-story";
+import { FeatureCarouselSection } from "@/components/home/feature-carousel-section";
+import { CompleteKit, HomeTextMarquee, TrustBar, type ProductRole } from "@/components/home/product-story";
 import { HowItWorks, Placement, RiskAreas } from "@/components/home/safety-education";
 import { wooProductGallery, wooProductToSummary } from "@/lib/woocommerce/adapters";
 import { getPrimaryProduct } from "@/lib/woocommerce/products";
@@ -13,6 +17,7 @@ import {
   getHomePage,
   getPageBySlug,
   getProductContent,
+  getSafetyGuides,
   getTestimonials,
 } from "@/lib/wordpress/adapters";
 import { stripHtml } from "@/lib/wordpress/format";
@@ -115,12 +120,13 @@ export default async function Home() {
   const product = await getPrimaryProduct();
   const summary = wooProductToSummary(product);
 
-  const [homePage, productContent, faqs, reviews, testimonials] = await Promise.all([
+  const [homePage, productContent, faqs, reviews, testimonials, safetyGuides] = await Promise.all([
     getHomePage(),
     getProductContent(product.slug),
     getFaqs(8),
     getProductReviews(product.id),
     getTestimonials(9),
+    getSafetyGuides(8),
   ]);
 
   const gallery: Media[] = [
@@ -240,9 +246,22 @@ export default async function Home() {
 
       <TrustBar items={trustItems} />
 
-      <ProductRoles items={roles} />
+      <HomeTextMarquee />
+
+      <ProductBento
+        heroImage={kitImage}
+        items={roles as BentoItem[]}
+        pieceCount={kitContents.length}
+      />
 
       <CompleteKit image={kitImage} contents={kitContents} />
+
+      <FeatureCarouselSection
+        title={homePage?.featureCarouselTitle || ""}
+        intro={homePage?.featureCarouselIntro || ""}
+        images={homePage?.featureCarouselImages ?? []}
+        autoplaySeconds={homePage?.featureCarouselAutoplay ?? null}
+      />
 
       <RiskAreas />
 
@@ -261,7 +280,14 @@ export default async function Home() {
 
       <BrandStory notesHtml={productContent?.manufacturerNotes || null} />
 
-      <Quality certifications={productContent?.certifications ?? []} />
+      <CertificationMarquee
+        title="Certified and tested"
+        certifications={productContent?.certifications ?? []}
+      />
+
+      <SafetyGuides
+        guides={safetyGuides.map((g) => ({ id: g.id, title: g.title, summary: g.summary }))}
+      />
 
       <ReviewsOrCommitment reviews={reviews} testimonials={testimonials} />
 
