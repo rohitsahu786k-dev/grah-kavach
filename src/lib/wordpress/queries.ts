@@ -210,6 +210,10 @@ export const HOMEPAGE_QUERY = `
       heroBannersMobile { ${mediaFields} }
       heroBannerLinks { label url }
       heroBannerAutoplay
+      featureCarouselTitle
+      featureCarouselIntro
+      featureCarouselImages { ${mediaFields} }
+      featureCarouselAutoplay
       heroEyebrow
       heroTitle
       heroDescription

@@ -98,6 +98,10 @@ const homepageResponseSchema = z.object({
         .optional()
         .default([]),
       heroBannerAutoplay: z.number().nullable().optional().default(null),
+      featureCarouselTitle: z.string().optional().default(""),
+      featureCarouselIntro: z.string().optional().default(""),
+      featureCarouselImages: z.array(wpMediaSchema).nullable().optional().default([]),
+      featureCarouselAutoplay: z.number().nullable().optional().default(null),
       heroEyebrow: z.string().optional().default(""),
       heroTitle: z.string().optional().default(""),
       heroDescription: z.string().optional().default(""),

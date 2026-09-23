@@ -20,17 +20,7 @@ export function BrandStory({ notesHtml }: { notesHtml: string | null }) {
     <section className="bg-background-subtle py-16 lg:py-24">
       <Container width="wide">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
-          <div className="overflow-hidden rounded-[8px] border border-border bg-white shadow-xl shadow-red-950/5">
-            <div className="relative aspect-[4/3]">
-              <Image
-                src="/home/udaipur-quality-workshop.png"
-                alt="Quality check workspace for Graha Kavach fire safety products in Udaipur"
-                fill
-                sizes="(max-width: 1023px) 92vw, 40vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
+          <MediaPlaceholder label="Udaipur Manufacturing Image" aspect="4/3" />
 
           <div>
             <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">

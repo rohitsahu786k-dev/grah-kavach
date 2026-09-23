@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { Phone, Mail, MapPin, MessageSquare, Clock, ShieldCheck } from "lucide-react";
-import { getGlobalSiteSettings, getPageBySlug } from "@/lib/wordpress/adapters";
+import {
+  getFaqs,
+  getGlobalSiteSettings,
+  getPageBySlug,
+  getProductContent,
+  getSafetyGuides,
+} from "@/lib/wordpress/adapters";
+import { CertificationMarquee } from "@/components/home/certification-marquee";
+import { SafetyGuides } from "@/components/home/safety-guides";
+import { FaqSection } from "@/components/home/conversion";
 import { ContactForm } from "@/components/contact/contact-form";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
@@ -18,7 +27,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const settings = await getGlobalSiteSettings();
+  const [settings, safetyGuides, faqs, productContent] = await Promise.all([
+    getGlobalSiteSettings(),
+    getSafetyGuides(8),
+    getFaqs(8),
+    getProductContent("graha-kavach-complete-fire-safety-kit"),
+  ]);
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Contact", path: "/contact" },
@@ -51,11 +65,11 @@ export default async function ContactPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="max-w-3xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary-subtle px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary-subtle px-3 py-1 text-xs font-medium uppercase tracking-wider text-primary">
             <ShieldCheck className="h-3.5 w-3.5" />
             Direct Support & Consultation
           </span>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
             Contact Graha Kavach
           </h1>
           <p className="mt-3 text-base text-foreground-muted sm:text-lg">
@@ -77,10 +91,10 @@ export default async function ContactPage() {
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                  <h3 className="text-xs font-medium uppercase tracking-wider text-foreground-muted">
                     Phone Support
                   </h3>
-                  <p className="mt-1 text-base font-semibold text-foreground">
+                  <p className="mt-1 text-base font-medium text-foreground">
                     {phone}
                   </p>
                   <p className="mt-0.5 text-xs text-foreground-muted">
@@ -98,10 +112,10 @@ export default async function ContactPage() {
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                  <h3 className="text-xs font-medium uppercase tracking-wider text-foreground-muted">
                     Email Inquiry
                   </h3>
-                  <p className="mt-1 text-base font-semibold text-foreground">
+                  <p className="mt-1 text-base font-medium text-foreground">
                     {email}
                   </p>
                   <p className="mt-0.5 text-xs text-foreground-muted">
@@ -121,10 +135,10 @@ export default async function ContactPage() {
                   <MessageSquare className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
+                  <h3 className="text-xs font-medium uppercase tracking-wider text-emerald-800">
                     Instant WhatsApp Chat
                   </h3>
-                  <p className="mt-1 text-base font-semibold text-emerald-950">
+                  <p className="mt-1 text-base font-medium text-emerald-950">
                     Chat with an Advisor
                   </p>
                   <p className="mt-0.5 text-xs text-emerald-700">
@@ -139,7 +153,7 @@ export default async function ContactPage() {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                  <h3 className="text-xs font-medium uppercase tracking-wider text-foreground-muted">
                     Head Office & Manufacturing Hub
                   </h3>
                   <p className="mt-1 text-sm font-medium leading-relaxed text-foreground whitespace-pre-line">
@@ -154,7 +168,7 @@ export default async function ContactPage() {
                   <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                  <h3 className="text-xs font-medium uppercase tracking-wider text-foreground-muted">
                     Business Hours
                   </h3>
                   <p className="mt-1 text-sm font-medium text-foreground">
@@ -170,7 +184,7 @@ export default async function ContactPage() {
             {/* Embedded Google Map */}
             <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
               <div className="border-b border-border bg-background-subtle px-4 py-2.5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                <p className="text-xs font-medium uppercase tracking-wider text-foreground-muted">
                   Location Map — Udaipur, Rajasthan
                 </p>
               </div>
@@ -196,6 +210,27 @@ export default async function ContactPage() {
             <ContactForm />
           </div>
         </div>
+      </div>
+
+      {/*
+       * Below the form: the same guide, certification and FAQ sections the
+       * homepage uses. Someone who lands here with a question is usually one
+       * answer away from not needing to send the form at all.
+       */}
+      <div className="mt-16 -mb-12 md:-mb-16">
+        <SafetyGuides
+          guides={safetyGuides.map((g) => ({ id: g.id, title: g.title, summary: g.summary }))}
+        />
+
+        <CertificationMarquee
+          title="Certified and tested"
+          certifications={productContent?.certifications ?? []}
+        />
+
+        <FaqSection
+          title="Before you write to us"
+          items={faqs.map((faq) => ({ id: faq.id, title: faq.title, answer: faq.answer }))}
+        />
       </div>
     </div>
   );

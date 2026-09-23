@@ -1,12 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { PurchasePanel } from "@/components/commerce/purchase-panel";
 import { StockStatus } from "@/components/commerce/stock-status";
-import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { ArrowRightIcon, CheckIcon, FlameIcon, ShieldIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, CheckIcon, ShieldIcon } from "@/components/ui/icons";
 import { MediaPlaceholder } from "@/components/ui/media-placeholder";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
+import { Clock, Flame, Headphones, Minus, Plus, ShieldCheck } from "lucide-react";
 import type { Media, ProductSummary } from "@/types";
 
 /* ------------------------------------------------------------------ */
@@ -159,65 +163,237 @@ export function BuySection({
 
 export type FaqItem = { id: string | number; title: string; answer: string };
 
-export function FaqSection({ title, items }: { title: string; items: FaqItem[] }) {
+const FALLBACK_10_FAQS: FaqItem[] = [
+  {
+    id: "1",
+    title: "What is inside the Graha Kavach kit?",
+    answer:
+      "The complete kit includes 1 ABC dry powder fire extinguisher (2 KG capacity) with heavy-duty wall bracket, 1 automatic fire extinguishing ball with metal cradle stand, 1 certified fiberglass fire blanket (1.2m x 1.8m) in a quick-release emergency pouch, plus all necessary mounting hardware, wall plugs, and a comprehensive user safety guide.",
+  },
+  {
+    id: "2",
+    title: "When should I use this kit?",
+    answer:
+      "Use it at the earliest sign of flame or smoke. The fire blanket is specifically designed for kitchen cooking-oil or pan fires. The ABC extinguisher handles electrical short circuits, gas cylinder leaks, and solid material fires. The automatic fire ball works 24/7 passively even when nobody is present.",
+  },
+  {
+    id: "3",
+    title: "What is the extinguisher capacity?",
+    answer:
+      "The extinguisher holds 2 Kilograms of premium stored-pressure ABC dry chemical powder, engineered to deliver 10–12 seconds of strong continuous discharge with an effective 3–4 metre throw to knock down flames safely.",
+  },
+  {
+    id: "4",
+    title: "How does the fire ball work?",
+    answer:
+      "The automatic fire ball activates within 3 to 5 seconds upon direct contact with flame (reaching 70°C). It bursts with a harmless, distinct 120dB warning sound and instantly disperses non-toxic extinguishing chemical powder over an area of up to 3 square metres.",
+  },
+  {
+    id: "5",
+    title: "Where should I place the fire blanket?",
+    answer:
+      "Mount the fire blanket in or right beside the kitchen, near the cooking stove at an easily reachable eye-level height, but not directly over the gas burner where flames could prevent reaching it. Also recommended near inverter batteries or workshops.",
+  },
+  {
+    id: "6",
+    title: "Can I use water on an oil or grease fire?",
+    answer:
+      "NEVER throw water on a cooking oil, grease, or electrical fire! Water sinks under the burning oil, vaporizes explosively, and creates a violent flare-up fireball. Always pull the Graha Kavach Fire Blanket to cover and smother the pan, cutting off oxygen, or discharge the ABC extinguisher.",
+  },
+  {
+    id: "7",
+    title: "Does the kit replace the fire service?",
+    answer:
+      "No home kit replaces professional fire services. Graha Kavach is your vital first line of defense to extinguish or control small fires before they spread. In any serious situation, immediately evacuate all family members and dial 101 or 112.",
+  },
+  {
+    id: "8",
+    title: "How often should I check the kit?",
+    answer:
+      "Check the pressure gauge on the extinguisher once a month to ensure the needle points in the green operational zone. Visually inspect the fire ball stand and fire blanket pull tabs every six months to verify they remain free of obstruction.",
+  },
+  {
+    id: "9",
+    title: "Can the fire blanket be reused?",
+    answer:
+      "No. Fire blankets are intended for single emergency use. High-temperature flame exposure damages the microscopic fiberglass weave. After using a blanket on an active fire, discard it safely and replace it with a fresh unit.",
+  },
+  {
+    id: "10",
+    title: "What number should I call in a fire emergency?",
+    answer:
+      "In India, immediately dial 101 for the Fire Department or 112 for the unified National Emergency Support Services.",
+  },
+];
+
+export function FaqSection({
+  title: _title,
+  items,
+}: {
+  title?: string;
+  items?: FaqItem[];
+}) {
+  void _title;
+  // Use CMS items if available, combined/filled up to 10 from the reference FAQs
+  const displayFaqs =
+    items && items.length >= 8
+      ? items
+      : items && items.length > 0
+        ? [...items, ...FALLBACK_10_FAQS.slice(items.length)]
+        : FALLBACK_10_FAQS;
+
+  // Default open question 06 ("Can I use water on an oil or grease fire?") matching reference image
+  const [openId, setOpenId] = useState<string>("6");
+
+  const toggle = (id: string) => {
+    setOpenId((prev) => (prev === id ? "" : id));
+  };
+
   return (
-    <section id="faq" className="bg-background py-16 lg:py-24">
+    <section id="faq" className="relative bg-[#faf8f5] py-16 lg:py-24 border-b border-[#ede7df]">
       <Container width="wide">
-        <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
+        <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14 items-start">
+          {/* Left Column: Heading + Info + Help Card */}
           <div className="lg:sticky lg:top-[calc(var(--gk-header-h)+2rem)] lg:self-start">
-            <span className="inline-flex items-center gap-2 rounded-[8px] border border-border bg-background-subtle px-3 py-2 text-xs font-medium tracking-[0.16em] text-foreground-muted uppercase">
-              <ShieldIcon className="size-4 text-primary" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-orange-500/25 bg-orange-50/80 px-3.5 py-1 text-xs font-semibold tracking-wider text-orange-600 uppercase">
+              <ShieldIcon className="size-3.5 text-orange-500" />
               FAQ
             </span>
-            <h2 className="mt-5 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-balance text-foreground lg:text-[42px]">
-              {title}
+
+            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[44px] leading-[1.14] font-bold tracking-tight text-foreground">
+              Fire safety kit{" "}
+              <span className="text-[#ea580c]">questions</span>
             </h2>
-            <p className="mt-4 max-w-md leading-7 text-foreground-muted">
-              Straight answers before checkout. Open panels stay in the page markup, so customers
-              and search engines both get the real answer.
+
+            <p className="mt-3.5 max-w-md text-sm sm:text-base leading-relaxed text-foreground-muted">
+              Straight answers before checkout. Our FAQs cover everything you need to know, so you can buy with confidence.
             </p>
 
-            <div className="mt-8 overflow-hidden rounded-[8px] border border-border bg-foreground p-5 text-white">
-              <div className="flex items-center gap-3">
-                <span className="grid size-11 place-items-center rounded-[8px] bg-primary">
-                  <FlameIcon className="size-5" />
-                </span>
+            {/* Dark "Still unsure?" Support Card */}
+            <div className="mt-7 overflow-hidden rounded-3xl border border-white/10 bg-[#1c1d1f] p-5 sm:p-6 text-white shadow-xl">
+              <div className="flex items-center gap-3.5">
+                <div className="size-11 sm:size-12 rounded-2xl bg-gradient-to-br from-[#dc2626] to-[#ea580c] flex items-center justify-center shrink-0 shadow-md">
+                  <Flame className="size-6 text-white" />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">Still unsure?</p>
-                  <p className="mt-1 text-sm text-white/65">Ask before you mount.</p>
+                  <p className="text-base font-bold text-white leading-tight">Still unsure?</p>
+                  <p className="mt-0.5 text-xs sm:text-sm text-zinc-400">Ask before you mount.</p>
                 </div>
               </div>
-              <Button href="/contact" variant="secondary" className="mt-5 w-full">
+
+              <Link
+                href="/contact"
+                className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-semibold py-3 text-sm sm:text-base shadow-lg shadow-orange-600/25 transition-colors"
+              >
                 Contact Support
                 <ArrowRightIcon className="size-4" />
-              </Button>
+              </Link>
+
+              {/* Bottom Trust Items Strip */}
+              <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-3 gap-2 text-center text-[11px] font-medium text-zinc-400">
+                <div className="flex items-center justify-center gap-1.5">
+                  <Headphones className="size-3.5 text-zinc-400 shrink-0" />
+                  <span>Friendly team</span>
+                </div>
+                <div className="flex items-center justify-center gap-1.5 border-x border-white/10 px-1">
+                  <ShieldCheck className="size-3.5 text-zinc-400 shrink-0" />
+                  <span>Expert advice</span>
+                </div>
+                <div className="flex items-center justify-center gap-1.5">
+                  <Clock className="size-3.5 text-zinc-400 shrink-0" />
+                  <span>Quick replies</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom-left Decorative Watermark */}
+            <div className="mt-8 hidden lg:block text-left select-none opacity-40">
+              <span className="block h-0.5 w-8 bg-zinc-400 mb-2" />
+              <p className="text-[11px] font-bold tracking-[0.18em] text-zinc-400 uppercase leading-relaxed">
+                SAFER HOMES
+                <br />
+                BRIGHTER TOMORROWS
+              </p>
             </div>
           </div>
 
-          <div>
-            {items.length > 0 ? (
-              <Accordion
-                className="gk-faq-accordion"
-                items={items.map((faq, index) => ({
-                  id: String(faq.id),
-                  question: (
-                    <span className="flex items-center gap-3">
-                      <span className="grid size-8 shrink-0 place-items-center rounded-[8px] bg-primary-subtle text-xs font-medium text-primary tabular-nums">
-                        {String(index + 1).padStart(2, "0")}
+          {/* Right Column: 10 Accordion Cards */}
+          <div className="space-y-3">
+            {displayFaqs.map((faq, index) => {
+              const numStr = String(index + 1).padStart(2, "0");
+              const itemId = String(faq.id || index + 1);
+              const isOpen = openId === itemId || openId === numStr;
+              const isHighlight = numStr === "06" || faq.title.toLowerCase().includes("water");
+
+              return (
+                <div
+                  key={itemId}
+                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                    isOpen
+                      ? "border-red-200 bg-[#fff5f5] shadow-sm ring-1 ring-red-100"
+                      : "border-[#ede7df] bg-white hover:border-orange-200 shadow-sm"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggle(numStr)}
+                    className="flex w-full items-center justify-between gap-3 p-4 sm:p-5 text-left select-none"
+                    aria-expanded={isOpen}
+                  >
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <span
+                        className={`size-7 sm:size-8 rounded-xl font-bold text-xs flex items-center justify-center shrink-0 ${
+                          isOpen
+                            ? "bg-red-100 text-red-600"
+                            : isHighlight
+                              ? "bg-red-100 text-red-600"
+                              : "bg-orange-50 text-[#ea580c]"
+                        }`}
+                      >
+                        {numStr}
                       </span>
-                      <span>{faq.title}</span>
+                      <span
+                        className={`text-sm sm:text-base font-semibold leading-snug ${
+                          isOpen
+                            ? "text-[#dc2626]"
+                            : isHighlight
+                              ? "text-[#dc2626]"
+                              : "text-foreground"
+                        }`}
+                      >
+                        {faq.title}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`size-6 sm:size-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                        isOpen
+                          ? "bg-red-100 text-red-600"
+                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                      }`}
+                    >
+                      {isOpen ? (
+                        <Minus className="size-3.5 stroke-[2.5]" />
+                      ) : (
+                        <Plus className="size-3.5 stroke-[2.5]" />
+                      )}
                     </span>
-                  ),
-                  answer: (
-                    <span className="block pl-11" dangerouslySetInnerHTML={{ __html: faq.answer }} />
-                  ),
-                }))}
-              />
-            ) : (
-              <p className="rounded-[8px] border border-dashed border-border-strong p-6 leading-7 text-foreground-muted">
-                Questions and answers appear here once they are published in the CMS.
-              </p>
-            )}
+                  </button>
+
+                  {isOpen ? (
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0">
+                      <div className="pl-10 sm:pl-12 text-xs sm:text-sm leading-relaxed text-zinc-700">
+                        {faq.answer.startsWith("<") ? (
+                          <span dangerouslySetInnerHTML={{ __html: faq.answer }} />
+                        ) : (
+                          faq.answer
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         </div>
       </Container>
@@ -230,72 +406,143 @@ export function FaqSection({ title, items }: { title: string; items: FaqItem[] }
 /* ------------------------------------------------------------------ */
 
 export function FinalCta({
-  image,
   product,
   unavailable,
 }: {
-  image: Media | null;
+  image?: Media | null;
   product: ProductSummary;
-  unavailable: boolean;
+  unavailable?: boolean;
 }) {
   return (
-    <section className="border-t border-border bg-foreground py-16 text-white lg:py-24">
-      <Container width="wide">
-        <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
-          <div className="overflow-hidden rounded-[8px] border border-white/10 bg-white/[0.06]">
-            {image?.url ? (
-              <div className="grid lg:grid-cols-2">
-                <div className="relative aspect-[16/10] w-full bg-white">
-                  <Image
-                    src={image.url}
-                    alt={image.alt || product.name}
-                    fill
-                    sizes="(max-width: 1023px) 92vw, 24vw"
-                    className="object-contain p-4"
-                  />
-                </div>
-                <div className="relative hidden lg:block">
-                  <Image
-                    src="/home/kitchen-kit-lifestyle.png"
-                    alt=""
-                    fill
-                    sizes="24vw"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            ) : (
-              <MediaPlaceholder label="Closing Lifestyle Image" aspect="16/9" />
-            )}
-          </div>
+    <section className="relative w-full overflow-hidden bg-[#070607] text-white">
+      {/* Mobile background (1122x1402) - Strictly NO overlay per user instruction */}
+      <div className="absolute inset-0 md:hidden pointer-events-none select-none">
+        <Image
+          src="/cta/cta-mobile.png"
+          alt="Graha Kavach Fire Safety Kit"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-bottom"
+        />
+      </div>
 
-          <div>
-            <h2 className="text-3xl leading-[1.12] font-medium tracking-[-0.025em] text-balance lg:text-[46px]">
+      {/* Desktop background (1600x686) - Strictly NO overlay per user instruction */}
+      <div className="absolute inset-0 hidden md:block pointer-events-none select-none">
+        <Image
+          src="/cta/cta-desktop.png"
+          alt="Graha Kavach Fire Safety Kit"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-right xl:object-center"
+        />
+      </div>
+
+      {/* Content container */}
+      <Container width="wide" className="relative z-10">
+        {/* Mobile View (< md): Text and Button on TOP of the image */}
+        <div className="flex flex-col items-start justify-start pt-7 pb-[300px] xs:pt-8 xs:pb-[340px] sm:pt-10 sm:pb-[380px] md:hidden">
+          <div className="w-full max-w-sm text-left">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-950/70 px-3 py-1 text-[11px] font-semibold tracking-wider text-red-200 uppercase">
+              <ShieldIcon className="size-3 text-primary" />
+              Complete Fire Safety Kit
+            </span>
+
+            <h2 className="mt-2.5 text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl text-balance">
               The day you need it is not the day to buy it.
             </h2>
-            <p className="mt-5 max-w-xl leading-8 text-white/70">
-              One kit, mounted where you can reach it, covering the three responses a small fire
-              calls for.
+
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-white/85 max-w-xs">
+              One kit, mounted where you can reach it — covering every critical second before fire spreads.
             </p>
 
-            <p className="mt-6 text-2xl font-medium">
-              {formatMinorUnitsToCurrency(product.priceMinor, product.currency)}
-            </p>
-
-            <div className="mt-7 flex flex-wrap gap-3">
-              {/* Still a link when out of stock — the product page is where the
-                  customer finds out when it is back — but marked as such. */}
+            <div className="mt-3.5 flex flex-wrap items-center gap-3">
+              {product?.priceMinor ? (
+                <span className="text-2xl font-bold tracking-tight text-white">
+                  {formatMinorUnitsToCurrency(product.priceMinor, product.currency)}
+                </span>
+              ) : null}
               <Button
                 href="/fire-safety-kit"
-                size="lg"
+                size="md"
+                className="bg-primary hover:bg-primary-hover text-white font-medium px-5 py-2 text-xs sm:text-sm shadow-md shadow-red-950/50"
                 aria-disabled={unavailable ? true : undefined}
               >
                 {unavailable ? "View Product" : "Get Graha Kavach"}
-                <ArrowRightIcon className="size-4" />
+                <ArrowRightIcon className="size-3.5 ml-1" />
               </Button>
-              <Button href="/contact" variant="secondary" size="lg">
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop View (>= md): Text and Button on LEFT side */}
+        <div className="hidden md:flex flex-col items-start justify-center md:py-20 lg:py-28 md:min-h-[540px] lg:min-h-[600px] xl:min-h-[660px]">
+          <div className="w-full max-w-lg lg:max-w-xl text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-950/60 px-3.5 py-1 text-xs font-semibold tracking-wider text-red-200 uppercase">
+              <ShieldIcon className="size-3.5 text-primary" />
+              Complete Home Fire Protection
+            </span>
+
+            <h2 className="mt-3.5 text-3xl leading-[1.12] font-semibold tracking-[-0.025em] text-white sm:text-4xl lg:text-[46px] text-balance">
+              The day you need it is not the day to buy it.
+            </h2>
+
+            <p className="mt-3.5 text-base lg:text-lg leading-relaxed text-white/80 max-w-md lg:max-w-lg">
+              One kit, mounted where you can reach it — covering every critical second before a small fire becomes uncontrollable.
+            </p>
+
+            {product?.priceMinor ? (
+              <div className="mt-5 flex flex-wrap items-baseline gap-3">
+                <span className="text-3xl lg:text-4xl font-bold tracking-tight text-white">
+                  {formatMinorUnitsToCurrency(product.priceMinor, product.currency)}
+                </span>
+                {product.regularPriceMinor && product.regularPriceMinor > product.priceMinor ? (
+                  <>
+                    <span className="text-lg text-white/45 line-through">
+                      {formatMinorUnitsToCurrency(product.regularPriceMinor, product.currency)}
+                    </span>
+                    <span className="rounded-full bg-primary/20 border border-primary/30 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                      Special Offer
+                    </span>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
+
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Button
+                href="/fire-safety-kit"
+                size="lg"
+                className="bg-primary hover:bg-primary-hover text-white font-medium px-6 py-3 text-base shadow-lg shadow-red-950/50"
+                aria-disabled={unavailable ? true : undefined}
+              >
+                {unavailable ? "View Product" : "Get Graha Kavach"}
+                <ArrowRightIcon className="size-4 ml-1" />
+              </Button>
+              <Button
+                href="/contact"
+                variant="secondary"
+                size="lg"
+                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white text-base"
+              >
                 Ask a Question
               </Button>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-white/70">
+              <span className="flex items-center gap-1.5">
+                <CheckIcon className="size-3.5 text-primary" />
+                5-Year Shelf Life
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckIcon className="size-3.5 text-primary" />
+                Free India Delivery
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckIcon className="size-3.5 text-primary" />
+                Cash on Delivery
+              </span>
             </div>
           </div>
         </div>

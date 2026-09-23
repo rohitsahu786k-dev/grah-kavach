@@ -1,39 +1,37 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { SecurePaymentStrip } from "@/components/commerce/secure-payment-strip";
-import { Button } from "@/components/ui/button";
-import { MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { WhatsAppIcon } from "@/components/ui/icons";
 import { buildTelUrl, buildWhatsAppUrl } from "@/lib/config/contact";
 import { getCmsPages, getGlobalSiteSettings, type NavItem } from "@/lib/wordpress/adapters";
 import { FooterNavGroup } from "./footer-nav-group";
+import { FooterSubscribe } from "./footer-subscribe";
 
-/*
- * The footer.
- *
- * White at the top so the last section of the page runs into it without a
- * seam, warming into the logo's amber and shield red at the very bottom. The
- * gradient is a tint, not a colour field: body copy here sits on something
- * within a couple of percent of white, so contrast is effectively unchanged.
- *
- * Contact details, social links, footer groups and the copyright line all come
- * from WordPress. Anything the client has not filled in is omitted rather than
- * shown empty.
- */
-
-const DEFAULT_EXPLORE: NavItem[] = [
-  { label: "Home", href: "/" },
+const EXPLORE: NavItem[] = [
   { label: "Fire Safety Kit", href: "/fire-safety-kit" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Safety Guide", href: "/safety-guide" },
-  { label: "About Us", href: "/about" },
 ];
 
-const DEFAULT_SUPPORT: NavItem[] = [
-  { label: "Contact", href: "/contact" },
+const ACCOUNT: NavItem[] = [
+  { label: "Your Account", href: "/account" },
   { label: "Track Order", href: "/track-order" },
   { label: "Wishlist", href: "/wishlist" },
-  { label: "FAQ", href: "/#faq" },
-  { label: "Blog", href: "/blog" },
+  { label: "Cart", href: "/cart" },
+];
+
+const DEFAULT_POLICIES: NavItem[] = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms-conditions" },
+  { label: "Shipping Policy", href: "/shipping-policy" },
+  { label: "Refund Policy", href: "/refund-policy" },
+  { label: "Cancellation Policy", href: "/cancellation-policy" },
+];
+
+const HELP: NavItem[] = [
+  { label: "Contact Us", href: "/contact" },
+  { label: "FAQs", href: "/#faq" },
+  { label: "How to Use", href: "/#how-it-works" },
+  { label: "Placement Guide", href: "/#buy" },
 ];
 
 export async function SiteFooter() {
@@ -43,195 +41,210 @@ export async function SiteFooter() {
   const whatsappUrl = buildWhatsAppUrl(contact.whatsapp, contact.phone);
   const telUrl = buildTelUrl(contact.phone);
 
-  // CMS groups win when the client has configured them; otherwise the site's
-  // own information architecture is used rather than an empty column.
-  const cmsGroups = settings.footerGroups.filter((group) => group.links.length > 0);
-  const groups =
-    cmsGroups.length > 0
-      ? cmsGroups.slice(0, 2)
-      : [
-          { title: "Explore", links: DEFAULT_EXPLORE },
-          { title: "Support", links: DEFAULT_SUPPORT },
-        ];
-  /*
-   * Policy links come from WordPress, not from this file.
-   *
-   * The ACF "Legal links" rows win when an editor has set them, because that
-   * is explicit ordering and wording. Otherwise every published page that is
-   * not already a hand-built route is listed — so a new policy page appears
-   * here, and gets a working URL, the moment it is published. A hard-coded
-   * list would silently point at slugs that may not exist.
-   */
-  const legalLinks: NavItem[] =
+  const policyLinks: NavItem[] =
     settings.legalLinks.length > 0
       ? settings.legalLinks
-      : cmsPages.map((page) => ({ label: page.title, href: page.href }));
+      : cmsPages.length > 0
+        ? cmsPages.map((page) => ({ label: page.title, href: page.href }))
+        : DEFAULT_POLICIES;
+
+  const cmsGroups = settings.footerGroups.filter((group) => group.links.length > 0);
+
+  const columns = [
+    { title: "Explore", links: cmsGroups[0]?.links ?? EXPLORE },
+    { title: "Account", links: ACCOUNT },
+    { title: "Policy", links: policyLinks.length > 0 ? policyLinks : DEFAULT_POLICIES },
+    { title: "Help", links: HELP },
+  ];
+
+  const address = contact.address || "103, Ostwal Plaza 2, Sundarwas, Udaipur (Raj.) India";
+  const email = contact.email || "grahakavach@gmail.com";
+  const phone = contact.phone || "+91 9610251841";
 
   return (
-    <footer className="gk-footer-surface border-t border-border">
-      {/* Closing call to action */}
-      <section className="mx-auto w-full max-w-[1400px] px-4 pt-14 pb-12 xs:px-5 lg:px-8 lg:pt-20 lg:pb-16 xl:px-10">
-        <div className="grid items-end gap-6 lg:grid-cols-[1.3fr_auto]">
-          <div>
-            <h2 className="max-w-xl text-3xl leading-tight font-medium tracking-tight text-foreground lg:text-[40px]">
-              Make fire preparedness part of your home.
-            </h2>
-            <p className="mt-4 max-w-lg leading-7 text-foreground-muted">
-              One kit, three ways to respond, kept where you can actually reach it.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button href="/fire-safety-kit" size="lg">
-              Explore Fire Safety Kit
-            </Button>
-            <Button href="/contact" variant="outline" size="lg">
-              Talk to Us
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <div className="mx-auto w-full max-w-[1400px] px-4 xs:px-5 lg:px-8 xl:px-10">
-        <div className="border-t border-border/80" />
+    <footer className="relative overflow-hidden border-t border-border bg-[#fffcfb]">
+      {/* 1. Base peach gradient waves background */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <Image
+          src="/footer/soft-peach-gradient-waves.png"
+          alt=""
+          fill
+          className="object-cover object-bottom"
+          priority
+        />
       </div>
 
-      {/* Main footer */}
-      <div className="mx-auto grid w-full max-w-[1400px] gap-8 px-4 py-10 xs:px-5 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-10 lg:px-8 lg:py-14 xl:px-10">
-        <div className="lg:pr-6">
-          <Link href="/" className="inline-flex items-center">
-            {settings.logo?.url ? (
+      {/* 2. Additional wavy ribbon layer for clear wave sweep across the lower footer */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[480px] z-0 overflow-hidden">
+        <Image
+          src="/footer/img-pattern.png"
+          alt=""
+          fill
+          className="object-cover object-bottom opacity-85"
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 pt-10 pb-6 xs:px-5 sm:pt-12 lg:px-8 lg:pt-16 xl:px-10">
+        {/*
+         * Six columns: 4 link directories, Subscribe block, and Contact block
+         */}
+        <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[0.85fr_0.9fr_1fr_0.9fr_1.6fr_1.35fr] lg:gap-y-0">
+          {columns.map((column) => (
+            <FooterNavGroup key={column.title} title={column.title} links={column.links} />
+          ))}
+
+          {/* Column 5: BE THE FIRST TO KNOW */}
+          <div className="border-b border-gray-100/70 pb-5 lg:border-0 lg:pb-0">
+            <h3 className="text-sm font-bold tracking-wider text-gray-900 uppercase">
+              BE THE FIRST TO KNOW
+            </h3>
+            <p className="mt-2 max-w-xs text-xs leading-5 text-gray-600">
+              Safety guidance, product updates and offers — occasionally, never daily.
+            </p>
+            <FooterSubscribe />
+          </div>
+
+          {/* Column 6: Get in Touch */}
+          <div className="pt-2 sm:pt-0">
+            <div>
+              <h3 className="text-sm font-bold text-gray-900">Get in Touch</h3>
+              <div className="mt-1.5 hidden h-0.5 w-6 rounded-full bg-[#f95738] lg:block" />
+            </div>
+
+            <ul className="mt-3.5 space-y-3 text-xs leading-5 text-gray-600">
+              {address ? (
+                <li>
+                  <a
+                    href={contact.mapsUrl || undefined}
+                    target={contact.mapsUrl ? "_blank" : undefined}
+                    rel={contact.mapsUrl ? "noopener noreferrer" : undefined}
+                    className="group flex items-start gap-3 transition-colors hover:text-gray-900"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#fff0ed] text-[#e63920] shadow-2xs transition-transform group-hover:scale-105">
+                      <MapPin className="size-4" />
+                    </span>
+                    <span className="whitespace-pre-line leading-relaxed">{address}</span>
+                  </a>
+                </li>
+              ) : null}
+
+              {email ? (
+                <li>
+                  <a
+                    href={`mailto:${email}`}
+                    className="group flex items-center gap-3 break-all transition-colors hover:text-gray-900"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#fff0ed] text-[#e63920] shadow-2xs transition-transform group-hover:scale-105">
+                      <Mail className="size-4" />
+                    </span>
+                    <span>{email}</span>
+                  </a>
+                </li>
+              ) : null}
+
+              {phone ? (
+                <li>
+                  <a
+                    href={telUrl || `tel:${phone}`}
+                    className="group flex items-center gap-3 transition-colors hover:text-gray-900"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#fff0ed] text-[#e63920] shadow-2xs transition-transform group-hover:scale-105">
+                      <Phone className="size-4" />
+                    </span>
+                    <span>{phone}</span>
+                  </a>
+                </li>
+              ) : null}
+
+              {whatsappUrl ? (
+                <li>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 transition-colors hover:text-gray-900"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#fff0ed] text-[#e63920] shadow-2xs transition-transform group-hover:scale-105">
+                      <WhatsAppIcon className="size-4" />
+                    </span>
+                    <span>WhatsApp</span>
+                  </a>
+                </li>
+              ) : null}
+            </ul>
+          </div>
+        </div>
+
+        {/* Brand row with Logo on left and Watermark Shield + Script text on right */}
+        <div className="relative mt-10 sm:mt-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-t border-gray-200/80 pt-8 pb-3">
+          {/* Left: Logo + Vertical divider + Description */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 z-10 w-full md:w-auto">
+            <Link href="/" className="inline-flex items-center shrink-0" aria-label={`${settings.brandName} home`}>
               <Image
-                src={settings.logo.url}
-                alt={settings.logo.alt || settings.brandName}
-                width={settings.logo.width ?? 240}
-                height={settings.logo.height ?? 80}
-                className="h-10 max-w-[190px] object-contain sm:h-12 sm:max-w-[230px]"
-                priority={false}
+                src="/brand/graha-kavach-logo.png"
+                alt={settings.brandName}
+                width={240}
+                height={75}
+                className="h-10 sm:h-12 w-auto object-contain"
+                priority
               />
-            ) : null}
-          </Link>
+            </Link>
 
-          {settings.description ? (
-            <p className="mt-4 max-w-sm text-sm leading-6 text-foreground-muted">
-              {settings.description}
+            <div className="hidden h-10 w-px bg-gray-300 sm:block" />
+
+            <p className="max-w-md text-xs sm:text-sm leading-relaxed text-gray-600">
+              Graha Kavach brings a practical 3-in-1 fire safety kit
+              <br className="hidden sm:inline" /> to Indian homes, shops and workplaces.
             </p>
-          ) : null}
+          </div>
 
-          {settings.socialLinks.length > 0 ? (
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {settings.socialLinks.map((item) => (
-                <li key={item.label}>
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gk-gradient-hover inline-flex min-h-9 items-center rounded-full border border-border bg-white/70 px-3.5 text-xs font-medium text-foreground-muted transition-colors hover:border-primary"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          {/* Right: Watermark Shield pattern and Script Text */}
+          <div className="relative flex items-center justify-center sm:justify-end z-10 w-full md:w-auto mt-2 md:mt-0 pr-1 sm:pr-4">
+            {/* Watermark shield pattern placed behind */}
+            <div className="pointer-events-none absolute right-0 sm:-right-6 -bottom-12 sm:-bottom-24 w-[190px] sm:w-[270px] opacity-35 -z-10">
+              <Image
+                src="/footer/pattern.png"
+                alt=""
+                width={270}
+                height={270}
+                className="w-full h-auto object-contain"
+              />
+            </div>
+
+            {/* Script text "Safer Spaces Brighter Tomorrows" */}
+            <div className="relative z-10 w-[180px] sm:w-[240px]">
+              <Image
+                src="/footer/text.png"
+                alt="Safer Spaces Brighter Tomorrows"
+                width={300}
+                height={90}
+                className="w-full h-auto object-contain"
+              />
+            </div>
+          </div>
         </div>
 
-        {groups.map((group) => (
-          <FooterNavGroup key={group.title} title={group.title} links={group.links} />
-        ))}
-
-        <div className="border-b border-border/70 py-1 lg:border-0 lg:py-0">
-          <h3 className="flex min-h-12 items-center text-sm font-medium text-foreground lg:min-h-0">
-            Contact
-          </h3>
-          <ul className="grid gap-3 pb-3 text-sm lg:mt-4 lg:pb-0">
-            {telUrl ? (
-              <li>
-                <a
-                  href={telUrl}
-                  className="gk-gradient-hover inline-flex min-h-9 items-start gap-2.5 text-foreground-muted transition-colors"
-                >
-                  <PhoneIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                  {contact.phone}
-                </a>
-              </li>
-            ) : null}
-
-            {contact.email ? (
-              <li>
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="gk-gradient-hover inline-flex min-h-9 items-start gap-2.5 break-all text-foreground-muted transition-colors"
-                >
-                  <MailIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                  {contact.email}
-                </a>
-              </li>
-            ) : null}
-
-            {whatsappUrl ? (
-              <li>
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="gk-gradient-hover inline-flex min-h-9 items-start gap-2.5 text-foreground-muted transition-colors"
-                >
-                  <WhatsAppIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                  WhatsApp
-                </a>
-              </li>
-            ) : null}
-
-            {contact.address ? (
-              <li>
-                {contact.mapsUrl ? (
-                  <a
-                    href={contact.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gk-gradient-hover inline-flex items-start gap-2.5 text-foreground-muted transition-colors"
-                  >
-                    <PinIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                    <span className="whitespace-pre-line leading-6">{contact.address}</span>
-                  </a>
-                ) : (
-                  <span className="inline-flex items-start gap-2.5 text-foreground-muted">
-                    <PinIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                    <span className="whitespace-pre-line leading-6">{contact.address}</span>
-                  </span>
-                )}
-              </li>
-            ) : null}
-          </ul>
+        {/* Secure payment options strip */}
+        <div className="mt-4 sm:mt-5 relative z-10">
+          <SecurePaymentStrip />
         </div>
-      </div>
 
-      <div className="mx-auto w-full max-w-[1400px] px-4 pb-8 xs:px-5 lg:px-8 xl:px-10">
-        <SecurePaymentStrip />
-      </div>
+        {/* Bottom copyright & tagline bar */}
+        <div className="relative z-10 mt-8 border-t border-gray-200/80 pt-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <span className="text-[11px] font-medium tracking-[0.14em] uppercase text-gray-500">
+              PREVENT &nbsp;|&nbsp; PROTECT &nbsp;|&nbsp; BE PREPARED
+            </span>
 
-      {/* Bottom bar */}
-      <div className="border-t border-border/80">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6 text-xs text-muted-foreground xs:px-5 lg:flex-row lg:items-center lg:justify-between lg:px-8 xl:px-10">
-          <p>
-            {settings.copyright ||
-              `Copyright ${new Date().getFullYear()} ${settings.brandName}. All rights reserved.`}
-          </p>
+            <span className="text-xs text-gray-500">
+              {settings.copyright || `© ${new Date().getFullYear()} ${settings.brandName}. All rights reserved.`}
+            </span>
 
-          {legalLinks.length > 0 ? (
-            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              {legalLinks.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="gk-gradient-hover inline-flex min-h-9 items-center transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+            <div className="flex items-center gap-2.5">
+              <span className="h-0.75 w-9 rounded-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808] border border-gray-200/60 shadow-2xs" />
+              <span className="text-xs font-medium text-gray-500">For a Safer India</span>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

@@ -129,6 +129,16 @@ final class GK_Model {
 			array( 'name' => 'hero_visual_desktop', 'label' => 'Desktop product visual', 'type' => 'image', 'gql' => 'heroVisualDesktop', 'tab' => 'Hero' ),
 			array( 'name' => 'hero_visual_mobile', 'label' => 'Mobile product visual', 'type' => 'image', 'gql' => 'heroVisualMobile', 'tab' => 'Hero' ),
 
+			// ---- Mid-page feature carousel ------------------------------
+			//
+			// A second, smaller carousel that sits between the homepage
+			// sections. Images only, same rule as the hero banners: whatever
+			// wording the slide needs must be part of the artwork.
+			array( 'name' => 'feature_carousel_title', 'label' => 'Section title', 'type' => 'text', 'gql' => 'featureCarouselTitle', 'tab' => 'Feature carousel' ),
+			array( 'name' => 'feature_carousel_intro', 'label' => 'Section intro', 'type' => 'text', 'gql' => 'featureCarouselIntro', 'tab' => 'Feature carousel' ),
+			array( 'name' => 'feature_carousel_images', 'label' => 'Carousel images', 'type' => 'gallery_rel', 'gql' => 'featureCarouselImages', 'tab' => 'Feature carousel', 'hint' => 'Images in display order. Use one consistent size for every slide. The storefront never draws text over these.' ),
+			array( 'name' => 'feature_carousel_autoplay', 'label' => 'Autoplay seconds', 'type' => 'number', 'gql' => 'featureCarouselAutoplay', 'tab' => 'Feature carousel', 'hint' => 'Leave empty or 0 to turn autoplay off.' ),
+
 			// ---- Trust bar ----------------------------------------------
 			array( 'name' => 'trust_items', 'label' => 'Trust bar items', 'type' => 'structured', 'gql' => 'trustItems', 'gqltype' => 'GrahaKavachTitleTextRow', 'shape' => array( 'title', 'text' ), 'tab' => 'Trust' ),
 
