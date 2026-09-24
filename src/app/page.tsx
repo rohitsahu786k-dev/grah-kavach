@@ -36,7 +36,7 @@ import type { Media } from "@/types";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const homePage = await getPageBySlug("home");
+  const homePage = await getPageBySlug("home").catch(() => null);
 
   return buildSeoMetadata({
     seo: homePage?.seo,
@@ -124,12 +124,30 @@ export default async function Home() {
   const summary = wooProductToSummary(product);
 
   const [homePage, productContent, faqs, reviews, testimonials, safetyGuides] = await Promise.all([
-    getHomePage(),
-    getProductContent(product.slug),
-    getFaqs(8),
-    getProductReviews(product.id),
-    getTestimonials(9),
-    getSafetyGuides(8),
+    getHomePage().catch((err) => {
+      console.error("Failed to load homePage from CMS:", err);
+      return null;
+    }),
+    getProductContent(product.slug).catch((err) => {
+      console.error("Failed to load productContent from CMS:", err);
+      return null;
+    }),
+    getFaqs(8).catch((err) => {
+      console.error("Failed to load faqs:", err);
+      return [];
+    }),
+    getProductReviews(product.id).catch((err) => {
+      console.error("Failed to load product reviews:", err);
+      return [];
+    }),
+    getTestimonials(9).catch((err) => {
+      console.error("Failed to load testimonials:", err);
+      return [];
+    }),
+    getSafetyGuides(8).catch((err) => {
+      console.error("Failed to load safety guides:", err);
+      return [];
+    }),
   ]);
 
   const gallery: Media[] = [
