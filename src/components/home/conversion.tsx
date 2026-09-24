@@ -52,14 +52,13 @@ export function BuySection({
       : 0;
 
   const main = gallery[0] ?? product.image;
-  const thumbs = gallery.slice(1, 4);
 
   return (
-    <section id="buy" className="bg-background-subtle py-16 lg:py-24">
+    <section id="buy" className="bg-background-subtle py-10 lg:py-14">
       <Container width="wide">
         <div className="grid gap-8 rounded-[8px] border border-border bg-white p-4 shadow-xl shadow-red-950/5 sm:p-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:p-8">
           <div>
-            <div className="overflow-hidden rounded-[8px] bg-background-subtle">
+            <div className="overflow-hidden rounded-[8px] bg-white">
               {main?.url ? (
                 <div className="relative aspect-[4/3] w-full">
                   <Image
@@ -74,25 +73,6 @@ export function BuySection({
                 <MediaPlaceholder label="Product Image" aspect="4/3" />
               )}
             </div>
-
-            {thumbs.length > 0 ? (
-              <ul className="mt-3 grid grid-cols-3 gap-3">
-                {thumbs.map((image) => (
-                  <li
-                    key={image.url}
-                    className="relative aspect-square overflow-hidden rounded-[var(--radius)] border border-border bg-white"
-                  >
-                    <Image
-                      src={image.url}
-                      alt={image.alt || ""}
-                      fill
-                      sizes="(max-width: 1023px) 30vw, 16vw"
-                      className="object-contain p-2"
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : null}
           </div>
 
           <div className="lg:py-4">
@@ -250,7 +230,7 @@ export function FaqSection({
   };
 
   return (
-    <section id="faq" className="relative bg-[#faf8f5] py-16 lg:py-24 border-b border-[#ede7df]">
+    <section id="faq" className="relative bg-[#faf8f5] py-10 lg:py-14 border-b border-[#ede7df]">
       <Container width="wide">
         <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14 items-start">
           {/* Left Column: Heading + Info + Help Card */}

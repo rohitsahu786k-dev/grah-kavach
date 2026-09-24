@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { ArrowRightIcon, CheckIcon, FlameIcon, ShieldIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, CheckIcon, ShieldIcon } from "@/components/ui/icons";
 import { MediaPlaceholder } from "@/components/ui/media-placeholder";
 import type { Media } from "@/types";
 
@@ -94,7 +94,7 @@ export type ProductRole = {
  */
 export function ProductRoles({ items }: { items: ProductRole[] }) {
   return (
-    <section className="bg-background py-16 lg:py-24">
+    <section className="bg-background py-10 lg:py-14">
       <Container width="wide">
         <div className="max-w-2xl">
           <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">
@@ -171,11 +171,21 @@ export function ProductRoles({ items }: { items: ProductRole[] }) {
 /* Section 4 — one complete kit                                        */
 /* ------------------------------------------------------------------ */
 
+const KIT_PIECES = [
+  { src: "/protection-system/asset-4.png", label: "Manual", name: "ABC Extinguisher" },
+  { src: "/protection-system/asset-6.png", label: "Automatic", name: "Fire Ball" },
+  { src: "/protection-system/asset-5.png", label: "Smother", name: "Fire Blanket" },
+] as const;
+
 /**
  * The kit as a single object, with everything in the box listed beside it.
  *
  * Contents come from the CMS when the client has filled them in, so the list
- * stays correct if the packaging changes without a code deploy.
+ * stays correct if the packaging changes without a code deploy. The imagery
+ * is the site's own product photography rather than the single CMS `image`
+ * prop — a lifestyle shot of all three pieces together, plus a real photo of
+ * each piece instead of a generic icon, so the "three roles" claim above is
+ * backed by something the visitor can actually see.
  */
 export function CompleteKit({
   image,
@@ -184,26 +194,24 @@ export function CompleteKit({
   image: Media | null;
   contents: Array<{ title: string; summary: string }>;
 }) {
+  void image;
+
   return (
-    <section className="relative overflow-hidden bg-foreground py-16 text-white lg:py-24">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
-      />
+    <section className="relative overflow-hidden bg-background py-10 lg:py-14">
       <Container width="wide">
         <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:gap-16">
           <div className="order-2 lg:order-1">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1.5 text-xs font-medium tracking-[0.16em] text-white/70 uppercase">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background-subtle px-3 py-1.5 text-xs font-medium tracking-[0.16em] text-foreground-muted uppercase">
               <ShieldIcon className="size-4 text-secondary" />
               One complete kit
             </span>
-            <h2 className="mt-4 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-balance lg:text-[42px]">
-              Everything has a role when seconds matter.
+            <h2 className="mt-4 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-balance text-foreground lg:text-[42px]">
+              Six pieces. Nothing left to source separately.
             </h2>
-            <p className="mt-4 max-w-xl leading-7 text-white/70">
-              The kit is packed so that nothing has to be assembled or sourced later. Mounting
-              hardware is included, because a device that never gets fixed to the wall is a device
-              nobody can find.
+            <p className="mt-4 max-w-xl leading-7 text-foreground-muted">
+              The extinguisher, the fire ball, the blanket, and the bracket, stand and fixings to
+              mount all three — packed as one order, so there is no second trip to a hardware store
+              before any of it can actually go on the wall.
             </p>
 
             {contents.length > 0 ? (
@@ -211,13 +219,13 @@ export function CompleteKit({
                 {contents.map((item) => (
                   <li
                     key={item.title}
-                    className="flex min-h-16 items-start gap-3 rounded-[8px] border border-white/10 bg-white/[0.06] p-3"
+                    className="flex min-h-16 items-start gap-3 rounded-[8px] border border-border bg-background-subtle p-3"
                   >
-                    <CheckIcon className="mt-0.5 size-4 shrink-0 text-secondary" />
+                    <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
                     <div className="min-w-0">
-                      <span className="text-sm leading-6 text-white/90">{item.title}</span>
+                      <span className="text-sm leading-6 text-foreground">{item.title}</span>
                       {item.summary ? (
-                        <span className="block text-xs leading-5 text-white/55">{item.summary}</span>
+                        <span className="block text-xs leading-5 text-foreground-muted">{item.summary}</span>
                       ) : null}
                     </div>
                   </li>
@@ -232,35 +240,33 @@ export function CompleteKit({
           </div>
 
           <div className="order-1 lg:order-2">
-            <div className="relative overflow-hidden rounded-[8px] bg-white p-4 shadow-2xl shadow-black/30 lg:p-6">
-              <div
-                aria-hidden="true"
-                className="absolute inset-x-8 top-0 h-14 bg-gradient-to-b from-secondary/20 to-transparent blur-2xl"
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[20px] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)]">
+              <Image
+                src="/protection-system/asset-1.png"
+                alt="The complete Graha Kavach fire safety kit — extinguisher, fire ball and fire blanket together"
+                fill
+                sizes="(max-width: 1023px) 92vw, 46vw"
+                className="object-cover"
               />
-              {image?.url ? (
-                <div className="relative aspect-[16/9] w-full">
-                  <Image
-                    src={image.url}
-                    alt={image.alt || "The complete Graha Kavach fire safety kit"}
-                    fill
-                    sizes="(max-width: 1023px) 92vw, 46vw"
-                    className="object-contain"
-                  />
-                </div>
-              ) : (
-                <MediaPlaceholder label="Complete Kit Image" aspect="16/9" />
-              )}
             </div>
 
             <div className="mt-4 grid grid-cols-3 gap-3">
-              {["Manual", "Automatic", "Smother"].map((label) => (
+              {KIT_PIECES.map((piece) => (
                 <div
-                  key={label}
-                  className="rounded-[8px] border border-white/10 bg-white/[0.06] px-3 py-4 text-center"
+                  key={piece.label}
+                  className="overflow-hidden rounded-[16px] border border-border bg-white text-center"
                 >
-                  <FlameIcon className="mx-auto size-5 text-secondary" />
-                  <p className="mt-2 text-xs font-medium tracking-[0.12em] text-white/70 uppercase">
-                    {label}
+                  <div className="relative aspect-square w-full bg-white">
+                    <Image
+                      src={piece.src}
+                      alt={piece.name}
+                      fill
+                      sizes="(max-width: 1023px) 30vw, 15vw"
+                      className="object-contain p-2"
+                    />
+                  </div>
+                  <p className="px-2 py-2.5 text-xs font-medium tracking-[0.1em] text-foreground-muted uppercase">
+                    {piece.label}
                   </p>
                 </div>
               ))}

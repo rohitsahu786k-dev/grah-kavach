@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { Shield, Award, Factory, Flame, Compass, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, Award, Factory, Flame, Compass, ArrowRight, ExternalLink, ShieldCheck, Beaker } from "lucide-react";
 import { getAboutContent, getPageBySlug } from "@/lib/wordpress/adapters";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
@@ -12,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     seo: page?.seo,
     fallbackTitle: "About Graha Kavach | Manufacturing Experience, Udaipur",
     fallbackDescription:
-      "Learn about Graha Kavach by Speciality Geochem, Udaipur. With manufacturing experience since 2010, we engineer certified, accessible fire safety solutions for Indian homes.",
+      "Learn about Graha Kavach by Speciality Geochem, Udaipur. With manufacturing experience since 1996, we engineer certified, accessible fire safety solutions for Indian homes.",
     path: "/about",
   });
 }
@@ -34,7 +36,7 @@ export default async function AboutPage() {
 
   const manufacturerText =
     cmsAbout?.manufacturer ||
-    "Graha Kavach is manufactured by Speciality Geochem, located in the historic industrial hub of Udaipur, Rajasthan. Drawing upon deep manufacturing and chemical formulation experience established since 2010, Speciality Geochem engineers top-tier extinguishing formulations, thermal fuses, and safety hardware that comply with rigorous national and international quality benchmarks.";
+    "Graha Kavach is manufactured by Speciality Geochem, located in the historic industrial hub of Udaipur, Rajasthan. Drawing upon deep manufacturing and chemical formulation experience established since 1996 across two RIICO production units, Speciality Geochem engineers top-tier extinguishing formulations, thermal fuses, and safety hardware that comply with rigorous national and international quality benchmarks.";
 
   const qualityText =
     cmsAbout?.quality ||
@@ -53,9 +55,9 @@ export default async function AboutPage() {
       ? cmsAbout.timeline
       : [
           {
-            year: "2010",
+            year: "1996",
             title: "Speciality Geochem Established",
-            text: "Founded in Udaipur, Rajasthan, specialising in chemical formulations, industrial minerals, and fire-retardant composites.",
+            text: "Founded in Udaipur, Rajasthan, specialising in chemical formulations, industrial minerals, and certified fire-fighting equipment.",
           },
           {
             year: "2018",
@@ -176,33 +178,105 @@ export default async function AboutPage() {
       </section>
 
       {/* Manufacturing & Speciality Geochem, Udaipur */}
-      <section className="border-y border-border bg-background-subtle py-16 md:py-20">
+      <section className="border-y border-border bg-white py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-            <div className="lg:col-span-5">
-              <div className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-foreground shadow-sm">
-                <Factory className="h-4 w-4 text-primary" />
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            
+            {/* Left: Factory Image */}
+            <div className="lg:col-span-6">
+              <div className="relative overflow-hidden rounded-2xl border border-border bg-stone-50 shadow-sm">
+                <div className="relative aspect-[16/10] sm:aspect-[4/3] w-full overflow-hidden">
+                  <Image
+                    src="https://admin.grahakavach.in/wp-content/uploads/Speciality-Geochem-Factory-Entrance.png"
+                    alt="Speciality Geochem Manufacturing Facility Entrance — Udaipur, Rajasthan"
+                    width={1200}
+                    height={800}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                </div>
+                <div className="p-4 border-t border-border bg-stone-50/80 flex items-center justify-between text-xs text-foreground-muted">
+                  <span className="flex items-center gap-1.5 font-medium text-foreground">
+                    <Factory className="h-4 w-4 text-primary" />
+                    Speciality Geochem Manufacturing Unit
+                  </span>
+                  <span>Udaipur, Rajasthan</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Manufacturing Credentials & Company Information */}
+            <div className="lg:col-span-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary-subtle px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                <Factory className="h-3.5 w-3.5" />
                 Speciality Geochem • Udaipur, Rajasthan
               </div>
-              <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Decades of Chemical & Safety Manufacturing Experience
+
+              <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+                30+ Years of Manufacturing & Chemical Engineering Excellence
               </h2>
-              <p className="mt-4 text-sm text-foreground-muted">
-                Facility located at Ostwal Plaza 2, Sundarwas, Udaipur, Rajasthan.
-              </p>
+
+              <div className="mt-5 space-y-4 text-sm sm:text-base leading-relaxed text-foreground-muted">
+                {manufacturerText.includes("<p>") ? (
+                  <div dangerouslySetInnerHTML={{ __html: manufacturerText }} />
+                ) : (
+                  <p>{manufacturerText}</p>
+                )}
+                {qualityText.includes("<p>") ? (
+                  <div dangerouslySetInnerHTML={{ __html: qualityText }} />
+                ) : (
+                  <p>{qualityText}</p>
+                )}
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="rounded-lg border border-border bg-stone-50/60 p-3">
+                  <div className="flex items-center gap-2 text-foreground font-semibold text-xs sm:text-sm">
+                    <ShieldCheck className="h-4 w-4 text-primary" />
+                    <span>2 RIICO Units</span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-foreground-muted">Industrial facilities in Udaipur</p>
+                </div>
+
+                <div className="rounded-lg border border-border bg-stone-50/60 p-3">
+                  <div className="flex items-center gap-2 text-foreground font-semibold text-xs sm:text-sm">
+                    <Award className="h-4 w-4 text-primary" />
+                    <span>ISO / CE Certified</span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-foreground-muted">Rigorous standards compliance</p>
+                </div>
+
+                <div className="rounded-lg border border-border bg-stone-50/60 p-3">
+                  <div className="flex items-center gap-2 text-foreground font-semibold text-xs sm:text-sm">
+                    <Beaker className="h-4 w-4 text-primary" />
+                    <span>In-House Testing</span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-foreground-muted">Thermal & pressure endurance lab</p>
+                </div>
+
+                <div className="rounded-lg border border-border bg-stone-50/60 p-3">
+                  <div className="flex items-center gap-2 text-foreground font-semibold text-xs sm:text-sm">
+                    <Factory className="h-4 w-4 text-primary" />
+                    <span>Est. 1996</span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-foreground-muted">Three decades of trust</p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Button
+                  href="https://specialitygeochem.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="md"
+                >
+                  <span>Visit Speciality Geochem Official Website</span>
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </div>
+
             </div>
-            <div className="space-y-4 text-base leading-7 text-foreground-muted lg:col-span-7">
-              {manufacturerText.includes("<p>") ? (
-                <div dangerouslySetInnerHTML={{ __html: manufacturerText }} />
-              ) : (
-                <p>{manufacturerText}</p>
-              )}
-              {qualityText.includes("<p>") ? (
-                <div dangerouslySetInnerHTML={{ __html: qualityText }} />
-              ) : (
-                <p>{qualityText}</p>
-              )}
-            </div>
+
           </div>
         </div>
       </section>

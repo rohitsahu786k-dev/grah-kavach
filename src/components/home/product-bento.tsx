@@ -33,7 +33,7 @@ export function ProductBento(_props?: {
 }) {
   void _props;
   return (
-    <section className="bg-[#faf8f5] py-14 lg:py-20 border-b border-[#ede7df]">
+    <section className="bg-[#faf8f5] py-10 lg:py-14 border-b border-[#ede7df]">
       <Container width="wide">
         {/* Top Eyebrow & Header with 3 Quick Role Cards */}
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">

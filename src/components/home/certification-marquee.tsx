@@ -35,13 +35,13 @@ export function CertificationMarquee({
   const track = [...withLogos, ...withLogos];
 
   return (
-    <section className="bg-background-subtle py-16 lg:py-20">
+    <section className="bg-background-subtle py-8 lg:py-10">
       <Container width="wide">
         <p className="text-center text-sm font-medium tracking-wide text-muted-foreground uppercase">
           {title}
         </p>
 
-        <div className="gk-marquee-mask relative mt-10 overflow-hidden">
+        <div className="gk-marquee-mask relative mt-6 overflow-hidden">
           <div className="gk-marquee-track flex w-max items-center">
             {track.map((item, index) => {
               const duplicate = index >= withLogos.length;

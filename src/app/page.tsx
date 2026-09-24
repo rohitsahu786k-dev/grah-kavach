@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { BrandStory, ReviewsOrCommitment } from "@/components/home/brand-trust";
+import { ReviewsOrCommitment } from "@/components/home/brand-trust";
+import { FounderSection } from "@/components/home/founder-section";
+import { FactorySection } from "@/components/home/factory-section";
 import { CertificationMarquee } from "@/components/home/certification-marquee";
 import { ProductBento, type BentoItem } from "@/components/home/product-bento";
 import { SafetyGuides } from "@/components/home/safety-guides";
@@ -7,6 +9,7 @@ import { BuySection, FaqSection, FinalCta } from "@/components/home/conversion";
 import { Hero } from "@/components/home/hero";
 import { HeroBanners } from "@/components/home/hero-banners";
 import { FeatureCarouselSection } from "@/components/home/feature-carousel-section";
+import { HomeSeoContent } from "@/components/home/seo-content";
 import { CompleteKit, HomeTextMarquee, TrustBar, type ProductRole } from "@/components/home/product-story";
 import { HowItWorks, Placement, RiskAreas } from "@/components/home/safety-education";
 import { wooProductGallery, wooProductToSummary } from "@/lib/woocommerce/adapters";
@@ -260,7 +263,7 @@ export default async function Home() {
         title={homePage?.featureCarouselTitle || ""}
         intro={homePage?.featureCarouselIntro || ""}
         images={homePage?.featureCarouselImages ?? []}
-        autoplaySeconds={homePage?.featureCarouselAutoplay ?? null}
+        autoplaySeconds={homePage?.featureCarouselAutoplay ?? 5}
       />
 
       <RiskAreas />
@@ -278,7 +281,9 @@ export default async function Home() {
 
       <Placement />
 
-      <BrandStory notesHtml={productContent?.manufacturerNotes || null} />
+      <FounderSection notesHtml={productContent?.manufacturerNotes || null} />
+
+      <FactorySection />
 
       <CertificationMarquee
         title="Certified and tested"
@@ -297,6 +302,8 @@ export default async function Home() {
       />
 
       <FinalCta image={kitImage} product={summary} unavailable={unavailable} />
+
+      <HomeSeoContent />
     </main>
   );
 }

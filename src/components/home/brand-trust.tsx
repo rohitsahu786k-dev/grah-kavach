@@ -162,7 +162,7 @@ export function ReviewsOrCommitment({
 }) {
   if (reviews.length > 0) {
     return (
-      <section className="bg-background-subtle py-16 lg:py-24">
+      <section className="bg-background-subtle py-10 lg:py-14">
         <Container width="wide">
           <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">Reviews</p>
           <h2 className="mt-4 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-foreground lg:text-[42px]">
@@ -195,7 +195,7 @@ export function ReviewsOrCommitment({
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="bg-background-subtle py-16 lg:py-24">
+    <section className="bg-background-subtle py-10 lg:py-14">
       <Container width="wide">
         <div className="max-w-2xl">
           <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">

@@ -85,7 +85,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
        * inside the customer provider. The commerce UI provider owns which
        * overlay is open and is read by the header, the tab bar and the drawer.
        */}
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="flex min-h-full flex-col bg-white text-foreground">
         <CustomerProvider>
           <WishlistProvider>
             <CartProvider>

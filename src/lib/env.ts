@@ -14,19 +14,34 @@ import { z } from "zod";
  * is guarded by `server-only`.
  */
 
-const url = z.string().url();
+/**
+ * `.default()` only substitutes when the *raw* input is `undefined` — it
+ * inspects the value handed to the schema before any preprocessing runs. An
+ * env var that exists but is set to `""` (easy to do by accident in the
+ * Vercel dashboard) is not `undefined`, so nesting `.default()` inside a
+ * preprocessed schema never sees it and `.url()` validation fails instead.
+ * Putting `z.preprocess` on the outside fixes that: it coerces `""` to
+ * `undefined` first, and *that* is what `.default()` downstream then sees.
+ */
+const blankToUndefined = (value: unknown) =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
+const url = (fallback: string) =>
+  z.preprocess(blankToUndefined, z.string().url().default(fallback));
+const str = (fallback: string) =>
+  z.preprocess(blankToUndefined, z.string().default(fallback));
 
 const publicSchema = z.object({
-  NEXT_PUBLIC_SITE_URL: url.default("https://grahakavach.in"),
+  NEXT_PUBLIC_SITE_URL: url("https://grahakavach.in"),
 });
 
 const serverSchema = z.object({
-  WORDPRESS_URL: url.default("https://admin.grahakavach.in"),
-  WORDPRESS_GRAPHQL_URL: url.default("https://admin.grahakavach.in/graphql"),
-  WOOCOMMERCE_URL: url.default("https://admin.grahakavach.in"),
-  WC_CONSUMER_KEY: z.string().default(""),
-  WC_CONSUMER_SECRET: z.string().default(""),
-  REVALIDATION_SECRET: z.string().default(""),
+  WORDPRESS_URL: url("https://admin.grahakavach.in"),
+  WORDPRESS_GRAPHQL_URL: url("https://admin.grahakavach.in/graphql"),
+  WOOCOMMERCE_URL: url("https://admin.grahakavach.in"),
+  WC_CONSUMER_KEY: str(""),
+  WC_CONSUMER_SECRET: str(""),
+  REVALIDATION_SECRET: str(""),
 });
 
 export const publicEnv = publicSchema.parse({

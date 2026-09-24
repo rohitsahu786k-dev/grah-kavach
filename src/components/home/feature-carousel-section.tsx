@@ -26,7 +26,7 @@ export function FeatureCarouselSection({ title, intro, images, autoplaySeconds }
   if (slides.length === 0) return null;
 
   return (
-    <section className="overflow-hidden bg-background py-16 lg:py-24">
+    <section className="overflow-hidden bg-background py-10 lg:py-14">
       <Container width="wide">
         <div className="mx-auto max-w-2xl text-center">
           {title ? (

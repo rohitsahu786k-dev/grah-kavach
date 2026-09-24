@@ -1,155 +1,133 @@
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
-import { ArrowRightIcon, CheckIcon, FlameIcon, ShieldIcon } from "@/components/ui/icons";
-import { MediaPlaceholder } from "@/components/ui/media-placeholder";
-import { cn } from "@/lib/utils/cn";
+import { CheckIcon, ShieldIcon } from "@/components/ui/icons";
 
 const RISKS = [
   {
     title: "Electrical panel / MCB",
     text: "Distribution boards collect dust and heat. Keep them visible, reachable and inspected by a qualified electrician.",
-    placeholder: "Electrical Panel Safety Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/electrical-panel-mcb-fire-safety-graha-kavach.webp",
+    alt: "Electrical panel and MCB fire safety guidance",
   },
   {
     title: "Inverter / battery",
     text: "Backup power sits in cupboards and lofts, often unventilated and rarely checked between failures.",
-    placeholder: "Inverter and Battery Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/inverter-battery-fire-safety-graha-kavach.webp",
+    alt: "Inverter and battery storage fire safety",
   },
   {
     title: "Kitchen",
     text: "Oil, open flame and fabric meet here. Keep the blanket near the exit side, not across the cooking hazard.",
-    placeholder: "Kitchen Safety Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/kitchen-fire-safety-graha-kavach.webp",
+    alt: "Kitchen fire safety with open flame and cooking hazards",
   },
   {
     title: "Old or overloaded wiring",
     text: "Extension boards and old wiring are worth checking before they become everyday risk.",
-    placeholder: "Household Wiring Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/old-overloaded-wiring-fire-safety-graha-kavach.webp",
+    alt: "Overloaded extension board and household wiring fire risk",
   },
 ] as const;
 
 export function RiskAreas() {
   return (
-    <section className="bg-background py-16 lg:py-24">
+    <section className="bg-white py-10 lg:py-14 border-t border-border/60">
       <Container width="wide">
-        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-          <div className="lg:sticky lg:top-[calc(var(--gk-header-h)+2rem)] lg:self-start">
-            <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/70">
+          <div className="max-w-2xl">
+            <span className="gk-text-gradient text-xs font-semibold tracking-[0.18em] uppercase">
               Fire can start anywhere
-            </p>
-            <h2 className="mt-4 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-balance text-foreground lg:text-[42px]">
+            </span>
+            <h2 className="mt-3 text-3xl leading-[1.14] font-medium tracking-[-0.025em] text-balance text-foreground lg:text-[42px]">
               Prepare around the places everyday risk gathers.
             </h2>
             <p className="mt-4 leading-7 text-foreground-muted">
-              Inspired by 21st.dev bento sections: the biggest idea gets the copy, while the cards
-              stay scannable. This guidance does not replace a professional inspection.
+              Most house fires start in one of a handful of predictable spots — not from anything
+              exotic. Knowing where reduces how long it takes to notice one. This guidance does not
+              replace a professional electrical inspection.
             </p>
-
-            <div className="mt-8 rounded-[8px] border border-border bg-background-subtle p-5">
-              <div className="flex items-start gap-3">
-                <ShieldIcon className="mt-1 size-5 shrink-0 text-primary" />
-                <p className="text-sm leading-6 text-foreground-muted">
-                  Mount the kit where you move through the home, not inside the risk zone itself.
-                </p>
-              </div>
-            </div>
           </div>
 
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {RISKS.map((risk, index) => (
-              <li
-                key={risk.title}
-                className={cn(
-                  "overflow-hidden rounded-[8px] border border-border bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-950/5 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
-                  index === 2 && "sm:col-span-2",
-                )}
-              >
-                <MediaPlaceholder
-                  label={risk.placeholder}
-                  aspect={index === 2 ? "16/9" : "3/2"}
-                  className="rounded-none border-0 border-b border-dashed"
+          <div className="flex shrink-0">
+            <div className="flex items-center gap-3 rounded-[12px] border border-border/80 bg-stone-50/80 p-4 max-w-sm">
+              <ShieldIcon className="size-5 shrink-0 text-primary" />
+              <p className="text-xs sm:text-sm font-medium leading-snug text-foreground">
+                Mount the kit where you move through the home, not inside the risk zone itself.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* All 4 cards in one row on desktop */}
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {RISKS.map((risk) => (
+            <article
+              key={risk.title}
+              className="group flex flex-col overflow-hidden rounded-[16px] border border-border/80 bg-white shadow-[0_4px_16px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]"
+            >
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-stone-100">
+                <Image
+                  src={risk.image}
+                  alt={risk.alt}
+                  width={1672}
+                  height={941}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  loading="lazy"
                 />
-                <div className="p-5">
-                  <h3 className="text-base font-medium text-foreground">{risk.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-foreground-muted">{risk.text}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+              </div>
+
+              <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <h3 className="text-lg font-semibold tracking-tight text-foreground lg:text-xl">
+                  {risk.title}
+                </h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-foreground-muted">
+                  {risk.text}
+                </p>
+              </div>
+            </article>
+          ))}
         </div>
       </Container>
     </section>
   );
 }
 
-const STEPS = [
-  {
-    number: "01",
-    title: "Extinguish",
-    lead: "ABC dry powder extinguisher",
-    text: "Use it only when the fire is small and your exit is clear. Aim at the base, squeeze and sweep.",
-  },
-  {
-    number: "02",
-    title: "Activate",
-    lead: "Automatic fire ball",
-    text: "Place it near an identified risk point so it can respond to flame contact when nobody is nearby.",
-  },
-  {
-    number: "03",
-    title: "Smother",
-    lead: "Fire blanket",
-    text: "Pull the tabs, cover the flame source and keep it covered. Useful for small contained kitchen fires.",
-  },
-] as const;
-
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-foreground py-16 text-white lg:py-24">
-      <Container width="wide">
-        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
-          <div className="max-w-2xl">
-            <p className="text-xs font-medium tracking-[0.18em] text-white/55 uppercase">
-              How Graha Kavach works
-            </p>
-            <h2 className="mt-4 text-3xl leading-[1.14] font-medium tracking-[-0.02em] text-balance lg:text-[42px]">
-              Three responses, in the order you would need them.
-            </h2>
-          </div>
-          <div className="flex flex-wrap items-center justify-start gap-3 lg:justify-end">
-            <span className="inline-flex items-center gap-2 rounded-[8px] border border-white/15 bg-white/[0.08] px-4 py-2 text-sm text-white/75">
-              <FlameIcon className="size-4 text-secondary" />
-              Small fires caught early
-            </span>
-            <Button href="/safety-guide" variant="secondary">
-              Explore Safety Guide
-              <ArrowRightIcon className="size-4" />
-            </Button>
-          </div>
-        </div>
-
-        <ol className="mt-10 grid gap-4 md:grid-cols-3">
-          {STEPS.map((step) => (
-            <li
-              key={step.number}
-              className="rounded-[8px] border border-white/10 bg-white/[0.07] p-6 lg:p-8"
-            >
-              <span className="text-sm font-medium tracking-[0.1em] text-secondary tabular-nums">
-                {step.number}
-              </span>
-              <h3 className="mt-4 text-xl font-medium lg:text-2xl">{step.title}</h3>
-              <p className="mt-1.5 text-xs font-medium tracking-[0.12em] text-white/55 uppercase">
-                {step.lead}
-              </p>
-              <p className="mt-4 text-sm leading-7 text-white/[0.72] lg:text-[15px]">{step.text}</p>
-            </li>
-          ))}
-        </ol>
-
-        <p className="mt-6 rounded-[8px] border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm leading-6 text-white/80">
-          If a fire is spreading, or there is smoke you cannot see through, leave and call the fire
-          service. These products are for small fires caught early.
-        </p>
-      </Container>
+    <section id="how-it-works" className="w-full overflow-hidden p-0 m-0">
+      <div className="flex flex-col w-full p-0 m-0 leading-none">
+        <Image
+          src="https://admin.grahakavach.in/wp-content/uploads/graha-kavach-01-extinguish-21x6-1.webp"
+          alt="Graha Kavach 01 - Extinguish: ABC Dry Powder Extinguisher"
+          width={2172}
+          height={724}
+          sizes="100vw"
+          className="block h-auto w-full p-0 m-0 align-top"
+          style={{ aspectRatio: "2172 / 724" }}
+          loading="lazy"
+        />
+        <Image
+          src="https://admin.grahakavach.in/wp-content/uploads/graha-kavach-02-activate-21x6-1.webp"
+          alt="Graha Kavach 02 - Activate: Automatic Fire Ball"
+          width={2172}
+          height={724}
+          sizes="100vw"
+          className="block h-auto w-full p-0 m-0 align-top"
+          style={{ aspectRatio: "2172 / 724" }}
+          loading="lazy"
+        />
+        <Image
+          src="https://admin.grahakavach.in/wp-content/uploads/graha-kavach-03-smother-fire-blanket-21x6-1.webp"
+          alt="Graha Kavach 03 - Smother: Fire Blanket"
+          width={2172}
+          height={724}
+          sizes="100vw"
+          className="block h-auto w-full p-0 m-0 align-top"
+          style={{ aspectRatio: "2172 / 724" }}
+          loading="lazy"
+        />
+      </div>
     </section>
   );
 }
@@ -158,23 +136,26 @@ const PLACEMENTS = [
   {
     title: "Extinguisher",
     text: "Mount it on the supplied bracket in a common area or corridor, somewhere on the way out.",
-    placeholder: "Extinguisher Placement Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/Fire-Extinguisher-in-Modern-Hallway.png",
+    alt: "Fire Extinguisher mounted in a modern hallway near the exit",
   },
   {
     title: "Fire ball",
     text: "Set it on its stand or bracket near the electrical risk area it is meant to cover.",
-    placeholder: "Fire Ball Placement Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/Modern-Utility-Wall-with-Fire-Safety-Ball.png",
+    alt: "Automatic Fire Ball on utility wall near electrical distribution board",
   },
   {
     title: "Fire blanket",
     text: "Keep it near the kitchen exit, within reach without crossing the cooking hazard.",
-    placeholder: "Fire Blanket Placement Image",
+    image: "https://admin.grahakavach.in/wp-content/uploads/Modern-Kitchen-with-Fire-Blanket-Safety.png",
+    alt: "Fire Blanket mounted on modern kitchen wall for quick emergency release",
   },
 ] as const;
 
 export function Placement() {
   return (
-    <section className="bg-background py-16 lg:py-24">
+    <section className="bg-background py-10 lg:py-14">
       <Container width="wide">
         <div className="max-w-2xl">
           <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">
@@ -189,31 +170,44 @@ export function Placement() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-12 lg:mt-16 lg:gap-20">
+        {/* 3 cards in one row on tablet/desktop, mobile responsive */}
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3 lg:mt-10 lg:gap-8">
           {PLACEMENTS.map((item, index) => (
-            <article key={item.title} className="grid items-center gap-6 lg:grid-cols-2 lg:gap-14">
-              <MediaPlaceholder
-                label={item.placeholder}
-                aspect="3/2"
-                className={cn(index % 2 === 1 && "lg:order-2")}
-              />
-              <div className={cn(index % 2 === 1 && "lg:order-1")}>
-                <span className="gk-text-gradient text-sm font-medium tabular-nums">
-                  {String(index + 1).padStart(2, "0")}
+            <article
+              key={item.title}
+              className="group flex flex-col overflow-hidden rounded-[16px] border border-border/80 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)]"
+            >
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-stone-100">
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  width={1600}
+                  height={900}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="flex flex-1 flex-col p-6 sm:p-7">
+                <span className="gk-text-gradient text-xs font-semibold tabular-nums tracking-wider uppercase">
+                  Step {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-3 text-2xl font-medium tracking-[-0.01em] text-foreground lg:text-3xl">
+                <h3 className="mt-2 text-xl font-medium tracking-[-0.01em] text-foreground lg:text-2xl">
                   {item.title}
                 </h3>
-                <p className="mt-4 max-w-lg leading-7 text-foreground-muted">{item.text}</p>
+                <p className="mt-3 text-sm leading-relaxed text-foreground-muted">
+                  {item.text}
+                </p>
               </div>
             </article>
           ))}
         </div>
 
-        <div className="mt-10 grid gap-3 md:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
           {["Visible from daily routes", "Not behind the hazard", "Reachable without searching"].map(
             (item) => (
-              <div key={item} className="flex items-center gap-3 rounded-[8px] bg-background-subtle p-4">
+              <div key={item} className="flex items-center gap-3 rounded-[10px] border border-border/60 bg-white p-4 shadow-sm">
                 <CheckIcon className="size-4 shrink-0 text-primary" />
                 <p className="text-sm font-medium text-foreground">{item}</p>
               </div>

@@ -18,7 +18,7 @@
 :root {
   /* Surfaces */
   --background: #ffffff;
-  --background-subtle: #faf9f7;
+  --background-subtle: #ffffff;
   --foreground: #1a1a1a;
   --foreground-muted: #57534e;
 
@@ -330,36 +330,6 @@ a {
   padding: 0 20px 22px;
 }
 
-.gk-carousel-card {
-  clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
-}
-
-.gk-carousel-card::before {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  content: "";
-  pointer-events: none;
-  background:
-    linear-gradient(135deg, rgba(248, 192, 0, 0.9) 0 38px, transparent 38px),
-    linear-gradient(315deg, rgba(224, 24, 32, 0.74) 0 44px, transparent 44px);
-  mix-blend-mode: screen;
-  opacity: 0.8;
-}
-
-.gk-carousel-nav {
-  clip-path: polygon(11px 0, 100% 0, calc(100% - 11px) 100%, 0 100%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background:
-    linear-gradient(135deg, rgba(248, 192, 0, 0.75) 0 18%, transparent 18%),
-    linear-gradient(110deg, rgba(26, 26, 26, 0.92), rgba(224, 24, 32, 0.96));
-  box-shadow: 0 16px 32px rgba(26, 26, 26, 0.26);
-}
-
-.gk-carousel-nav:hover {
-  transform: translateY(-50%) scale(1.06);
-}
-
 /*
  * The footer gradient: white at the top so the page transitions into it without
  * a seam, warming through the logo's flame amber into the shield red at the
@@ -498,4 +468,39 @@ a {
   .gk-text-marquee-track {
     animation: none;
   }
+}
+
+/*
+ * Minimal prose styling for the long-form SEO text block above the footer.
+ * No typography plugin in use, so headings and paragraph rhythm inside it
+ * are set by hand rather than pulled in as a dependency for one section.
+ */
+.gk-prose > p {
+  margin-top: 1.25rem;
+}
+
+.gk-prose > p:first-child {
+  margin-top: 0;
+}
+
+.gk-prose > h3 {
+  margin-top: 2rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.gk-prose > ul {
+  margin-top: 1.25rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.gk-prose > ul > li + li {
+  margin-top: 0.625rem;
+}
+
+.gk-prose > ul + p {
+  margin-top: 1.25rem;
 }
