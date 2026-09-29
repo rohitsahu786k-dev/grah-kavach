@@ -9,7 +9,11 @@ export function ScrollToTopOnNav() {
   useEffect(() => {
     // If there is no hash in the URL, ensure page starts at the top
     if (typeof window !== "undefined" && !window.location.hash) {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      window.scrollTo(0, 0);
+      const timer = setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [pathname]);
 

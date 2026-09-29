@@ -30,7 +30,7 @@ export function FactorySection() {
             </span>
 
             <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl leading-tight">
-              Speciality Geochem — Trusted Manufacturing Since 1996
+              Speciality Geochem — Trusted Manufacturing Roots Since 2010
             </h2>
 
             <p className="mt-3 text-sm sm:text-base leading-relaxed text-foreground-muted">
