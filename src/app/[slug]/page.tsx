@@ -29,6 +29,8 @@ export async function generateStaticParams() {
   return pages.map((page) => ({ slug: page.slug }));
 }
 
+import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
+
 export async function generateMetadata({ params }: CmsPageProps): Promise<Metadata> {
   const { slug } = await params;
 
@@ -39,9 +41,15 @@ export async function generateMetadata({ params }: CmsPageProps): Promise<Metada
 
   return buildSeoMetadata({
     seo: page.seo,
-    fallbackTitle: page.title,
-    fallbackDescription: "",
+    fallbackTitle: `${page.title} | Graha Kavach`,
+    fallbackDescription: `Official ${page.title.toLowerCase()} for Graha Kavach (Speciality Geochem, Udaipur).`,
     path: `/${slug}`,
+    keywords: [
+      `${page.title} Graha Kavach`,
+      "Graha Kavach policies",
+      "Speciality Geochem customer terms",
+      "fire safety kit online terms",
+    ],
   });
 }
 
@@ -54,8 +62,17 @@ export default async function CmsPage({ params }: CmsPageProps) {
 
   if (!page) notFound();
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: page.title, path: `/${slug}` },
+  ]);
+
   return (
     <main className="bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Container width="default" className="py-10 lg:py-16">
         <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
           <ol className="flex items-center gap-2">

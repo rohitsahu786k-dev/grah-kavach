@@ -21,6 +21,7 @@ interface BuildSeoOptions {
   fallbackDescription: string;
   path: string;
   fallbackImage?: string | null;
+  keywords?: string[] | string;
 }
 
 /**
@@ -66,6 +67,7 @@ export function buildSeoMetadata({
   fallbackDescription,
   path,
   fallbackImage,
+  keywords,
 }: BuildSeoOptions): Metadata {
   const cleanFallbackTitle = stripHtml(fallbackTitle);
   const cleanFallbackDesc = stripHtml(fallbackDescription);
@@ -82,7 +84,9 @@ export function buildSeoMetadata({
     ? stripHtml(seo.opengraphDescription)
     : description;
 
-  const ogImageUrl = seo?.opengraphImage?.sourceUrl || fallbackImage;
+  const publicBase = siteConfig.frontendUrl.replace(/\/$/, "");
+  const defaultOgImage = `${publicBase}/brand/graha-kavach-logo.png`;
+  const ogImageUrl = seo?.opengraphImage?.sourceUrl || fallbackImage || defaultOgImage;
 
   // On the public frontend, index unless Yoast explicitly marked this post as noindex
   const isNoindex = seo?.metaRobotsNoindex === "noindex";
@@ -91,6 +95,15 @@ export function buildSeoMetadata({
   return {
     title,
     description,
+    keywords: keywords || [
+      "fire safety kit",
+      "home fire extinguisher",
+      "fire safety ball",
+      "fire blanket for kitchen",
+      "residential fire safety India",
+      "Graha Kavach",
+      "Speciality Geochem Udaipur",
+    ],
     alternates: {
       canonical,
     },
@@ -110,14 +123,22 @@ export function buildSeoMetadata({
       description: ogDescription,
       url: canonical,
       siteName: "Graha Kavach",
+      locale: "en_IN",
       type: "website",
-      images: ogImageUrl ? [{ url: ogImageUrl }] : undefined,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: ogTitle,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images: ogImageUrl ? [ogImageUrl] : undefined,
+      images: [ogImageUrl],
     },
   };
 }

@@ -12,17 +12,31 @@ import { SafetyGuides } from "@/components/home/safety-guides";
 import { FaqSection } from "@/components/home/conversion";
 import { ContactForm } from "@/components/contact/contact-form";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
+import {
+  buildBreadcrumbSchema,
+  buildOrganizationSchema,
+  buildContactPageSchema,
+  buildLocalBusinessSchema,
+} from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug("contact-us");
 
   return buildSeoMetadata({
     seo: page?.seo,
-    fallbackTitle: "Contact Fire Safety Team | Graha Kavach",
+    fallbackTitle: "Contact Fire Safety Team | Graha Kavach, Udaipur",
     fallbackDescription:
-      "Get in touch with Graha Kavach fire safety specialists for product inquiries, bulk orders, residential safety consultations, and customer support in Udaipur, Rajasthan.",
+      "Get in touch with Graha Kavach fire safety specialists for product inquiries, bulk orders, residential safety consultations, and customer support in Udaipur, Rajasthan (+91 98290 82077).",
     path: "/contact",
+    keywords: [
+      "contact Graha Kavach",
+      "fire safety team Udaipur",
+      "fire extinguisher supplier Udaipur",
+      "Speciality Geochem contact",
+      "fire safety support phone number",
+      "Graha Kavach customer care",
+      "fire safety dealer Rajasthan",
+    ],
   });
 }
 
@@ -38,10 +52,12 @@ export default async function ContactPage() {
     { name: "Contact", path: "/contact" },
   ]);
   const orgSchema = buildOrganizationSchema();
+  const contactPageSchema = buildContactPageSchema();
+  const localBusinessSchema = buildLocalBusinessSchema();
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@graph": [breadcrumbSchema, orgSchema],
+    "@graph": [breadcrumbSchema, orgSchema, contactPageSchema, localBusinessSchema],
   };
 
   const phone = settings.contact.phone || "+91 98290 82077";

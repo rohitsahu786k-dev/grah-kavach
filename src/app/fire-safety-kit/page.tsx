@@ -58,21 +58,35 @@ async function getKitData() {
 }
 
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildProductSchema, buildBreadcrumbSchema } from "@/lib/seo/structured-data";
+import { buildProductSchema, buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { product, content } = await getKitData();
-  const title = content?.headline ? `${content.headline} | Graha Kavach` : `${product.name} — Complete 3-in-1 Fire Safety Kit`;
+  const title = content?.headline
+    ? `${content.headline} | Graha Kavach`
+    : `Graha Kavach™ Complete 3-in-1 Home Fire Safety Kit (₹2,499) — Buy Online`;
   const description =
     content?.heroSupportingText ||
     stripHtml(product.short_description) ||
-    "Certified 3-in-1 domestic fire safety kit: 2kg ABC dry powder extinguisher, automatic fire ball, and 550°C fibreglass blanket.";
+    "Certified 3-in-1 domestic fire safety kit: 2kg ABC dry powder extinguisher, automatic fire ball, and 550°C fibreglass blanket with wall mounting hardware. Free delivery across India.";
 
   return buildSeoMetadata({
     fallbackTitle: title,
     fallbackDescription: description,
     path: "/fire-safety-kit",
     fallbackImage: product.images[0]?.src,
+    keywords: [
+      "buy fire safety kit",
+      "home fire extinguisher online",
+      "fire safety ball price",
+      "kitchen fire blanket",
+      "3 in 1 fire safety kit India",
+      "Graha Kavach kit",
+      "residential fire extinguisher price",
+      "fire safety equipment Udaipur",
+      "ABC fire extinguisher 2kg",
+      "automatic fire ball",
+    ],
   });
 }
 
@@ -98,6 +112,7 @@ export default async function FireSafetyKitPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
+      buildOrganizationSchema(),
       ...(productSchema ? [productSchema] : []),
       breadcrumbSchema,
     ],

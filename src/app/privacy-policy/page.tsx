@@ -3,18 +3,36 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Lock, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 
+import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
+
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy | Customer Data Protection — Graha Kavach",
   description:
     "Learn how Graha Kavach (Speciality Geochem) collects, uses, and safeguards customer personal information and order records in compliance with applicable Indian data protection laws.",
+  keywords: [
+    "Graha Kavach privacy policy",
+    "customer data protection India",
+    "Speciality Geochem privacy policy",
+    "fire safety ecommerce privacy",
+    "data security Graha Kavach",
+  ],
   alternates: {
     canonical: "/privacy-policy",
   },
 };
 
 export default function PrivacyPolicyPage() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Privacy Policy", path: "/privacy-policy" },
+  ]);
+
   return (
     <main className="bg-background py-10 lg:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <Container width="default">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground sm:text-sm">

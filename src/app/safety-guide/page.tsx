@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { getPageBySlug } from "@/lib/wordpress/adapters";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbSchema, buildFaqSchema } from "@/lib/seo/structured-data";
+import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug("safety-guide");
@@ -22,6 +22,16 @@ export async function generateMetadata(): Promise<Metadata> {
     fallbackDescription:
       "Authoritative guide to domestic fire preparedness based on official Graha Kavach instructions: PASS protocol, Fire Ball deployment, Fire Blanket smothering, and emergency procedures.",
     path: "/safety-guide",
+    keywords: [
+      "home fire safety guide",
+      "fire emergency procedure India",
+      "kitchen oil fire safety",
+      "PASS protocol fire safety",
+      "fire extinguisher pressure check",
+      "fire blanket single use",
+      "Class A B C fire guide",
+      "domestic fire prevention tips",
+    ],
   });
 }
 
@@ -54,10 +64,12 @@ export default function SafetyGuidePage() {
     { name: "Safety Guide", path: "/safety-guide" },
   ]);
   const faqSchema = buildFaqSchema(faqs);
+  const orgSchema = buildOrganizationSchema();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
+      orgSchema,
       breadcrumbSchema,
       ...(faqSchema ? [faqSchema] : []),
     ],

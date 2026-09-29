@@ -28,6 +28,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const cleanTitle = stripHtml(post.title);
   const cleanExcerpt = stripHtml(post.excerpt) || cleanTitle;
   const featuredImgUrl = post.featuredImage?.node?.sourceUrl;
+  const categoryNames = post.categories?.nodes.map((c) => c.name.toLowerCase()) || [];
+  const keywords = [
+    ...categoryNames,
+    cleanTitle.toLowerCase(),
+    "home fire safety",
+    "fire prevention tips",
+    "Graha Kavach guide",
+  ];
 
   return buildSeoMetadata({
     seo: post.seo,
@@ -35,6 +43,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     fallbackDescription: cleanExcerpt,
     path: `/blog/${post.slug}`,
     fallbackImage: featuredImgUrl,
+    keywords,
   });
 }
 
@@ -244,10 +253,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
             <div className="mt-4 sm:mt-0">
               <Link
-                href="/checkout"
+                href="/fire-safety-kit"
                 className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-2.5 text-xs font-bold text-primary shadow transition hover:bg-stone-100"
               >
-                Order Kit Today
+                Explore Kit
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>

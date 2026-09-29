@@ -30,6 +30,7 @@ import {
   buildOrganizationSchema,
   buildProductSchema,
   buildWebSiteSchema,
+  buildLocalBusinessSchema,
 } from "@/lib/seo/structured-data";
 import type { Media } from "@/types";
 
@@ -40,10 +41,22 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return buildSeoMetadata({
     seo: homePage?.seo,
-    fallbackTitle: "Graha Kavach — Complete 3-in-1 Home Fire Safety Kit",
+    fallbackTitle: "Graha Kavach™ | 3-in-1 Home Fire Safety Kit — Speciality Geochem (Est. 2010)",
     fallbackDescription:
-      "A 2 kg ABC dry powder extinguisher, an automatic fire ball and a fire blanket in one kit, with the hardware to mount them. Made in Udaipur by Speciality Geochem.",
+      "Certified 3-in-1 home fire protection system: 2kg ABC dry powder extinguisher, automatic flame-activated fire ball, and 550°C fibreglass blanket with wall mounts. Engineered in Udaipur with 16 years of protection roots.",
     path: "/",
+    keywords: [
+      "home fire safety kit",
+      "fire extinguisher for home",
+      "automatic fire ball",
+      "fire blanket for kitchen",
+      "residential fire safety India",
+      "Graha Kavach",
+      "Speciality Geochem Udaipur",
+      "fire safety equipment Rajasthan",
+      "kitchen fire safety kit",
+      "2kg ABC dry powder extinguisher",
+    ],
   });
 }
 
@@ -211,6 +224,7 @@ export default async function Home() {
     "@graph": [
       buildOrganizationSchema(),
       buildWebSiteSchema(),
+      buildLocalBusinessSchema(),
       ...(buildProductSchema(product, reviews) ? [buildProductSchema(product, reviews)] : []),
       ...(buildFaqSchema(faqItems.map((faq) => ({ q: faq.title, a: faq.answer })))
         ? [buildFaqSchema(faqItems.map((faq) => ({ q: faq.title, a: faq.answer })))]

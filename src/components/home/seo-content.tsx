@@ -36,68 +36,64 @@ export function HomeSeoContent() {
             )}
           >
             <p>
-              Graha Kavach is a 3-in-1 home fire safety kit designed, manufactured and sold from
-              Udaipur, Rajasthan — a 2 kg ABC dry powder fire extinguisher, an automatic fire
-              extinguisher ball, and a fire blanket, packed together with the hardware to mount all
-              three. If you have been searching for a fire extinguisher price in Udaipur, a fire
-              safety kit for your apartment, or a complete home fire safety kit online in India,
-              this is built to answer that search directly: one order, three tools, covering the
-              fire risks an ordinary Indian home or small shop actually faces — a stovetop
-              flare-up, a short circuit at the electrical panel, or a fire that starts small and
-              needs to be controlled before it spreads.
+              Graha Kavach is a{" "}
+              <Link href="/fire-safety-kit" className="font-medium text-primary underline underline-offset-4 hover:text-primary-hover">
+                3-in-1 home fire safety kit
+              </Link>{" "}
+              designed, manufactured and sold from Udaipur, Rajasthan — a 2 kg ABC dry powder fire extinguisher, an automatic fire
+              extinguisher ball, and a fire blanket, packed together with the hardware to mount all three. If you have been searching
+              for a fire extinguisher price in Udaipur, a fire safety kit for your apartment, or a complete home fire safety kit
+              online in India, this is built to answer that search directly: one order, three tools, covering the fire risks an
+              ordinary Indian home or small shop actually faces — a stovetop flare-up, a short circuit at the electrical panel, or
+              a fire that starts small and needs to be controlled before it spreads.
             </p>
 
             <h3>Why an Udaipur home needs a fire safety kit</h3>
             <p>
-              Udaipur&apos;s older city homes with dense, aging wiring and its newer apartment
-              blocks running air conditioners, inverters and kitchen appliances off a single
-              distribution board share the same weak point: an electrical panel or MCB box that
-              rarely gets a second look until something goes wrong. Add a kitchen where an LPG
-              cylinder, hot oil and cotton or synthetic fabric all sit within arm&apos;s reach of
-              each other, and the two most common domestic fire risks in any Rajasthan home are
-              already present before anyone has thought about buying a fire extinguisher. A fire
-              safety kit for home use in Udaipur is not about a rare event — its whole point is
-              that when a pan catches fire or a plug point sparks, the right tool is already
-              mounted on the wall instead of being something you wish you had ordered last week.
+              Udaipur&apos;s older city homes with dense, aging wiring and its newer apartment blocks running air conditioners, inverters
+              and kitchen appliances off a single distribution board share the same weak point: an electrical panel or MCB box that rarely
+              gets a second look until something goes wrong. Add a kitchen where an LPG cylinder, hot oil and cotton or synthetic fabric
+              all sit within arm&apos;s reach of each other, and the two most common domestic fire risks in any Rajasthan home are already
+              present before anyone has thought about buying a fire extinguisher. A fire safety kit for home use in Udaipur is not about
+              a rare event — its whole point is that when a pan catches fire or a plug point sparks, the right tool is already mounted
+              on the wall instead of being something you wish you had ordered last week.
             </p>
 
             <h3>Made in Udaipur — not just sold here</h3>
             <p>
-              Most fire safety kits listed online are shipped in from somewhere else. Graha Kavach
-              is manufactured by Speciality Geochem, based in Udaipur, Rajasthan, working in the
-              region since 2010. That matters for two practical reasons: replacement parts,
-              refills and support questions are answered by people working in the same state, not
-              a call centre reading from a script; and buying fire safety equipment made in
-              Udaipur keeps the manufacturing and the after-sales relationship in the same place.
-              For a Rajasthan-based household or small business searching for a fire extinguisher
-              supplier near Udaipur, or a fire safety kit made in Rajasthan rather than resold from
-              elsewhere, this is that product.
+              Most fire safety kits listed online are shipped in from somewhere else. Graha Kavach is manufactured by{" "}
+              <Link href="/about" className="font-medium text-primary underline underline-offset-4 hover:text-primary-hover">
+                Speciality Geochem
+              </Link>
+              , based in Udaipur, Rajasthan, working in the region since 2010. That matters for two practical reasons: replacement parts,
+              refills and support questions are answered by people working in the same state, not a call centre reading from a script; and
+              buying fire safety equipment made in Udaipur keeps the manufacturing and the after-sales relationship in the same place.
+              For a Rajasthan-based household or small business searching for a fire extinguisher supplier near Udaipur, or a fire safety
+              kit made in Rajasthan rather than resold from elsewhere, this is that product.
             </p>
 
             <h3>What&apos;s inside the kit</h3>
             <p>
-              A 2 kg ABC dry powder fire extinguisher with a pressure gauge, built for roughly
-              10–12 seconds of continuous discharge with a 3–4 metre throw — enough to knock down a
-              small electrical, liquid or solid-material fire before it spreads. This is the
-              extinguisher a household reaches for when the fire is visible, small, and there is a
-              clear way to approach it. An automatic fire extinguisher ball, mounted on its stand
-              near a known risk point such as an electrical panel, an inverter cupboard or a
-              workshop corner, activates on direct flame contact and releases a non-toxic
-              extinguishing powder — useful specifically because it works whether or not anyone is
-              in the room when a fire starts. A 1 m × 1 m fire blanket, sized for one job:
-              smothering a stovetop or pan fire by cutting off its air supply, which is the correct
-              response to a cooking-oil fire and the wrong one for water. All of it comes with a
-              wall bracket, mounting stand, screws and wall plugs, so none of it needs a separate
-              trip to a hardware store in Udaipur before it can actually go up on a wall.
+              A 2 kg ABC dry powder fire extinguisher with a pressure gauge, built for roughly 10–12 seconds of continuous discharge with
+              a 3–4 metre throw — enough to knock down a small electrical, liquid or solid-material fire before it spreads. This is the
+              extinguisher a household reaches for when the fire is visible, small, and there is a clear way to approach it. An automatic
+              fire extinguisher ball, mounted on its stand near a known risk point such as an electrical panel, an inverter cupboard or
+              a workshop corner, activates on direct flame contact and releases a non-toxic extinguishing powder — useful specifically
+              because it works whether or not anyone is in the room when a fire starts. A 1 m × 1 m fire blanket, sized for one job:
+              smothering a stovetop or pan fire by cutting off its air supply, which is the correct response to a cooking-oil fire and the
+              wrong one for water. All of it comes with a wall bracket, mounting stand, screws and wall plugs, so none of it needs a
+              separate trip to a hardware store in Udaipur before it can actually go up on a wall.
             </p>
 
             <h3>Extinguisher, fire ball or blanket — which one do you reach for?</h3>
             <p>
-              When the fire is visible, small, and there is a clear path to reach it, the ABC dry
-              powder extinguisher is the right first move — pull the pin, aim at the base, squeeze
-              the lever, sweep side to side. When the risk is somewhere nobody is standing — an
-              inverter cupboard, the space above an MCB box, a workshop corner with old wiring —
-              the automatic fire ball is the tool built for that gap, because it does not need a
+              When the fire is visible, small, and there is a clear path to reach it, the ABC dry powder extinguisher is the right first move
+              —{" "}
+              <Link href="/how-it-works" className="font-medium text-primary underline underline-offset-4 hover:text-primary-hover">
+                pull the pin, aim at the base, squeeze the lever, sweep side to side
+              </Link>
+              . When the risk is somewhere nobody is standing — an inverter cupboard, the space above an MCB box, a workshop corner with
+              old wiring — the automatic fire ball is the tool built for that gap, because it does not need a
               person present to activate. Reaching for water on a cooking-oil or electrical fire is
               one of the most common mistakes in a kitchen: water sinks under burning oil and can
               throw it back out as a flare-up. That is specifically the situation the fire blanket

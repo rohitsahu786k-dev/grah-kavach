@@ -18,14 +18,38 @@ import {
   Home,
 } from "lucide-react";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
+import { buildBreadcrumbSchema, buildAboutPageSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = {
-  title: "About Us | We’ve Protected Businesses for 16 Years — Graha Kavach",
+  title: "About Us: 16 Years of Protection | Speciality Geochem (Est. 2010) — Graha Kavach",
   description:
     "For 16 years, Speciality Geochem (Est. 2010), Udaipur, has protected businesses from fire. Now, Graha Kavach brings certified 3-in-1 fire safety protection home for the people you love.",
+  keywords: [
+    "about Graha Kavach",
+    "Speciality Geochem Udaipur",
+    "Rakesh Mishra Udaipur",
+    "fire equipment manufacturer Rajasthan",
+    "RIICO fire safety manufacturing",
+    "home fire safety legacy",
+    "16 years fire protection",
+  ],
   alternates: {
     canonical: "/about",
+  },
+  openGraph: {
+    title: "About Graha Kavach — 16 Years of Fire Protection Heritage",
+    description:
+      "From manufacturing facilities in Udaipur since 2010 to family homes nationwide: discover the story of Graha Kavach.",
+    url: "https://grahakavach.in/about",
+    siteName: "Graha Kavach",
+    images: [{ url: "/brand/graha-kavach-logo.png", width: 1200, height: 630, alt: "About Graha Kavach" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Graha Kavach — 16 Years of Fire Protection Heritage",
+    description:
+      "From manufacturing facilities in Udaipur since 2010 to family homes nationwide: discover the story of Graha Kavach.",
+    images: ["/brand/graha-kavach-logo.png"],
   },
 };
 
@@ -71,12 +95,19 @@ export default function AboutPage() {
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
   ]);
+  const aboutSchema = buildAboutPageSchema();
+  const orgSchema = buildOrganizationSchema();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbSchema, aboutSchema, orgSchema],
+  };
 
   return (
     <div className="bg-background">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Hero Section */}

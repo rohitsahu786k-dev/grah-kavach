@@ -11,12 +11,32 @@ export function buildOrganizationSchema() {
     "@type": "Organization",
     "@id": `${BASE_URL}/#organization`,
     name: "Graha Kavach",
+    alternateName: "Graha Kavach Fire Safety",
     url: BASE_URL,
     logo: {
       "@type": "ImageObject",
       "@id": `${BASE_URL}/#logo`,
-      url: `${BASE_URL}/logo.png`,
-      caption: "Graha Kavach Fire Safety",
+      url: `${BASE_URL}/brand/graha-kavach-logo.png`,
+      caption: "Graha Kavach Home Fire Safety",
+    },
+    foundingDate: "2010",
+    founder: {
+      "@type": "Person",
+      name: "Rakesh Mishra",
+      url: "https://therakeshmishra.com/",
+    },
+    parentOrganization: {
+      "@type": "Organization",
+      name: "Speciality Geochem",
+      url: "https://specialitygeochem.com/",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "RIICO Industrial Area",
+        addressLocality: "Udaipur",
+        addressRegion: "Rajasthan",
+        postalCode: "313001",
+        addressCountry: "IN",
+      },
     },
     telephone: "+91-9829082077",
     email: "grahakavach@gmail.com",
@@ -28,7 +48,16 @@ export function buildOrganizationSchema() {
       postalCode: "313001",
       addressCountry: "IN",
     },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+91-9829082077",
+      contactType: "customer service",
+      areaServed: "IN",
+      availableLanguage: ["en", "hi"],
+    },
     sameAs: [
+      "https://specialitygeochem.com/",
+      "https://therakeshmishra.com/",
       "https://facebook.com",
       "https://instagram.com",
       "https://linkedin.com",
@@ -43,11 +72,16 @@ export function buildWebSiteSchema() {
     "@id": `${BASE_URL}/#website`,
     url: BASE_URL,
     name: "Graha Kavach",
-    description: "Domestic and residential fire safety solutions for Indian homes.",
+    description: "Certified 3-in-1 residential and workplace fire safety solutions for Indian homes by Speciality Geochem, Udaipur.",
     publisher: {
       "@id": `${BASE_URL}/#organization`,
     },
     inLanguage: "en-IN",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${BASE_URL}/blog?category={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 
@@ -205,5 +239,115 @@ export function buildFaqSchema(faqs: Array<{ q: string; a: string }>) {
         text: stripHtml(faq.a),
       },
     })),
+  };
+}
+
+export function buildLocalBusinessSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${BASE_URL}/#localbusiness`,
+    name: "Graha Kavach — Speciality Geochem",
+    description: "Certified fire safety equipment manufacturing and 3-in-1 domestic fire safety kits in Udaipur, Rajasthan.",
+    url: BASE_URL,
+    telephone: "+91-9829082077",
+    email: "grahakavach@gmail.com",
+    image: `${BASE_URL}/brand/graha-kavach-logo.png`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "103, Ostwal Plaza 2, Sundarwas",
+      addressLocality: "Udaipur",
+      addressRegion: "Rajasthan",
+      postalCode: "313001",
+      addressCountry: "IN",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "24.5854",
+      longitude: "73.7125",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "09:30",
+        closes: "18:30",
+      },
+    ],
+    priceRange: "₹₹",
+  };
+}
+
+export function buildHowToSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": `${BASE_URL}/how-it-works/#howto`,
+    name: "How the Graha Kavach 3-in-1 Fire Safety System Protects Your Home",
+    description: "Emergency fire response protocol combining 24/7 automated fire ball suppression, clean fire blanket smothering, and active PASS chemical extinguisher operation.",
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Layer 1: Automatic 24/7 Fire Ball Vigilance",
+        text: "Position above electrical meter boards, kitchens or near LPG cylinders. Triggers automatically on direct flame contact within 3-5 seconds to disperse MAP powder and knock down flames without human presence.",
+        url: `${BASE_URL}/how-it-works#layer-1`,
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Layer 2: Clean Kitchen Fire Blanket Smothering",
+        text: "In the event of a kitchen oil fire or pan blaze, pull the quick-release tabs, protect your hands, and drape the 550°C fibreglass blanket gently over the fire to starve it of oxygen without toxic residues.",
+        url: `${BASE_URL}/how-it-works#layer-2`,
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Layer 3: Active ABC Extinguisher PASS Protocol",
+        text: "For spreading fires: Pull the safety pin, Aim nozzle at the base of the fire from 3-4 metres, Squeeze the lever, and Sweep side-to-side until extinguished.",
+        url: `${BASE_URL}/how-it-works#layer-3`,
+      },
+    ],
+  };
+}
+
+export function buildAboutPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${BASE_URL}/about/#webpage`,
+    url: `${BASE_URL}/about`,
+    name: "About Graha Kavach — 16 Years of Protection | Speciality Geochem (Est. 2010)",
+    description: "Protecting workplaces for 16 years, now bringing certified 3-in-1 fire protection home. Founded by Rakesh Mishra with manufacturing roots dating back to 2010 in Udaipur, Rajasthan.",
+    mainEntity: {
+      "@type": "Organization",
+      name: "Speciality Geochem",
+      foundingDate: "2010",
+      founder: {
+        "@type": "Person",
+        name: "Rakesh Mishra",
+        sameAs: "https://therakeshmishra.com/",
+      },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Udaipur",
+        addressRegion: "Rajasthan",
+        addressCountry: "IN",
+      },
+    },
+  };
+}
+
+export function buildContactPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${BASE_URL}/contact/#webpage`,
+    url: `${BASE_URL}/contact`,
+    name: "Contact Graha Kavach — Fire Safety Consultation & Support, Udaipur",
+    description: "Direct fire safety consultation, bulk orders, and support in Udaipur, Rajasthan.",
+    mainEntity: {
+      "@id": `${BASE_URL}/#organization`,
+    },
   };
 }

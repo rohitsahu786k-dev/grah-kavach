@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Shield, Flame, ArrowRight, AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
 import { getPageBySlug } from "@/lib/wordpress/adapters";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
+import { buildBreadcrumbSchema, buildHowToSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageBySlug("how-it-works");
@@ -14,6 +14,16 @@ export async function generateMetadata(): Promise<Metadata> {
     fallbackDescription:
       "Discover how the Graha Kavach 3-in-1 Fire Safety Kit provides complete multi-stage defense: 24/7 automatic suppression, instant kitchen smothering, and active PASS knockdown.",
     path: "/how-it-works",
+    keywords: [
+      "how fire extinguisher works",
+      "PASS fire technique",
+      "automatic fire ball deployment",
+      "how to use fire blanket",
+      "kitchen oil fire safety",
+      "home fire protection layers",
+      "fire safety steps",
+      "Graha Kavach how it works",
+    ],
   });
 }
 
@@ -22,12 +32,19 @@ export default function HowItWorksPage() {
     { name: "Home", path: "/" },
     { name: "How It Works", path: "/how-it-works" },
   ]);
+  const howToSchema = buildHowToSchema();
+  const orgSchema = buildOrganizationSchema();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbSchema, howToSchema, orgSchema],
+  };
 
   return (
     <div className="bg-background">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Hero */}
       <section className="border-b border-border bg-gradient-to-b from-background-subtle to-background py-16 md:py-24">
@@ -263,10 +280,10 @@ export default function HowItWorksPage() {
           </p>
           <div className="mt-6 flex justify-center gap-4">
             <Link
-              href="/checkout"
+              href="/fire-safety-kit"
               className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold text-white shadow transition hover:bg-primary-hover"
             >
-              Buy Complete Kit (₹2,499)
+              Explore Complete Kit (₹2,499)
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link

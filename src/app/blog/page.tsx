@@ -4,7 +4,7 @@ import { getPosts, getCategories } from "@/lib/wordpress/adapters";
 import { BlogCard } from "@/components/blog/blog-card";
 import { CategoryFilter } from "@/components/blog/category-filter";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
+import { buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 interface BlogPageProps {
   searchParams: Promise<{ category?: string }>;
@@ -29,6 +29,15 @@ export async function generateMetadata({ searchParams }: BlogPageProps): Promise
     fallbackTitle,
     fallbackDescription,
     path,
+    keywords: [
+      "fire safety blog",
+      "fire prevention articles",
+      "home fire preparedness guides",
+      "extinguisher user manuals",
+      "fire safety ball instructions",
+      "Graha Kavach blog",
+      activeCat ? `${activeCat.name.toLowerCase()} fire safety` : "fire safety articles",
+    ],
   });
 }
 
@@ -47,6 +56,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     ...(activeCat ? [{ name: activeCat.name, path: `/blog?category=${activeCat.slug}` }] : []),
   ];
   const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
+  const orgSchema = buildOrganizationSchema();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbSchema, orgSchema],
+  };
 
   const filteredPosts = category && category !== "all"
     ? allPosts.filter((post) =>
@@ -61,7 +76,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     <div className="bg-background py-12 md:py-16">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
