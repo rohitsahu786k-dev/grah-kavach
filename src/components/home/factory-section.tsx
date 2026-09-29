@@ -9,8 +9,8 @@ export function FactorySection() {
       {/* Background Factory Image */}
       <div className="absolute inset-0">
         <Image
-          src="https://admin.grahakavach.in/wp-content/uploads/Speciality-Geochem-Factory-Entrance.png"
-          alt="Speciality Geochem Manufacturing Facility Entrance — Udaipur, Rajasthan"
+          src="https://admin.grahakavach.in/wp-content/uploads/office.webp"
+          alt="Speciality Geochem Office & Manufacturing Facility — Udaipur, Rajasthan"
           fill
           priority
           sizes="100vw"

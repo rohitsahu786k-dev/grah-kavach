@@ -357,8 +357,8 @@ export default function AboutPage() {
               <div className="relative overflow-hidden rounded-2xl border border-border bg-stone-50 shadow-sm">
                 <div className="relative aspect-[16/10] sm:aspect-[4/3] w-full overflow-hidden">
                   <Image
-                    src="https://admin.grahakavach.in/wp-content/uploads/Speciality-Geochem-Factory-Entrance.png"
-                    alt="Speciality Geochem Manufacturing Facility Entrance — Udaipur, Rajasthan"
+                    src="https://admin.grahakavach.in/wp-content/uploads/office.webp"
+                    alt="Speciality Geochem Office & Manufacturing Facility — Udaipur, Rajasthan"
                     width={1200}
                     height={800}
                     sizes="(max-width: 1024px) 100vw, 50vw"
