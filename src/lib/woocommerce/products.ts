@@ -67,7 +67,7 @@ const FALLBACK_PRIMARY_PRODUCT: WooProduct = {
   images: [
     {
       id: 1,
-      src: "https://admin.grahakavach.in/wp-content/uploads/graha-kavach-01-extinguish-21x6-1.webp",
+      src: "https://admin.grahakavach.in/wp-content/uploads/extinguish-home-office-1870x623-1.webp",
       name: "Graha Kavach 3-in-1 Fire Safety Kit",
       alt: "Graha Kavach 3-in-1 Fire Safety Kit",
     },

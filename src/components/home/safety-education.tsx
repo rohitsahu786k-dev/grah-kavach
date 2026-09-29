@@ -98,13 +98,13 @@ export function HowItWorks() {
     <section id="how-it-works" className="w-full overflow-hidden p-0 m-0">
       <div className="flex flex-col w-full p-0 m-0 leading-none">
         <Image
-          src="https://admin.grahakavach.in/wp-content/uploads/graha-kavach-01-extinguish-21x6-1.webp"
+          src="https://admin.grahakavach.in/wp-content/uploads/extinguish-home-office-1870x623-1.webp"
           alt="Graha Kavach 01 - Extinguish: ABC Dry Powder Extinguisher"
-          width={2172}
-          height={724}
+          width={1870}
+          height={623}
           sizes="100vw"
           className="block h-auto w-full p-0 m-0 align-top"
-          style={{ aspectRatio: "2172 / 724" }}
+          style={{ aspectRatio: "1870 / 623" }}
           loading="lazy"
         />
         <Image
