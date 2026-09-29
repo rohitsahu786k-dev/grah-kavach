@@ -31,7 +31,7 @@ const HELP: NavItem[] = [
   { label: "Contact Us", href: "/contact" },
   { label: "FAQs", href: "/#faq" },
   { label: "How to Use", href: "/#how-it-works" },
-  { label: "Placement Guide", href: "/#buy" },
+  { label: "Placement Guide", href: "/#placement" },
 ];
 
 export async function SiteFooter() {
@@ -59,7 +59,7 @@ export async function SiteFooter() {
 
   const address = contact.address || "103, Ostwal Plaza 2, Sundarwas, Udaipur (Raj.) India";
   const email = contact.email || "grahakavach@gmail.com";
-  const phone = contact.phone || "+91 9610251841";
+  const phone = contact.phone || "+91 98290 82077";
 
   return (
     <footer className="relative overflow-hidden border-t border-border bg-[#fffcfb]">

@@ -155,7 +155,7 @@ const PLACEMENTS = [
 
 export function Placement() {
   return (
-    <section className="bg-background py-10 lg:py-14">
+    <section id="placement" className="scroll-mt-24 bg-background py-10 lg:py-14">
       <Container width="wide">
         <div className="max-w-2xl">
           <p className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">

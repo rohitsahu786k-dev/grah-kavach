@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useCustomer } from "@/lib/auth/use-customer";
 import { Field, Input } from "@/components/ui/form";
 
@@ -11,6 +12,8 @@ export default function AccountProfilePage() {
   const [lastName, setLastName] = useState(customer?.lastName || "");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -151,33 +154,55 @@ export default function AccountProfilePage() {
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field id="newPassword" label="New Password" hint="At least 6 characters">
                 {({ id, "aria-describedby": describedBy, "aria-invalid": invalid }) => (
-                  <Input
-                    id={id}
-                    type="password"
-                    autoComplete="new-password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="••••••••"
-                    disabled={submitting}
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid}
-                  />
+                  <div className="relative flex items-center">
+                    <Input
+                      id={id}
+                      type={showNewPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      disabled={submitting}
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword((v) => !v)}
+                      className="absolute right-3 p-1 text-stone-400 transition-colors hover:text-stone-700"
+                      aria-label={showNewPassword ? "Hide password" : "Show password"}
+                    >
+                      {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </button>
+                  </div>
                 )}
               </Field>
 
               <Field id="confirmPassword" label="Confirm New Password">
                 {({ id, "aria-describedby": describedBy, "aria-invalid": invalid }) => (
-                  <Input
-                    id={id}
-                    type="password"
-                    autoComplete="new-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                    disabled={submitting}
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid}
-                  />
+                  <div className="relative flex items-center">
+                    <Input
+                      id={id}
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      disabled={submitting}
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      className="absolute right-3 p-1 text-stone-400 transition-colors hover:text-stone-700"
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </button>
+                  </div>
                 )}
               </Field>
             </div>

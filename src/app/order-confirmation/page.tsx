@@ -19,6 +19,7 @@ type OrderConfirmationData = {
   billing: {
     first_name: string;
     last_name: string;
+    company?: string;
     address_1: string;
     address_2?: string;
     city: string;
@@ -31,6 +32,7 @@ type OrderConfirmationData = {
   shipping: {
     first_name: string;
     last_name: string;
+    company?: string;
     address_1: string;
     address_2?: string;
     city: string;
@@ -38,6 +40,7 @@ type OrderConfirmationData = {
     postcode: string;
     country: string;
   };
+  gstin?: string;
   lineItems: {
     id: number;
     productId: number;
@@ -300,15 +303,31 @@ function OrderConfirmationContent() {
             </div>
           </div>
 
-          {/* Payment Method */}
+          {/* Payment & Tax Invoice */}
           <div className="rounded-2xl border border-border bg-white p-6 shadow-xs">
-            <h3 className="text-base font-medium text-foreground">Payment Information</h3>
+            <h3 className="text-base font-medium text-foreground">Payment & Tax Invoice</h3>
             <p className="mt-2 text-sm font-medium text-foreground">
               {order.paymentMethodTitle}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               Status: <span className="font-semibold capitalize text-foreground">{order.status}</span>
             </p>
+
+            {order.gstin || order.billing.company ? (
+              <div className="mt-4 border-t border-border pt-3 text-xs">
+                <p className="font-semibold text-foreground">GST Tax Invoice Details:</p>
+                {order.billing.company ? (
+                  <p className="mt-1 text-muted-foreground">
+                    Firm / Company: <span className="font-medium text-foreground">{order.billing.company}</span>
+                  </p>
+                ) : null}
+                {order.gstin ? (
+                  <p className="mt-1 text-muted-foreground">
+                    GSTIN: <span className="font-mono font-medium text-foreground">{order.gstin}</span>
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           {/* Support CTA */}

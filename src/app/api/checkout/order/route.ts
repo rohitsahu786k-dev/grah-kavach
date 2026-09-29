@@ -97,6 +97,7 @@ export async function POST(request: Request) {
       billing: {
         first_name: address.firstName,
         last_name: address.lastName,
+        company: address.company || "",
         address_1: address.address1,
         address_2: address.address2 || "",
         city: address.city,
@@ -109,6 +110,7 @@ export async function POST(request: Request) {
       shipping: {
         first_name: address.firstName,
         last_name: address.lastName,
+        company: address.company || "",
         address_1: address.address1,
         address_2: address.address2 || "",
         city: address.city,
@@ -125,6 +127,13 @@ export async function POST(request: Request) {
       meta_data: [
         { key: "_idempotency_key", value: idempotencyKey },
         { key: "_source", value: "nextjs-headless" },
+        ...(address.gstin
+          ? [
+              { key: "_billing_gstin", value: address.gstin },
+              { key: "GSTIN", value: address.gstin },
+              { key: "gstin", value: address.gstin },
+            ]
+          : []),
       ],
     };
 

@@ -44,7 +44,7 @@ export default async function ContactPage() {
     "@graph": [breadcrumbSchema, orgSchema],
   };
 
-  const phone = settings.contact.phone || "+91 9610251841";
+  const phone = settings.contact.phone || "+91 98290 82077";
   const cleanPhone = phone.replace(/[^0-9+]/g, "");
   const email = settings.contact.email || "grahakavach@gmail.com";
   const address =

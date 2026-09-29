@@ -89,6 +89,24 @@ export const indianAddressSchema = z.object({
       message: "Enter a valid 6-digit PIN code",
     }),
   country: z.literal("IN").default("IN"),
+  company: z
+    .string()
+    .trim()
+    .max(100, "Company name is too long")
+    .optional()
+    .default(""),
+  gstin: z
+    .string()
+    .trim()
+    .transform((val) => val.toUpperCase())
+    .refine(
+      (val) => !val || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(val),
+      {
+        message: "Enter a valid 15-digit GSTIN (e.g. 08AAAAA0000A1Z5)",
+      },
+    )
+    .optional()
+    .default(""),
   orderNotes: z
     .string()
     .trim()

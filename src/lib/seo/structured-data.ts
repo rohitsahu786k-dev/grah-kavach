@@ -18,7 +18,7 @@ export function buildOrganizationSchema() {
       url: `${BASE_URL}/logo.png`,
       caption: "Graha Kavach Fire Safety",
     },
-    telephone: "+91-9610251841",
+    telephone: "+91-9829082077",
     email: "grahakavach@gmail.com",
     address: {
       "@type": "PostalAddress",

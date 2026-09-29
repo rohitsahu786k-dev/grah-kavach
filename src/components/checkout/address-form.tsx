@@ -236,6 +236,61 @@ export function AddressForm({
             </Field>
           </div>
 
+          {/* Business & Tax Invoice Details */}
+          <div className="mt-6 rounded-xl border border-dashed border-stone-300 bg-stone-50/70 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-sm font-semibold text-foreground">
+                  Need a GST Tax Invoice for Business? (Optional)
+                </h4>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Provide your Registered Business Name and GSTIN to claim GST input tax credit.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Field
+                id="company"
+                label="Company / Firm Name (Optional)"
+                error={errors.company}
+              >
+                {({ id, "aria-describedby": describedBy, "aria-invalid": invalid }) => (
+                  <Input
+                    id={id}
+                    value={address.company || ""}
+                    onChange={(e) => onChange("company", e.target.value)}
+                    placeholder="e.g. Speciality Geochem Pvt Ltd"
+                    disabled={disabled}
+                    aria-describedby={describedBy}
+                    aria-invalid={invalid}
+                  />
+                )}
+              </Field>
+
+              <Field
+                id="gstin"
+                label="GSTIN Number (Optional)"
+                hint="15-digit GST identification number"
+                error={errors.gstin}
+              >
+                {({ id, "aria-describedby": describedBy, "aria-invalid": invalid }) => (
+                  <Input
+                    id={id}
+                    maxLength={15}
+                    value={address.gstin || ""}
+                    onChange={(e) => onChange("gstin", e.target.value.toUpperCase())}
+                    placeholder="08AAAAA0000A1Z5"
+                    className="font-mono uppercase tracking-wider"
+                    disabled={disabled}
+                    aria-describedby={describedBy}
+                    aria-invalid={invalid}
+                  />
+                )}
+              </Field>
+            </div>
+          </div>
+
           <Field
             id="orderNotes"
             label="Delivery Instructions (Optional)"

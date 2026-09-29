@@ -25,6 +25,8 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState<IndianAddress>({
     firstName: "",
     lastName: "",
+    company: "",
+    gstin: "",
     email: "",
     phone: "",
     address1: "",

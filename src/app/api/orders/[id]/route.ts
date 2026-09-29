@@ -36,6 +36,7 @@ type WooRawOrder = {
   billing: {
     first_name: string;
     last_name: string;
+    company?: string;
     address_1: string;
     address_2: string;
     city: string;
@@ -48,6 +49,7 @@ type WooRawOrder = {
   shipping: {
     first_name: string;
     last_name: string;
+    company?: string;
     address_1: string;
     address_2: string;
     city: string;
@@ -56,6 +58,7 @@ type WooRawOrder = {
     country: string;
   };
   line_items: WooOrderItem[];
+  meta_data?: { key: string; value: any }[];
 };
 
 export async function GET(
@@ -114,6 +117,10 @@ export async function GET(
       paymentMethodTitle: order.payment_method_title,
       billing: order.billing,
       shipping: order.shipping,
+      gstin:
+        order.meta_data?.find(
+          (m) => m.key === "_billing_gstin" || m.key === "GSTIN" || m.key === "gstin",
+        )?.value || "",
       lineItems: order.line_items.map((item) => ({
         id: item.id,
         productId: item.product_id,

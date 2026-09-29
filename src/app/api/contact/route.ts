@@ -7,7 +7,9 @@ const contactSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^(?:\+91|91)?[6-9]\d{9}$/, "Please enter a valid 10-digit Indian phone number"),
+    .regex(/^(?:\+91|91)?[6-9]\d{9}$/, "Please enter a valid 10-digit Indian phone number")
+    .optional()
+    .or(z.literal("")),
   subject: z.string().trim().min(2, "Subject must be at least 2 characters").max(150),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000),
   website_hp: z.string().optional().default(""), // Honeypot field

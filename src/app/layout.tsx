@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { ScrollToTopOnNav } from "@/components/layout/scroll-to-top-on-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ToastProvider } from "@/components/ui/toast";
@@ -55,7 +56,7 @@ export const metadata: Metadata = {
 
 const PRODUCT_HREF = "/fire-safety-kit";
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getGlobalSiteSettings();
   const whatsappUrl = buildWhatsAppUrl(
     settings.contact.whatsapp,
@@ -91,6 +92,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <CartProvider>
               <CommerceUIProvider>
                 <ToastProvider>
+                  <ScrollToTopOnNav />
                   <a
                     href="#main"
                     className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-[var(--radius)] focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:text-white"

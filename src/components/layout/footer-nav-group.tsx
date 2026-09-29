@@ -84,6 +84,23 @@ export function FooterNavGroup({ title, links }: { title: string; links: NavItem
             <li key={`${title}-${item.href}`}>
               <Link
                 href={item.href}
+                onClick={(e) => {
+                  if (item.href.startsWith("/#") || item.href.startsWith("#")) {
+                    const hash = item.href.replace(/^\/?#/, "");
+                    if (typeof window !== "undefined" && window.location.pathname === "/") {
+                      const el = document.getElementById(hash);
+                      if (el) {
+                        e.preventDefault();
+                        el.scrollIntoView({ behavior: "smooth" });
+                        return;
+                      }
+                    }
+                  } else {
+                    if (typeof window !== "undefined") {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }
+                  }
+                }}
                 className="group inline-flex items-center gap-2.5 text-xs sm:text-sm text-gray-600 transition-colors hover:text-gray-900"
               >
                 {Icon ? (

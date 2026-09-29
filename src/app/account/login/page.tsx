@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import { useCustomer } from "@/lib/auth/use-customer";
 import { Field, Input } from "@/components/ui/form";
 
@@ -14,6 +15,7 @@ function LoginForm() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,18 +92,29 @@ function LoginForm() {
 
           <Field id="password" label="Password" required>
             {({ id, "aria-describedby": describedBy, "aria-invalid": invalid }) => (
-              <Input
-                id={id}
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                disabled={submitting}
-                aria-describedby={describedBy}
-                aria-invalid={invalid}
-                required
-              />
+              <div className="relative flex items-center">
+                <Input
+                  id={id}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  disabled={submitting}
+                  aria-describedby={describedBy}
+                  aria-invalid={invalid}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 p-1 text-stone-400 transition-colors hover:text-stone-700"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             )}
           </Field>
 
