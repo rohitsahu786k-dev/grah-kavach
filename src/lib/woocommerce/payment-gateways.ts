@@ -1,7 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
-import { wooRequest } from "./client";
+import { getWooCommerceUrls, wooRequest } from "./client";
 
 export const wooPaymentGatewaySchema = z.object({
   id: z.string(),
@@ -23,6 +23,42 @@ export type PaymentMethodInfo = {
   isOnline: boolean;
 };
 
+const isOnlineGateway = (id: string) => !["cod", "bacs", "cheque"].includes(id.toLowerCase());
+
+/*
+ * The authenticated /payment_gateways endpoint needs a WooCommerce API key with
+ * admin-level rights. When it is refused, the public Store API still lists the
+ * gateways that are enabled at checkout, so checkout keeps working.
+ */
+const storeApiTitles: Record<string, { title: string; description: string }> = {
+  razorpay: {
+    title: "UPI, Cards, NetBanking",
+    description: "Pay securely via UPI, Credit/Debit Card, or Internet Banking through Razorpay.",
+  },
+  cod: {
+    title: "Cash on Delivery",
+    description: "Pay in cash or via UPI QR code upon doorstep delivery.",
+  },
+};
+
+async function getGatewaysFromStoreApi(): Promise<PaymentMethodInfo[]> {
+  const response = await fetch(`${getWooCommerceUrls().base}/wp-json/wc/store/v1/cart`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`Store API responded ${response.status}`);
+
+  const cart = (await response.json()) as { payment_methods?: string[] };
+
+  return (cart.payment_methods ?? []).map((id) => ({
+    id,
+    title: storeApiTitles[id]?.title ?? id,
+    description: storeApiTitles[id]?.description ?? "",
+    instructions: "",
+    isOnline: isOnlineGateway(id),
+  }));
+}
+
 export async function getActivePaymentGateways(): Promise<PaymentMethodInfo[]> {
   try {
     const gateways = await wooRequest<WooPaymentGateway[]>({
@@ -38,9 +74,15 @@ export async function getActivePaymentGateways(): Promise<PaymentMethodInfo[]> {
         title: g.title || g.method_title || g.id,
         description: g.description || g.method_description || "",
         instructions: g.instructions || "",
-        isOnline: !["cod", "bacs", "cheque"].includes(g.id.toLowerCase()),
+        isOnline: isOnlineGateway(g.id),
       }));
-  } catch {
-    return [];
+  } catch (error) {
+    console.error("[payment-gateways] REST lookup failed, using Store API:", error);
+    try {
+      return await getGatewaysFromStoreApi();
+    } catch (fallbackError) {
+      console.error("[payment-gateways] Store API lookup failed:", fallbackError);
+      return [];
+    }
   }
 }
