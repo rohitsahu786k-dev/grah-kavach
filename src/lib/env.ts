@@ -42,6 +42,9 @@ const serverSchema = z.object({
   WC_CONSUMER_KEY: str("ck_3a584215f9aac5b5da95df76e56e7b6c247968a7"),
   WC_CONSUMER_SECRET: str("cs_4a159dd0701483c7c6aa603af5f75136401dc724"),
   REVALIDATION_SECRET: str(""),
+  // Razorpay Checkout. The secret is server-only; the key id is handed to the browser by the order API.
+  RAZORPAY_KEY_ID: str(""),
+  RAZORPAY_KEY_SECRET: str(""),
 });
 
 export const publicEnv = publicSchema.parse({
@@ -63,6 +66,8 @@ export function serverEnv() {
       process.env.WC_CONSUMER_SECRET ?? process.env.WOO_CONSUMER_SECRET,
     REVALIDATION_SECRET:
       process.env.REVALIDATION_SECRET ?? process.env.REVALIDATE_SECRET,
+    RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
   });
 
   return cachedServerEnv;

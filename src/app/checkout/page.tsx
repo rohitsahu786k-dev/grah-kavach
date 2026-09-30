@@ -8,6 +8,7 @@ import { AddressForm } from "@/components/checkout/address-form";
 import { PaymentSelector } from "@/components/checkout/payment-selector";
 import { CheckoutReview } from "@/components/checkout/checkout-review";
 import { indianAddressSchema, type IndianAddress } from "@/lib/validation/checkout";
+import { payWithRazorpay } from "@/lib/razorpay/client";
 import { COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import type { ValidatedCart } from "@/lib/cart/types";
@@ -161,6 +162,7 @@ export default function CheckoutPage() {
         messages?: string[];
         isOnline?: boolean;
         paymentUrl?: string | null;
+        razorpay?: { keyId: string; orderId: string; amount: number; currency: string } | null;
         orderId?: number;
         orderKey?: string;
       };
@@ -177,7 +179,49 @@ export default function CheckoutPage() {
         throw new Error(data.details ? `${reason} (${data.details})` : reason);
       }
 
-      // Online gateway (Razorpay): hand over to the payment page. The cart is
+      // Razorpay: pay in the popup on this page, then confirm with the server.
+      if (data.razorpay && data.orderId && data.orderKey) {
+        const result = await payWithRazorpay({
+          ...data.razorpay,
+          name: "Graha Kavach",
+          description: `Order #${data.orderId}`,
+          prefill: {
+            name: `${parsedAddress.data.firstName} ${parsedAddress.data.lastName}`,
+            email: parsedAddress.data.email,
+            contact: parsedAddress.data.phone,
+          },
+        });
+
+        if (result.status === "dismissed") {
+          throw new Error("Payment was cancelled. Your order is saved — press Pay to try again.");
+        }
+        if (result.status === "failed") {
+          throw new Error(`${result.message} Please try again or choose Cash on Delivery.`);
+        }
+
+        const confirmRes = await fetch("/api/checkout/razorpay/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            wooOrderId: data.orderId,
+            orderKey: data.orderKey,
+            ...result.payment,
+          }),
+        });
+        if (!confirmRes.ok) {
+          throw new Error(
+            "Your payment went through but we could not confirm it yet. Please do not pay again — contact support with order #" +
+              data.orderId +
+              ".",
+          );
+        }
+
+        clearCart();
+        router.push(`/order-confirmation?orderId=${data.orderId}&key=${data.orderKey}`);
+        return;
+      }
+
+      // Fallback when Razorpay keys are not set on the server: hand over to the payment page. The cart is
       // kept until the confirmation page sees a paid order.
       if (data.isOnline && data.paymentUrl) {
         window.location.assign(data.paymentUrl);

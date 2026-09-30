@@ -5,6 +5,11 @@ import { wooRequest } from "@/lib/woocommerce/client";
 import { getActivePaymentGateways } from "@/lib/woocommerce/payment-gateways";
 import { COD_FEE_LABEL, COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { getWooCommerceUrls } from "@/lib/woocommerce/client";
+import {
+  createRazorpayOrder,
+  isRazorpayConfigured,
+  razorpayKeyId,
+} from "@/lib/razorpay/server";
 
 type IdempotencyEntry = {
   response: {
@@ -17,6 +22,7 @@ type IdempotencyEntry = {
     currency: string;
     isOnline: boolean;
     paymentUrl: string | null;
+    razorpay: { keyId: string; orderId: string; amount: number; currency: string } | null;
   };
   timestamp: number;
 };
@@ -168,6 +174,38 @@ export async function POST(request: Request) {
       revalidate: false,
     });
 
+    // Razorpay pays inside the site's own popup. The Razorpay order is created
+    // here because it needs the secret key; the browser only gets the order id.
+    let razorpay: IdempotencyEntry["response"]["razorpay"] = null;
+    if (!isCod && selectedGateway.id === "razorpay" && isRazorpayConfigured()) {
+      try {
+        const rzpOrder = await createRazorpayOrder({
+          amountMinor: Math.round(parseFloat(wooOrder.total) * 100),
+          currency: wooOrder.currency || "INR",
+          receipt: String(wooOrder.id),
+          wooOrderId: wooOrder.id,
+        });
+        razorpay = {
+          keyId: razorpayKeyId(),
+          orderId: rzpOrder.id,
+          amount: rzpOrder.amount,
+          currency: rzpOrder.currency,
+        };
+      } catch (error) {
+        // Do not leave an unpayable pending order behind.
+        await wooRequest({
+          path: `/orders/${wooOrder.id}`,
+          method: "PUT",
+          body: { status: "cancelled" },
+          revalidate: false,
+        }).catch(() => undefined);
+        return NextResponse.json(
+          { error: "Could not start the online payment.", details: String(error) },
+          { status: 502 },
+        );
+      }
+    }
+
     const result = {
       success: true,
       orderId: wooOrder.id,
@@ -177,9 +215,10 @@ export async function POST(request: Request) {
       total: wooOrder.total,
       currency: wooOrder.currency,
       isOnline: !isCod && selectedGateway.isOnline,
-      // Online gateways (Razorpay) collect payment on WooCommerce's order-pay page.
+      razorpay,
+      // Fallback when the in-page Razorpay popup is unavailable: WooCommerce's order-pay page.
       paymentUrl:
-        !isCod && selectedGateway.isOnline
+        !isCod && selectedGateway.isOnline && !razorpay
           ? wooOrder.payment_url ||
             `${getWooCommerceUrls().checkout}order-pay/${wooOrder.id}/?pay_for_order=true&key=${wooOrder.order_key}`
           : null,
