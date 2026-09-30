@@ -152,10 +152,29 @@ export default function CheckoutPage() {
         }),
       });
 
-      const data = await res.json();
+      // A proxy or CDN error page is HTML, not JSON — say so instead of surfacing a parser error.
+      const raw = await res.text();
+      let data: {
+        success?: boolean;
+        error?: string;
+        details?: string;
+        messages?: string[];
+        isOnline?: boolean;
+        paymentUrl?: string | null;
+        orderId?: number;
+        orderKey?: string;
+      };
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        throw new Error(
+          `The server could not process your order right now (error ${res.status}). No payment was taken — please try again in a minute.`,
+        );
+      }
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || (data.messages && data.messages[0]) || "Order creation failed.");
+        const reason = data.error || (data.messages && data.messages[0]) || "Order creation failed.";
+        throw new Error(data.details ? `${reason} (${data.details})` : reason);
       }
 
       // Online gateway (Razorpay): hand over to the payment page. The cart is
