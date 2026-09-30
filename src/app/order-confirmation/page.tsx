@@ -43,6 +43,7 @@ type OrderConfirmationData = {
   };
   gstin?: string;
   fees?: { name: string; total: string }[];
+  codAdvance?: string;
   lineItems: {
     id: number;
     productId: number;
@@ -233,6 +234,21 @@ function OrderConfirmationContent() {
                 <span>Total Amount</span>
                 <span className="text-2xl font-bold text-foreground">₹{order.total}</span>
               </div>
+
+              {order.codAdvance ? (
+                <div className="mt-3 space-y-1 rounded-lg bg-stone-50 p-3">
+                  <div className="flex justify-between text-foreground">
+                    <span>Advance paid online</span>
+                    <span className="font-semibold">₹{order.codAdvance}</span>
+                  </div>
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Balance to pay on delivery</span>
+                    <span className="font-medium text-foreground">
+                      ₹{Math.max(0, parseFloat(order.total) - parseFloat(order.codAdvance)).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
 

@@ -122,6 +122,8 @@ export async function GET(
         order.meta_data?.find(
           (m) => m.key === "_billing_gstin" || m.key === "GSTIN" || m.key === "gstin",
         )?.value || "",
+      codAdvance:
+        order.meta_data?.find((m) => m.key === "_cod_advance_paid")?.value || "",
       fees: (order.fee_lines ?? []).map((f) => ({ name: f.name, total: f.total })),
       lineItems: order.line_items.map((item) => ({
         id: item.id,

@@ -1,12 +1,14 @@
 "use client";
 
-import { COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { isCodMethod } from "@/lib/config/checkout";
 import type { PaymentMethodInfo } from "@/lib/woocommerce/payment-gateways";
 
 type PaymentSelectorProps = {
   methods: PaymentMethodInfo[];
   selectedMethod: string;
   onSelectMethod: (id: string) => void;
+  /** Advance taken online on COD orders, in paise. 0 when COD is plain pay-on-delivery. */
+  codAdvanceMinor?: number;
   disabled?: boolean;
 };
 
@@ -14,6 +16,7 @@ export function PaymentSelector({
   methods,
   selectedMethod,
   onSelectMethod,
+  codAdvanceMinor = 0,
   disabled = false,
 }: PaymentSelectorProps) {
   if (methods.length === 0) {
@@ -66,7 +69,7 @@ export function PaymentSelector({
 
                 {isCodMethod(method.id) ? (
                   <span className="rounded bg-stone-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-stone-700">
-                    +₹{COD_FEE_MINOR / 100} COD charges
+                    {codAdvanceMinor > 0 ? `Pay ₹${codAdvanceMinor / 100} now` : "Pay on Delivery"}
                   </span>
                 ) : (
                   <span className="rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-blue-700">
@@ -78,7 +81,9 @@ export function PaymentSelector({
               <p className="mt-1 break-words text-xs text-muted-foreground">
                 {method.description ||
                   (method.id === "cod"
-                    ? "Pay securely in cash or via UPI QR code upon doorstep delivery."
+                    ? codAdvanceMinor > 0
+                      ? `Pay ₹${codAdvanceMinor / 100} online now to confirm your order. The rest is paid in cash or UPI on delivery.`
+                      : "Pay securely in cash or via UPI QR code upon doorstep delivery."
                     : "Secure instant payment via certified payment gateway.")}
               </p>
             </div>

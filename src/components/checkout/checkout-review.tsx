@@ -4,15 +4,15 @@ import Image from "next/image";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import type { ValidatedCart } from "@/lib/cart/types";
 
-import { COD_FEE_LABEL } from "@/lib/config/checkout";
+import { COD_ADVANCE_LABEL } from "@/lib/config/checkout";
 
 type CheckoutReviewProps = {
   cart: ValidatedCart;
-  /** Extra charge for the selected payment method (COD), in paise. */
-  codFeeMinor?: number;
+  /** COD advance paid online now, in paise. Part of the total, not an extra charge. */
+  advanceMinor?: number;
 };
 
-export function CheckoutReview({ cart, codFeeMinor = 0 }: CheckoutReviewProps) {
+export function CheckoutReview({ cart, advanceMinor = 0 }: CheckoutReviewProps) {
   return (
     <div className="rounded-2xl border border-border bg-white p-4 shadow-xs sm:p-6 lg:p-8">
       <h3 className="text-lg font-medium text-foreground">Order Review</h3>
@@ -80,15 +80,6 @@ export function CheckoutReview({ cart, codFeeMinor = 0 }: CheckoutReviewProps) {
           </span>
         </div>
 
-        {codFeeMinor > 0 ? (
-          <div className="flex justify-between gap-3 text-muted-foreground">
-            <span>{COD_FEE_LABEL}</span>
-            <span className="shrink-0 font-medium text-foreground">
-              {formatMinorUnitsToCurrency(codFeeMinor, cart.currency)}
-            </span>
-          </div>
-        ) : null}
-
         <div className="flex justify-between text-muted-foreground">
           <span>Estimated Taxes</span>
           <span className="font-medium text-foreground">
@@ -101,9 +92,26 @@ export function CheckoutReview({ cart, codFeeMinor = 0 }: CheckoutReviewProps) {
         <div className="flex items-baseline justify-between border-t border-border pt-4 text-base font-semibold text-foreground">
           <span>Total Payable</span>
           <span className="text-2xl font-bold tracking-tight text-foreground">
-            {formatMinorUnitsToCurrency(cart.totalMinor + codFeeMinor, cart.currency)}
+            {formatMinorUnitsToCurrency(cart.totalMinor, cart.currency)}
           </span>
         </div>
+
+        {advanceMinor > 0 ? (
+          <div className="space-y-2 rounded-lg bg-stone-50 p-3 text-sm">
+            <div className="flex justify-between gap-3 text-foreground">
+              <span>{COD_ADVANCE_LABEL}</span>
+              <span className="shrink-0 font-semibold">
+                {formatMinorUnitsToCurrency(advanceMinor, cart.currency)}
+              </span>
+            </div>
+            <div className="flex justify-between gap-3 text-muted-foreground">
+              <span>Balance to pay on delivery</span>
+              <span className="shrink-0 font-medium text-foreground">
+                {formatMinorUnitsToCurrency(Math.max(0, cart.totalMinor - advanceMinor), cart.currency)}
+              </span>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

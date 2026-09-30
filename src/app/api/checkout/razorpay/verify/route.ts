@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { wooRequest } from "@/lib/woocommerce/client";
 import {
   fetchRazorpayOrder,
@@ -15,7 +16,13 @@ const bodySchema = z.object({
   razorpay_signature: z.string().min(1),
 });
 
-type WooOrder = { id: number; order_key: string; status: string; total: string };
+type WooOrder = {
+  id: number;
+  order_key: string;
+  status: string;
+  total: string;
+  payment_method: string;
+};
 
 export async function POST(request: Request) {
   try {
@@ -43,12 +50,43 @@ export async function POST(request: Request) {
     // The signature proves this payment belongs to *a* Razorpay order. Make sure
     // that order is the one created for this Woo order, for the full amount.
     const rzpOrder = await fetchRazorpayOrder(razorpay_order_id);
-    const expectedAmount = Math.round(parseFloat(order.total) * 100);
+    const totalMinor = Math.round(parseFloat(order.total) * 100);
+    const isCodAdvance = isCodMethod(order.payment_method);
+    const expectedAmount = isCodAdvance ? Math.min(COD_ADVANCE_MINOR, totalMinor) : totalMinor;
     if (rzpOrder.receipt !== String(wooOrderId) || rzpOrder.amount !== expectedAmount) {
       return NextResponse.json({ error: "Payment does not match this order." }, { status: 400 });
     }
 
-    if (order.status === "pending" || order.status === "failed" || order.status === "on-hold") {
+    if (isCodAdvance && order.status === "pending") {
+      // Advance received: the order is confirmed, the balance is collected on delivery.
+      const balance = ((totalMinor - expectedAmount) / 100).toFixed(2);
+      await wooRequest({
+        path: `/orders/${wooOrderId}`,
+        method: "PUT",
+        body: {
+          status: "processing",
+          transaction_id: razorpay_payment_id,
+          meta_data: [
+            { key: "_cod_advance_paid", value: (expectedAmount / 100).toFixed(2) },
+            { key: "razorpay_payment_id", value: razorpay_payment_id },
+            { key: "razorpay_order_id", value: razorpay_order_id },
+          ],
+        },
+        revalidate: false,
+      });
+      await wooRequest({
+        path: `/orders/${wooOrderId}/notes`,
+        method: "POST",
+        body: {
+          note: `COD advance of ₹${(expectedAmount / 100).toFixed(2)} paid via Razorpay (${razorpay_payment_id}). Collect balance ₹${balance} on delivery.`,
+          customer_note: false,
+        },
+        revalidate: false,
+      });
+    } else if (
+      !isCodAdvance &&
+      (order.status === "pending" || order.status === "failed" || order.status === "on-hold")
+    ) {
       await wooRequest({
         path: `/orders/${wooOrderId}`,
         method: "PUT",

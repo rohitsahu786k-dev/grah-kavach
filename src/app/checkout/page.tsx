@@ -9,7 +9,7 @@ import { PaymentSelector } from "@/components/checkout/payment-selector";
 import { CheckoutReview } from "@/components/checkout/checkout-review";
 import { indianAddressSchema, type IndianAddress } from "@/lib/validation/checkout";
 import { payWithRazorpay } from "@/lib/razorpay/client";
-import { COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import type { ValidatedCart } from "@/lib/cart/types";
 import type { PaymentMethodInfo } from "@/lib/woocommerce/payment-gateways";
@@ -20,6 +20,7 @@ export default function CheckoutPage() {
 
   const [validatedCart, setValidatedCart] = useState<ValidatedCart | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodInfo[]>([]);
+  const [codAdvanceAvailable, setCodAdvanceAvailable] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -74,6 +75,7 @@ export default function CheckoutPage() {
         const payData = await payRes.json();
         const methods: PaymentMethodInfo[] = payData.methods || [];
         setPaymentMethods(methods);
+        setCodAdvanceAvailable((payData.codAdvanceMinor ?? 0) > 0);
         if (methods.length > 0) {
           setSelectedPaymentMethod(methods[0].id);
         }
@@ -238,8 +240,11 @@ export default function CheckoutPage() {
   };
 
   const isCod = isCodMethod(selectedPaymentMethod);
-  const codFeeMinor = isCod ? COD_FEE_MINOR : 0;
-  const payableMinor = (validatedCart?.totalMinor ?? 0) + codFeeMinor;
+  const totalMinor = validatedCart?.totalMinor ?? 0;
+  // COD takes an advance online; the rest is paid on delivery. The total does not change.
+  const advanceMinor = isCod && codAdvanceAvailable ? Math.min(COD_ADVANCE_MINOR, totalMinor) : 0;
+  const currency = validatedCart?.currency ?? "INR";
+  const dueNowMinor = advanceMinor > 0 ? advanceMinor : totalMinor;
 
   if (!isReady || loading) {
     return (
@@ -342,6 +347,7 @@ export default function CheckoutPage() {
               <div className="mt-4">
                 <PaymentSelector
                   methods={paymentMethods}
+                  codAdvanceMinor={codAdvanceAvailable ? COD_ADVANCE_MINOR : 0}
                   selectedMethod={selectedPaymentMethod}
                   onSelectMethod={setSelectedPaymentMethod}
                   disabled={submitting}
@@ -353,7 +359,7 @@ export default function CheckoutPage() {
           {/* Right Column: Order Review & Submit */}
           <div className="min-w-0 space-y-6 lg:sticky lg:top-24">
             {validatedCart ? (
-              <CheckoutReview cart={validatedCart} codFeeMinor={codFeeMinor} />
+              <CheckoutReview cart={validatedCart} advanceMinor={advanceMinor} />
             ) : (
               <div className="h-64 animate-pulse rounded-2xl bg-white" />
             )}
@@ -386,14 +392,16 @@ export default function CheckoutPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    <span>{isCod ? "Placing your order..." : "Redirecting to secure payment..."}</span>
+                    <span>{isCod && advanceMinor === 0 ? "Placing your order..." : "Opening secure payment..."}</span>
                   </>
                 ) : (
                   <>
                     <span>
-                      {isCod
-                        ? `Place COD Order · ${formatMinorUnitsToCurrency(payableMinor, validatedCart?.currency ?? "INR")}`
-                        : `Pay Securely · ${formatMinorUnitsToCurrency(payableMinor, validatedCart?.currency ?? "INR")}`}
+                      {isCod && advanceMinor === 0
+                        ? `Place COD Order · ${formatMinorUnitsToCurrency(totalMinor, currency)}`
+                        : isCod
+                          ? `Pay ${formatMinorUnitsToCurrency(advanceMinor, currency)} & Place COD Order`
+                          : `Pay Securely · ${formatMinorUnitsToCurrency(dueNowMinor, currency)}`}
                     </span>
                     <svg className="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="20 6 9 17 4 12" />

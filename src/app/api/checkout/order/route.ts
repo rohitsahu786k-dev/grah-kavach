@@ -3,7 +3,7 @@ import { checkoutSubmissionSchema } from "@/lib/validation/checkout";
 import { validateCartServer } from "@/lib/woocommerce/cart-server";
 import { wooRequest } from "@/lib/woocommerce/client";
 import { getActivePaymentGateways } from "@/lib/woocommerce/payment-gateways";
-import { COD_FEE_LABEL, COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { getWooCommerceUrls } from "@/lib/woocommerce/client";
 import {
   createRazorpayOrder,
@@ -98,7 +98,10 @@ export async function POST(request: Request) {
     // Determine initial status based on payment method
     // COD is set to 'processing' (or 'on-hold') and unpaid
     const isCod = isCodMethod(selectedGateway.id);
-    const initialStatus = isCod ? "processing" : "pending";
+    // COD takes a small advance online when Razorpay is set up; the order then
+    // stays pending until that advance is paid. Without Razorpay it is plain COD.
+    const codAdvance = isCod && isRazorpayConfigured();
+    const initialStatus = isCod && !codAdvance ? "processing" : "pending";
 
     // Construct WooCommerce Order Payload
     const orderPayload = {
@@ -134,15 +137,6 @@ export async function POST(request: Request) {
         product_id: item.productId,
         quantity: item.quantity,
       })),
-      fee_lines: isCod
-        ? [
-            {
-              name: COD_FEE_LABEL,
-              tax_status: "none",
-              total: (COD_FEE_MINOR / 100).toFixed(2),
-            },
-          ]
-        : [],
       coupon_lines: validatedCart.coupon ? [{ code: validatedCart.coupon.code }] : [],
       customer_note: address.orderNotes || "",
       meta_data: [
@@ -177,10 +171,11 @@ export async function POST(request: Request) {
     // Razorpay pays inside the site's own popup. The Razorpay order is created
     // here because it needs the secret key; the browser only gets the order id.
     let razorpay: IdempotencyEntry["response"]["razorpay"] = null;
-    if (!isCod && selectedGateway.id === "razorpay" && isRazorpayConfigured()) {
+    const totalMinor = Math.round(parseFloat(wooOrder.total) * 100);
+    if (codAdvance || (selectedGateway.id === "razorpay" && isRazorpayConfigured())) {
       try {
         const rzpOrder = await createRazorpayOrder({
-          amountMinor: Math.round(parseFloat(wooOrder.total) * 100),
+          amountMinor: codAdvance ? Math.min(COD_ADVANCE_MINOR, totalMinor) : totalMinor,
           currency: wooOrder.currency || "INR",
           receipt: String(wooOrder.id),
           wooOrderId: wooOrder.id,
