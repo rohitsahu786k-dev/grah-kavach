@@ -1,5 +1,6 @@
 "use client";
 
+import { COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import type { PaymentMethodInfo } from "@/lib/woocommerce/payment-gateways";
 
 type PaymentSelectorProps = {
@@ -41,7 +42,7 @@ export function PaymentSelector({
         return (
           <label
             key={method.id}
-            className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4.5 transition-all ${
+            className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 sm:gap-4 sm:p-4.5 transition-all ${
               isSelected
                 ? "border-primary bg-primary/5 shadow-xs"
                 : "border-border bg-white hover:border-stone-400"
@@ -57,15 +58,15 @@ export function PaymentSelector({
               className="mt-1 size-4.5 text-primary accent-[var(--primary)]"
             />
 
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                 <span className="font-medium text-foreground">
                   {method.title}
                 </span>
 
-                {method.id === "cod" ? (
+                {isCodMethod(method.id) ? (
                   <span className="rounded bg-stone-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-stone-700">
-                    Pay on Delivery
+                    +₹{COD_FEE_MINOR / 100} COD charges
                   </span>
                 ) : (
                   <span className="rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-blue-700">
@@ -74,7 +75,7 @@ export function PaymentSelector({
                 )}
               </div>
 
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 break-words text-xs text-muted-foreground">
                 {method.description ||
                   (method.id === "cod"
                     ? "Pay securely in cash or via UPI QR code upon doorstep delivery."

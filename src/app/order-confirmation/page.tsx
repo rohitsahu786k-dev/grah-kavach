@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useCart } from "@/lib/cart/use-cart";
 
 type OrderConfirmationData = {
   orderNumber: string;
@@ -41,6 +42,7 @@ type OrderConfirmationData = {
     country: string;
   };
   gstin?: string;
+  fees?: { name: string; total: string }[];
   lineItems: {
     id: number;
     productId: number;
@@ -61,6 +63,7 @@ type OrderConfirmationData = {
 
 function OrderConfirmationContent() {
   const searchParams = useSearchParams();
+  const { clearCart } = useCart();
   const orderId = searchParams.get("orderId");
   const key = searchParams.get("key");
 
@@ -83,6 +86,8 @@ function OrderConfirmationContent() {
         }
         const data: OrderConfirmationData = await res.json();
         setOrder(data);
+        // Online orders keep the cart until the payment is confirmed.
+        if (!["pending", "failed", "cancelled"].includes(data.status)) clearCart();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error loading order.");
       } finally {
@@ -91,6 +96,7 @@ function OrderConfirmationContent() {
     }
 
     fetchOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId, key, linkIsIncomplete]);
 
   const message = linkIsIncomplete ? "Missing order details in link." : error;
@@ -151,7 +157,7 @@ function OrderConfirmationContent() {
           Thank you for choosing Graha Kavach. Your fire safety equipment is being prepared for dispatch.
         </p>
 
-        <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-4 rounded-xl border border-emerald-200 bg-white px-5 py-3 text-sm">
+        <div className="mt-6 inline-flex max-w-full flex-wrap items-center justify-center gap-4 rounded-xl border border-emerald-200 bg-white px-5 py-3 text-sm">
           <div>
             <span className="text-xs text-muted-foreground">Order Number:</span>
             <p className="font-mono font-bold text-foreground">#{order.orderNumber}</p>
@@ -201,6 +207,13 @@ function OrderConfirmationContent() {
                   {parseFloat(order.shippingTotal) > 0 ? `₹${order.shippingTotal}` : "FREE"}
                 </span>
               </div>
+
+              {(order.fees ?? []).map((fee) => (
+                <div key={fee.name} className="flex justify-between text-muted-foreground">
+                  <span>{fee.name}</span>
+                  <span className="font-medium text-foreground">₹{fee.total}</span>
+                </div>
+              ))}
 
               {parseFloat(order.discountTotal) > 0 ? (
                 <div className="flex justify-between text-emerald-700">
@@ -371,7 +384,7 @@ function OrderConfirmationContent() {
 export default function OrderConfirmationPage() {
   return (
     <main className="min-h-screen bg-stone-50/50 py-12">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
         <Suspense fallback={<div className="text-center py-20">Loading order...</div>}>
           <OrderConfirmationContent />
         </Suspense>

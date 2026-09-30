@@ -119,20 +119,20 @@ export default async function FireSafetyKitPage() {
   };
 
   return (
-    <main className="pb-24 lg:pb-0">
+    <main className="overflow-x-hidden pb-24 lg:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <section className="border-b border-border bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-5 text-sm text-muted-foreground lg:px-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5 text-sm text-muted-foreground lg:px-10">
           <Link href="/">Home</Link>
           <span className="mx-2">/</span>
           <span className="text-foreground">Fire Safety Kit</span>
         </div>
       </section>
 
-      <section className="bg-white py-10">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-10">
-          <div>
+      <section className="bg-white py-6 sm:py-10">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-10">
+          <div className="min-w-0">
             <ResponsiveImage
               media={heroImage}
               alt={product.name}
@@ -159,12 +159,12 @@ export default async function FireSafetyKitPage() {
             ) : null}
           </div>
 
-          <div className="lg:sticky lg:top-28 lg:self-start">
+          <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
             <Badge tone="primary">Fire Safety Kit</Badge>
-            <h1 className="mt-4 text-4xl font-medium leading-tight text-foreground lg:text-5xl">
+            <h1 className="mt-4 break-words text-3xl font-medium leading-tight sm:text-4xl text-foreground lg:text-5xl">
               {content?.headline || product.name}
             </h1>
-            <p className="mt-5 text-lg leading-8 text-foreground-muted">
+            <p className="mt-4 text-base leading-7 sm:mt-5 sm:text-lg sm:leading-8 text-foreground-muted">
               {content?.heroSupportingText || stripHtml(product.short_description)}
             </p>
 
@@ -208,8 +208,8 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-background-subtle py-16">
-        <div className="mx-auto grid max-w-7xl gap-5 px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-10">
+      <section className="bg-background-subtle py-10 sm:py-16">
+        <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-10">
           {storySections.map(([title, text]) => (
             <article className="border border-border bg-white p-5" key={title}>
               <h2 className="font-medium text-foreground">{title}</h2>
@@ -219,8 +219,8 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <section className="bg-white py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Inside the box</p>
           <h2 className="mt-3 text-3xl font-medium text-foreground">Everything in the kit.</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -235,8 +235,8 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-background-subtle py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <section className="bg-background-subtle py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Specifications</p>
           <h2 className="mt-3 text-3xl font-medium text-foreground">Verified product information.</h2>
           <div className="mt-8 overflow-hidden border border-border bg-white">
@@ -251,9 +251,9 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-2 lg:px-10">
-          <div>
+      <section className="bg-white py-10 sm:py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-10">
+          <div className="min-w-0">
             <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Placement and use</p>
             <h2 className="mt-3 text-3xl font-medium text-foreground">Use safely, and only when appropriate.</h2>
             <div className="mt-6 border border-warning bg-warning-subtle p-4 text-sm leading-6 text-warning">
@@ -278,8 +278,8 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-background-subtle py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <section className="bg-background-subtle py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Manufacturer</p>
           <h2 className="mt-3 text-3xl font-medium text-foreground">Speciality Geochem.</h2>
           <div className="mt-5 max-w-3xl leading-8 text-foreground-muted">
@@ -292,8 +292,8 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <section className="bg-white py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Certifications</p>
           <h2 className="mt-3 text-3xl font-medium text-foreground">CMS-managed verified documents.</h2>
           {content?.certifications.length ? (
@@ -313,9 +313,9 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-background-subtle py-16">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-2 lg:px-10">
-          <div>
+      <section className="bg-background-subtle py-10 sm:py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-10">
+          <div className="min-w-0">
             <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">FAQ</p>
             <h2 className="mt-3 text-3xl font-medium text-foreground">Product questions.</h2>
             {content?.faqs.length ? (
@@ -334,7 +334,7 @@ export default async function FireSafetyKitPage() {
             )}
           </div>
 
-          <div>
+          <div className="min-w-0">
             <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Reviews</p>
             <h2 className="mt-3 text-3xl font-medium text-foreground">WooCommerce reviews.</h2>
             {reviews.length ? (
@@ -356,8 +356,8 @@ export default async function FireSafetyKitPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <section className="bg-white py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Related safety articles</p>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {relatedPosts.map((post) => (

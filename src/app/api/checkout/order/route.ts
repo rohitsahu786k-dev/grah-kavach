@@ -3,6 +3,8 @@ import { checkoutSubmissionSchema } from "@/lib/validation/checkout";
 import { validateCartServer } from "@/lib/woocommerce/cart-server";
 import { wooRequest } from "@/lib/woocommerce/client";
 import { getActivePaymentGateways } from "@/lib/woocommerce/payment-gateways";
+import { COD_FEE_LABEL, COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { getWooCommerceUrls } from "@/lib/woocommerce/client";
 
 type IdempotencyEntry = {
   response: {
@@ -13,6 +15,8 @@ type IdempotencyEntry = {
     status: string;
     total: string;
     currency: string;
+    isOnline: boolean;
+    paymentUrl: string | null;
   };
   timestamp: number;
 };
@@ -45,7 +49,8 @@ export async function POST(request: Request) {
     const { address, paymentMethod, items, couponCode, idempotencyKey } = parsed.data;
 
     // Check idempotency cache
-    const existing = idempotencyStore.get(idempotencyKey);
+    const cacheKey = `${idempotencyKey}:${paymentMethod}`;
+    const existing = idempotencyStore.get(cacheKey);
     if (existing) {
       return NextResponse.json(existing.response);
     }
@@ -86,7 +91,8 @@ export async function POST(request: Request) {
 
     // Determine initial status based on payment method
     // COD is set to 'processing' (or 'on-hold') and unpaid
-    const initialStatus = paymentMethod === "cod" ? "processing" : "pending";
+    const isCod = isCodMethod(selectedGateway.id);
+    const initialStatus = isCod ? "processing" : "pending";
 
     // Construct WooCommerce Order Payload
     const orderPayload = {
@@ -122,6 +128,15 @@ export async function POST(request: Request) {
         product_id: item.productId,
         quantity: item.quantity,
       })),
+      fee_lines: isCod
+        ? [
+            {
+              name: COD_FEE_LABEL,
+              tax_status: "none",
+              total: (COD_FEE_MINOR / 100).toFixed(2),
+            },
+          ]
+        : [],
       coupon_lines: validatedCart.coupon ? [{ code: validatedCart.coupon.code }] : [],
       customer_note: address.orderNotes || "",
       meta_data: [
@@ -145,6 +160,7 @@ export async function POST(request: Request) {
       status: string;
       total: string;
       currency: string;
+      payment_url?: string;
     }>({
       path: "/orders",
       method: "POST",
@@ -160,10 +176,17 @@ export async function POST(request: Request) {
       status: wooOrder.status,
       total: wooOrder.total,
       currency: wooOrder.currency,
+      isOnline: !isCod && selectedGateway.isOnline,
+      // Online gateways (Razorpay) collect payment on WooCommerce's order-pay page.
+      paymentUrl:
+        !isCod && selectedGateway.isOnline
+          ? wooOrder.payment_url ||
+            `${getWooCommerceUrls().checkout}order-pay/${wooOrder.id}/?pay_for_order=true&key=${wooOrder.order_key}`
+          : null,
     };
 
     // Cache idempotency response
-    idempotencyStore.set(idempotencyKey, {
+    idempotencyStore.set(cacheKey, {
       response: result,
       timestamp: Date.now(),
     });

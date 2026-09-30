@@ -58,6 +58,7 @@ type WooRawOrder = {
     country: string;
   };
   line_items: WooOrderItem[];
+  fee_lines?: { id: number; name: string; total: string }[];
   meta_data?: { key: string; value: any }[];
 };
 
@@ -121,6 +122,7 @@ export async function GET(
         order.meta_data?.find(
           (m) => m.key === "_billing_gstin" || m.key === "GSTIN" || m.key === "gstin",
         )?.value || "",
+      fees: (order.fee_lines ?? []).map((f) => ({ name: f.name, total: f.total })),
       lineItems: order.line_items.map((item) => ({
         id: item.id,
         productId: item.product_id,

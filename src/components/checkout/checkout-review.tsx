@@ -4,13 +4,17 @@ import Image from "next/image";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import type { ValidatedCart } from "@/lib/cart/types";
 
+import { COD_FEE_LABEL } from "@/lib/config/checkout";
+
 type CheckoutReviewProps = {
   cart: ValidatedCart;
+  /** Extra charge for the selected payment method (COD), in paise. */
+  codFeeMinor?: number;
 };
 
-export function CheckoutReview({ cart }: CheckoutReviewProps) {
+export function CheckoutReview({ cart, codFeeMinor = 0 }: CheckoutReviewProps) {
   return (
-    <div className="rounded-2xl border border-border bg-white p-6 shadow-xs lg:p-8">
+    <div className="rounded-2xl border border-border bg-white p-4 shadow-xs sm:p-6 lg:p-8">
       <h3 className="text-lg font-medium text-foreground">Order Review</h3>
 
       {/* Item list */}
@@ -42,7 +46,7 @@ export function CheckoutReview({ cart }: CheckoutReviewProps) {
               </p>
             </div>
 
-            <span className="text-sm font-semibold text-foreground">
+            <span className="shrink-0 text-sm font-semibold text-foreground">
               {formatMinorUnitsToCurrency(item.lineSubtotalMinor, cart.currency)}
             </span>
           </div>
@@ -76,6 +80,15 @@ export function CheckoutReview({ cart }: CheckoutReviewProps) {
           </span>
         </div>
 
+        {codFeeMinor > 0 ? (
+          <div className="flex justify-between gap-3 text-muted-foreground">
+            <span>{COD_FEE_LABEL}</span>
+            <span className="shrink-0 font-medium text-foreground">
+              {formatMinorUnitsToCurrency(codFeeMinor, cart.currency)}
+            </span>
+          </div>
+        ) : null}
+
         <div className="flex justify-between text-muted-foreground">
           <span>Estimated Taxes</span>
           <span className="font-medium text-foreground">
@@ -88,7 +101,7 @@ export function CheckoutReview({ cart }: CheckoutReviewProps) {
         <div className="flex items-baseline justify-between border-t border-border pt-4 text-base font-semibold text-foreground">
           <span>Total Payable</span>
           <span className="text-2xl font-bold tracking-tight text-foreground">
-            {formatMinorUnitsToCurrency(cart.totalMinor, cart.currency)}
+            {formatMinorUnitsToCurrency(cart.totalMinor + codFeeMinor, cart.currency)}
           </span>
         </div>
       </div>

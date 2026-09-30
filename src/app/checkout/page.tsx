@@ -8,6 +8,8 @@ import { AddressForm } from "@/components/checkout/address-form";
 import { PaymentSelector } from "@/components/checkout/payment-selector";
 import { CheckoutReview } from "@/components/checkout/checkout-review";
 import { indianAddressSchema, type IndianAddress } from "@/lib/validation/checkout";
+import { COD_FEE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import type { ValidatedCart } from "@/lib/cart/types";
 import type { PaymentMethodInfo } from "@/lib/woocommerce/payment-gateways";
 
@@ -156,7 +158,13 @@ export default function CheckoutPage() {
         throw new Error(data.error || (data.messages && data.messages[0]) || "Order creation failed.");
       }
 
-      // Order created successfully! Clear the cart and navigate to confirmation
+      // Online gateway (Razorpay): hand over to the payment page. The cart is
+      // kept until the confirmation page sees a paid order.
+      if (data.isOnline && data.paymentUrl) {
+        window.location.assign(data.paymentUrl);
+        return;
+      }
+
       clearCart();
       router.push(`/order-confirmation?orderId=${data.orderId}&key=${data.orderKey}`);
     } catch (err) {
@@ -165,6 +173,10 @@ export default function CheckoutPage() {
       window.scrollTo({ top: 100, behavior: "smooth" });
     }
   };
+
+  const isCod = isCodMethod(selectedPaymentMethod);
+  const codFeeMinor = isCod ? COD_FEE_MINOR : 0;
+  const payableMinor = (validatedCart?.totalMinor ?? 0) + codFeeMinor;
 
   if (!isReady || loading) {
     return (
@@ -202,10 +214,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-stone-50/50 py-10">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+    <main className="min-h-screen overflow-x-hidden bg-stone-50/50 py-6 sm:py-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
         {/* Breadcrumb */}
-        <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link href="/" className="hover:text-foreground">
             Home
           </Link>
@@ -217,7 +229,7 @@ export default function CheckoutPage() {
           <span className="text-foreground">Checkout</span>
         </div>
 
-        <h1 className="text-3xl font-medium tracking-tight text-foreground lg:text-4xl">
+        <h1 className="text-2xl font-medium sm:text-3xl tracking-tight text-foreground lg:text-4xl">
           Complete Your Order
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -244,10 +256,10 @@ export default function CheckoutPage() {
           </div>
         ) : null}
 
-        <form onSubmit={handlePlaceOrder} className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px] lg:items-start">
+        <form onSubmit={handlePlaceOrder} className="mt-6 grid gap-6 sm:mt-8 sm:gap-8 lg:grid-cols-[1fr_400px] lg:items-start">
           {/* Left Column: Delivery Address & Payment Selection */}
-          <div className="space-y-8">
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-xs lg:p-8">
+          <div className="min-w-0 space-y-6 sm:space-y-8">
+            <div className="rounded-2xl border border-border bg-white p-4 shadow-xs sm:p-6 lg:p-8">
               <AddressForm
                 address={address}
                 onChange={handleAddressChange}
@@ -256,7 +268,7 @@ export default function CheckoutPage() {
               />
             </div>
 
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-xs lg:p-8">
+            <div className="rounded-2xl border border-border bg-white p-4 shadow-xs sm:p-6 lg:p-8">
               <h3 className="text-lg font-medium text-foreground">
                 3. Payment Method
               </h3>
@@ -276,18 +288,18 @@ export default function CheckoutPage() {
           </div>
 
           {/* Right Column: Order Review & Submit */}
-          <div className="space-y-6 lg:sticky lg:top-24">
+          <div className="min-w-0 space-y-6 lg:sticky lg:top-24">
             {validatedCart ? (
-              <CheckoutReview cart={validatedCart} />
+              <CheckoutReview cart={validatedCart} codFeeMinor={codFeeMinor} />
             ) : (
               <div className="h-64 animate-pulse rounded-2xl bg-white" />
             )}
 
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-xs">
+            <div className="rounded-2xl border border-border bg-white p-4 shadow-xs sm:p-6">
               <button
                 type="submit"
                 disabled={submitting || paymentMethods.length === 0 || validatedCart?.hasErrors}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-stone-300"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-4 text-center text-base font-semibold text-white shadow-md transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-stone-300"
               >
                 {submitting ? (
                   <>
@@ -311,11 +323,15 @@ export default function CheckoutPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    <span>Placing Order in WooCommerce...</span>
+                    <span>{isCod ? "Placing your order..." : "Redirecting to secure payment..."}</span>
                   </>
                 ) : (
                   <>
-                    <span>Confirm & Place Order</span>
+                    <span>
+                      {isCod
+                        ? `Place COD Order · ${formatMinorUnitsToCurrency(payableMinor, validatedCart?.currency ?? "INR")}`
+                        : `Pay Securely · ${formatMinorUnitsToCurrency(payableMinor, validatedCart?.currency ?? "INR")}`}
+                    </span>
                     <svg className="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>

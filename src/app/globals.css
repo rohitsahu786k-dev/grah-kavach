@@ -504,3 +504,17 @@ a {
 .gk-prose > ul + p {
   margin-top: 1.25rem;
 }
+
+/*
+ * No page may scroll sideways on a phone. `hidden` on the root is what the
+ * viewport actually honours; `clip` on the body does the same without turning
+ * the body into a scroll container, so `position: sticky` keeps working.
+ */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
