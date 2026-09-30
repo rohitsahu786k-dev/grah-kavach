@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, Calendar, ArrowRight, ShieldCheck } from "lucide-react";
 import type { WpPost } from "@/lib/wordpress/types";
+import { fallbackPostImage } from "@/lib/wordpress/fallback-media";
 import { stripHtml, calculateReadingTime, formatIndianDate } from "@/lib/wordpress/format";
 
 interface BlogCardProps {
@@ -16,7 +17,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
   const cleanTitle = stripHtml(post.title);
   const cleanExcerpt = stripHtml(post.excerpt);
 
-  const featuredImgUrl = post.featuredImage?.node?.sourceUrl;
+  const featuredImgUrl = post.featuredImage?.node?.sourceUrl ?? fallbackPostImage(cleanTitle).url;
 
   if (featured) {
     return (

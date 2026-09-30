@@ -8,6 +8,8 @@ import { PurchaseActions } from "@/components/commerce/purchase-actions";
 import { SecurePaymentStrip } from "@/components/commerce/secure-payment-strip";
 import { StockStatus } from "@/components/commerce/stock-status";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
+import { ProductGallery } from "@/components/commerce/product-gallery";
+import { fallbackPostImage, kitFallbackItems } from "@/lib/wordpress/fallback-media";
 
 import {
   formatMinorUnitsToCurrency,
@@ -98,7 +100,15 @@ export default async function FireSafetyKitPage() {
     ...wooProductGallery(product),
     ...(content?.galleryAdditions ?? []),
   ];
-  const heroImage = gallery[0] ?? summary.image;
+  const galleryImages = gallery.length ? gallery : summary.image ? [summary.image] : [];
+  const kitItems = content?.kitContents.length
+    ? content.kitContents.map((item, i) => ({
+        id: item.id,
+        title: item.title,
+        summary: item.summary || item.quantity,
+        image: item.image ?? kitFallbackItems[i % kitFallbackItems.length].image,
+      }))
+    : kitFallbackItems;
   const unavailable = product.status !== "publish" || summary.stockStatus === "outofstock";
 
   const specs = content?.specifications.length ? content.specifications.map((spec) => [spec.group, spec.label, spec.value]) : fallbackSpecs;
@@ -133,30 +143,7 @@ export default async function FireSafetyKitPage() {
       <section className="bg-white py-6 sm:py-10">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-10">
           <div className="min-w-0">
-            <ResponsiveImage
-              media={heroImage}
-              alt={product.name}
-              aspect="square"
-              fit="contain"
-              priority
-              className="border border-border bg-background-subtle p-4"
-              sizes="(max-width: 1023px) 94vw, 50vw"
-            />
-            {gallery.length > 1 ? (
-              <div className="mt-4 grid grid-cols-4 gap-3">
-                {gallery.slice(1, 5).map((image) => (
-                  <ResponsiveImage
-                    key={image.url}
-                    media={image}
-                    alt={image.alt || product.name}
-                    aspect="square"
-                    fit="contain"
-                    className="border border-border bg-white p-2"
-                    sizes="120px"
-                  />
-                ))}
-              </div>
-            ) : null}
+            <ProductGallery images={galleryImages} alt={product.name} />
           </div>
 
           <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
@@ -224,11 +211,11 @@ export default async function FireSafetyKitPage() {
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Inside the box</p>
           <h2 className="mt-3 text-3xl font-medium text-foreground">Everything in the kit.</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {(content?.kitContents.length ? content.kitContents : []).map((item) => (
+            {kitItems.map((item) => (
               <article className="border border-border bg-background-subtle p-4" key={item.id}>
                 <ResponsiveImage media={item.image ?? null} alt={item.title} aspect="square" fit="contain" />
                 <h3 className="mt-4 font-medium">{item.title}</h3>
-                <p className="mt-2 text-sm text-foreground-muted">{item.summary || item.quantity}</p>
+                <p className="mt-2 text-sm text-foreground-muted">{item.summary}</p>
               </article>
             ))}
           </div>
@@ -361,12 +348,30 @@ export default async function FireSafetyKitPage() {
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Related safety articles</p>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {relatedPosts.map((post) => (
-              <article className="border border-border bg-background-subtle p-5" key={post.databaseId}>
+              <article className="overflow-hidden border border-border bg-background-subtle" key={post.databaseId}>
+                <ResponsiveImage
+                  media={
+                    post.featuredImage?.node?.sourceUrl
+                      ? {
+                          id: post.databaseId,
+                          url: post.featuredImage.node.sourceUrl,
+                          alt: post.featuredImage.node.altText || stripHtml(post.title),
+                          width: null,
+                          height: null,
+                        }
+                      : fallbackPostImage(stripHtml(post.title))
+                  }
+                  aspect="16/9"
+                  fit="cover"
+                  sizes="(max-width: 767px) 92vw, 33vw"
+                />
+                <div className="p-5">
                 <h3 className="text-lg font-medium text-foreground">{stripHtml(post.title)}</h3>
                 <p className="mt-3 line-clamp-3 text-sm leading-6 text-foreground-muted">{stripHtml(post.excerpt)}</p>
                 <Link className="gk-text-gradient mt-5 inline-flex text-sm font-medium" href={`/blog/${post.slug}`}>
                   Read article
                 </Link>
+                </div>
               </article>
             ))}
           </div>
