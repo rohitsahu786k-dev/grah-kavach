@@ -103,13 +103,13 @@ export async function POST(req: Request) {
 
     if (!wpRes.ok) {
       console.error("WordPress Inquiry submission failed with status:", wpRes.status);
-      // Even if WP storage had an issue, acknowledge the user so they don't get frustrated
+      // Do not claim success for a message that was never saved.
       return NextResponse.json(
         {
-          success: true,
-          message: "Thank you for reaching out. We have received your inquiry and will contact you shortly.",
+          error:
+            "We could not send your message right now. Please try again in a few minutes or call us directly.",
         },
-        { status: 200 }
+        { status: 502 }
       );
     }
 
