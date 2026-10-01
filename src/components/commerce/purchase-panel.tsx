@@ -8,6 +8,8 @@ import { AddToCartButton } from "./add-to-cart-button";
 import { QuantitySelector } from "./quantity-selector";
 import { WishlistButton } from "./wishlist-button";
 
+import { useBuyNow } from "./use-buy-now";
+
 type Props = {
   productId: number;
   productName: string;
@@ -33,15 +35,13 @@ export function PurchasePanel({
   showBuyNow = true,
   className,
 }: Props) {
-  const router = useRouter();
-  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const { handleBuyNow: triggerBuyNow, isBuying } = useBuyNow(productId, productName);
 
   const max = typeof maxQuantity === "number" && maxQuantity > 0 ? Math.min(maxQuantity, 99) : 99;
 
   function handleBuyNow() {
-    addItem(productId, quantity);
-    router.push("/checkout");
+    void triggerBuyNow(quantity);
   }
 
   return (
@@ -51,20 +51,22 @@ export function PurchasePanel({
           value={quantity}
           onChange={setQuantity}
           max={max}
-          disabled={disabled}
+          disabled={disabled || isBuying}
         />
 
         <AddToCartButton
           productId={productId}
           productName={productName}
           quantity={quantity}
-          disabled={disabled}
+          disabled={disabled || isBuying}
           size="md"
           variant={showBuyNow ? "outline" : "primary"}
         />
 
         {showBuyNow && !disabled ? (
-          <Button onClick={handleBuyNow}>Buy Now</Button>
+          <Button onClick={handleBuyNow} disabled={isBuying}>
+            {isBuying ? "Opening Razorpay..." : "Buy Now"}
+          </Button>
         ) : null}
 
         <WishlistButton

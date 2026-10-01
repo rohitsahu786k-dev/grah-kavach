@@ -8,6 +8,8 @@ import { AddToCartButton } from "./add-to-cart-button";
 import { QuantitySelector } from "./quantity-selector";
 import { WishlistButton } from "./wishlist-button";
 
+import { useBuyNow } from "./use-buy-now";
+
 type PurchaseActionsProps = {
   productId: number;
   productName?: string;
@@ -35,15 +37,13 @@ export function PurchaseActions({
   priceLabel,
   mobile = false,
 }: PurchaseActionsProps) {
-  const router = useRouter();
-  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const { handleBuyNow: triggerBuyNow, isBuying } = useBuyNow(productId, productName);
 
   const max = typeof maxQuantity === "number" && maxQuantity > 0 ? Math.min(maxQuantity, 99) : 99;
 
   function handleBuyNow() {
-    addItem(productId, quantity);
-    router.push("/checkout");
+    void triggerBuyNow(quantity);
   }
 
   if (mobile) {
@@ -65,14 +65,14 @@ export function PurchaseActions({
           <AddToCartButton
             productId={productId}
             productName={productName}
-            disabled={disabled}
+            disabled={disabled || isBuying}
             size="sm"
             variant="outline"
           />
 
           {!disabled ? (
-            <Button size="sm" onClick={handleBuyNow}>
-              Buy Now
+            <Button size="sm" onClick={handleBuyNow} disabled={isBuying}>
+              {isBuying ? "Opening..." : "Buy Now"}
             </Button>
           ) : null}
         </div>
@@ -82,17 +82,21 @@ export function PurchaseActions({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <QuantitySelector value={quantity} onChange={setQuantity} max={max} disabled={disabled} />
+      <QuantitySelector value={quantity} onChange={setQuantity} max={max} disabled={disabled || isBuying} />
 
       <AddToCartButton
         productId={productId}
         productName={productName}
         quantity={quantity}
-        disabled={disabled}
+        disabled={disabled || isBuying}
         variant="outline"
       />
 
-      {!disabled ? <Button onClick={handleBuyNow}>Buy Now</Button> : null}
+      {!disabled ? (
+        <Button onClick={handleBuyNow} disabled={isBuying}>
+          {isBuying ? "Opening Razorpay..." : "Buy Now"}
+        </Button>
+      ) : null}
 
       <WishlistButton productId={productId} productName={productName} variant="inline" />
     </div>

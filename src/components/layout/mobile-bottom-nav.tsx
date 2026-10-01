@@ -42,15 +42,15 @@ function itemClass(active: boolean) {
   return cn(
     // 44px+ target inside a 64px bar, with the label under the glyph.
     "relative flex min-h-[56px] flex-1 flex-col items-center justify-center gap-1 rounded-[var(--radius)] px-1 pt-1 transition-colors",
-    active ? "gk-text-gradient" : "text-muted-foreground active:bg-muted",
+    active ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground active:bg-muted font-normal",
   );
 }
 
-const labelClass = "text-[10.5px] leading-none font-medium tracking-tight";
+const labelClass = "text-[10.5px] leading-none tracking-tight";
 
 export function MobileBottomNav({ productHref, whatsappUrl }: Props) {
   const pathname = usePathname();
-  const { openCart } = useCommerceUI();
+  const { openCart, isCartOpen } = useCommerceUI();
   const { totalItemCount, isReady: cartReady } = useCart();
   const { count: wishlistCount, isReady: wishlistReady } = useWishlist();
 
@@ -97,7 +97,7 @@ export function MobileBottomNav({ productHref, whatsappUrl }: Props) {
           type="button"
           onClick={openCart}
           aria-label={`Cart${cartReady && totalItemCount > 0 ? `, ${totalItemCount} ${totalItemCount === 1 ? "item" : "items"}` : ", empty"}`}
-          className={itemClass(false)}
+          className={itemClass(isCartOpen)}
         >
           <span className="relative">
             <CartIcon className="size-[22px]" />

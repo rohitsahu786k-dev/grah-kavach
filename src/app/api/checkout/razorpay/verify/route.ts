@@ -4,6 +4,7 @@ import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { wooRequest } from "@/lib/woocommerce/client";
 import {
   fetchRazorpayOrder,
+  fetchRazorpayPayment,
   isRazorpayConfigured,
   verifyPaymentSignature,
 } from "@/lib/razorpay/server";
@@ -87,17 +88,32 @@ export async function POST(request: Request) {
       !isCodAdvance &&
       (order.status === "pending" || order.status === "failed" || order.status === "on-hold")
     ) {
+      const paymentDetails = await fetchRazorpayPayment(razorpay_payment_id).catch(() => null);
+      const updateBody: Record<string, unknown> = {
+        set_paid: true,
+        status: "processing",
+        transaction_id: razorpay_payment_id,
+        meta_data: [
+          { key: "razorpay_payment_id", value: razorpay_payment_id },
+          { key: "razorpay_order_id", value: razorpay_order_id },
+        ],
+      };
+
+      if (paymentDetails) {
+        const contact = typeof paymentDetails.contact === "string" ? paymentDetails.contact : "";
+        const email = typeof paymentDetails.email === "string" ? paymentDetails.email : "";
+        if (contact || email) {
+          updateBody.billing = {
+            ...(contact ? { phone: contact } : {}),
+            ...(email ? { email } : {}),
+          };
+        }
+      }
+
       await wooRequest({
         path: `/orders/${wooOrderId}`,
         method: "PUT",
-        body: {
-          set_paid: true,
-          transaction_id: razorpay_payment_id,
-          meta_data: [
-            { key: "razorpay_payment_id", value: razorpay_payment_id },
-            { key: "razorpay_order_id", value: razorpay_order_id },
-          ],
-        },
+        body: updateBody,
         revalidate: false,
       });
     }

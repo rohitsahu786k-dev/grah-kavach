@@ -50,9 +50,10 @@ type PayInput = {
   orderId: string;
   amount: number;
   currency: string;
-  name: string;
-  description: string;
-  prefill: { name: string; email: string; contact: string };
+  name?: string;
+  description?: string;
+  prefill?: Partial<{ name: string; email: string; contact: string }>;
+  one_click_checkout?: boolean;
 };
 
 /** Opens the Razorpay popup and resolves once the customer pays, closes it, or the payment fails. */
@@ -62,18 +63,28 @@ export async function payWithRazorpay(input: PayInput): Promise<RazorpayResult> 
   if (!Razorpay) throw new Error("Secure payment window is unavailable.");
 
   return new Promise<RazorpayResult>((resolve) => {
-    const instance = new Razorpay({
+    const options: Record<string, unknown> = {
       key: input.keyId,
       order_id: input.orderId,
       amount: input.amount,
       currency: input.currency,
-      name: input.name,
-      description: input.description,
-      prefill: input.prefill,
+      name: input.name || "Graha Kavach",
+      description: input.description || "Fire Safety Order",
       theme: { color: "#E01820" },
+      one_click_checkout: input.one_click_checkout ?? true,
       handler: (payment: RazorpaySuccess) => resolve({ status: "paid", payment }),
-      modal: { ondismiss: () => resolve({ status: "dismissed" }) },
-    });
+      modal: {
+        ondismiss: () => resolve({ status: "dismissed" }),
+        backdropclose: false,
+        escape: true,
+      },
+    };
+
+    if (input.prefill) {
+      options.prefill = input.prefill;
+    }
+
+    const instance = new Razorpay(options);
 
     instance.on("payment.failed", (response) =>
       resolve({

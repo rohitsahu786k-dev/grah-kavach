@@ -67,6 +67,10 @@ export function fetchRazorpayOrder(id: string) {
   return razorpayRequest<RazorpayOrder>(`/orders/${encodeURIComponent(id)}`);
 }
 
+export function fetchRazorpayPayment(id: string) {
+  return razorpayRequest<Record<string, unknown>>(`/payments/${encodeURIComponent(id)}`);
+}
+
 /** Checks the signature Razorpay returns to the browser after a successful payment. */
 export function verifyPaymentSignature(orderId: string, paymentId: string, signature: string) {
   const expected = createHmac("sha256", serverEnv().RAZORPAY_KEY_SECRET)
