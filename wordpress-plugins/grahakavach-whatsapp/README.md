@@ -1,6 +1,6 @@
 # Graha Kavach WhatsApp Alerts
 
-WhatsApp Cloud API messages for the WooCommerce backend (`admin.grahakavach.in`) and the Next.js storefront.
+Automated WhatsApp Cloud API messages for the WooCommerce backend (`admin.grahakavach.in`) and the Next.js storefront.
 
 | Message | Template | Triggered by |
 | --- | --- | --- |
@@ -43,6 +43,8 @@ WhatsApp Cloud API messages for the WooCommerce backend (`admin.grahakavach.in`)
 6. Settings tab -> send a test message to your own number. Check the **Message log** tab.
 
 The Next.js side needs no new environment variable. Deploy the storefront as usual.
+
+Templates stay PENDING until Meta approves them (a few minutes to 24 hours); messages sent before that fail with error 132001.
 
 ## Notes
 
