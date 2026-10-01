@@ -8,7 +8,11 @@ const registerSchema = z.object({
   lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().trim().email("Enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  phone: z.string().trim().optional().default(""),
+  phone: z
+    .string()
+    .trim()
+    .transform((value) => value.replace(/^(\+91|0)/, "").replace(/\D/g, ""))
+    .refine((value) => /^[6-9]\d{9}$/.test(value), "Enter a valid 10-digit mobile number"),
 });
 
 export async function POST(request: Request) {

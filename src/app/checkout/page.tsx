@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart/use-cart";
+import { useCartCapture } from "@/lib/cart/use-cart-capture";
 import { AddressForm } from "@/components/checkout/address-form";
 import { PaymentSelector } from "@/components/checkout/payment-selector";
 import { CheckoutReview } from "@/components/checkout/checkout-review";
@@ -43,6 +44,14 @@ export default function CheckoutPage() {
   });
 
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof IndianAddress, string>>>({});
+
+  // Lets us follow up on WhatsApp if the shopper leaves before paying.
+  useCartCapture({
+    items,
+    phone: address.phone,
+    name: `${address.firstName} ${address.lastName}`,
+    email: address.email,
+  });
 
   // Unique Idempotency Key generated once per checkout session
   const [idempotencyKey] = useState(() => {

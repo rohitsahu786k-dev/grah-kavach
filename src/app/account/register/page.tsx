@@ -35,6 +35,11 @@ function RegisterForm() {
       return;
     }
 
+    if (!/^[6-9]\d{9}$/.test(phone.trim())) {
+      setError("Enter a valid 10-digit mobile number.");
+      return;
+    }
+
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
@@ -139,7 +144,7 @@ function RegisterForm() {
             )}
           </Field>
 
-          <Field id="phone" label="Mobile Phone (India)" hint="For courier delivery coordination">
+          <Field id="phone" label="Mobile Phone (India)" hint="We send order updates on WhatsApp to this number" required>
             {({ id, "aria-describedby": describedBy, "aria-invalid": invalid }) => (
               <div className="relative flex items-center">
                 <span className="pointer-events-none absolute left-3.5 text-sm font-medium text-stone-500">

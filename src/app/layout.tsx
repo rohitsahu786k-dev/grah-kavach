@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { CartRecovery } from "@/components/cart/cart-recovery";
 import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { ScrollToTopOnNav } from "@/components/layout/scroll-to-top-on-nav";
@@ -97,6 +98,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <CommerceUIProvider>
                 <ToastProvider>
                   <ScrollToTopOnNav />
+                  <CartRecovery />
                   <a
                     href="#main"
                     className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-[var(--radius)] focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:text-white"
