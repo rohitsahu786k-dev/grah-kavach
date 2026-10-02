@@ -1,9 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart/cart-context";
 import { AddToCartButton } from "./add-to-cart-button";
 import { QuantitySelector } from "./quantity-selector";
 import { WishlistButton } from "./wishlist-button";
@@ -36,7 +34,7 @@ export function PurchasePanel({
   className,
 }: Props) {
   const [quantity, setQuantity] = useState(1);
-  const { handleBuyNow: triggerBuyNow, isBuying } = useBuyNow(productId, productName);
+  const { handleBuyNow: triggerBuyNow } = useBuyNow(productId);
 
   const max = typeof maxQuantity === "number" && maxQuantity > 0 ? Math.min(maxQuantity, 99) : 99;
 
@@ -51,21 +49,21 @@ export function PurchasePanel({
           value={quantity}
           onChange={setQuantity}
           max={max}
-          disabled={disabled || isBuying}
+          disabled={disabled}
         />
 
         <AddToCartButton
           productId={productId}
           productName={productName}
           quantity={quantity}
-          disabled={disabled || isBuying}
+          disabled={disabled}
           size="md"
           variant={showBuyNow ? "outline" : "primary"}
         />
 
         {showBuyNow && !disabled ? (
-          <Button onClick={handleBuyNow} disabled={isBuying}>
-            {isBuying ? "Opening Razorpay..." : "Buy Now"}
+          <Button onClick={handleBuyNow}>
+            Buy Now
           </Button>
         ) : null}
 

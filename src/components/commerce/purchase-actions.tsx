@@ -1,9 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart/cart-context";
 import { AddToCartButton } from "./add-to-cart-button";
 import { QuantitySelector } from "./quantity-selector";
 import { WishlistButton } from "./wishlist-button";
@@ -38,7 +36,7 @@ export function PurchaseActions({
   mobile = false,
 }: PurchaseActionsProps) {
   const [quantity, setQuantity] = useState(1);
-  const { handleBuyNow: triggerBuyNow, isBuying } = useBuyNow(productId, productName);
+  const { handleBuyNow: triggerBuyNow } = useBuyNow(productId);
 
   const max = typeof maxQuantity === "number" && maxQuantity > 0 ? Math.min(maxQuantity, 99) : 99;
 
@@ -65,14 +63,14 @@ export function PurchaseActions({
           <AddToCartButton
             productId={productId}
             productName={productName}
-            disabled={disabled || isBuying}
+            disabled={disabled}
             size="sm"
             variant="outline"
           />
 
           {!disabled ? (
-            <Button size="sm" onClick={handleBuyNow} disabled={isBuying}>
-              {isBuying ? "Opening..." : "Buy Now"}
+            <Button size="sm" onClick={handleBuyNow}>
+              Buy Now
             </Button>
           ) : null}
         </div>
@@ -82,19 +80,19 @@ export function PurchaseActions({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <QuantitySelector value={quantity} onChange={setQuantity} max={max} disabled={disabled || isBuying} />
+      <QuantitySelector value={quantity} onChange={setQuantity} max={max} disabled={disabled} />
 
       <AddToCartButton
         productId={productId}
         productName={productName}
         quantity={quantity}
-        disabled={disabled || isBuying}
+        disabled={disabled}
         variant="outline"
       />
 
       {!disabled ? (
-        <Button onClick={handleBuyNow} disabled={isBuying}>
-          {isBuying ? "Opening Razorpay..." : "Buy Now"}
+        <Button onClick={handleBuyNow}>
+          Buy Now
         </Button>
       ) : null}
 

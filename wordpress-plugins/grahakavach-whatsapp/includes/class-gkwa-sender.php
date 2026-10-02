@@ -22,7 +22,7 @@ final class GKWA_Sender {
 	private const MAX_ATTEMPTS = 4;
 
 	public static function init(): void {
-		add_action( self::JOB_HOOK, array( __CLASS__, 'process_job' ), 10, 1 );
+		add_action( self::JOB_HOOK, array( __CLASS__, 'process_job' ), 10, 2 );
 	}
 
 	/**
@@ -95,29 +95,74 @@ final class GKWA_Sender {
 			)
 		);
 
-		self::schedule( $log_id, max( 0, (int) ( $ctx['delay'] ?? 0 ) ) );
+		$delay = max( 0, (int) ( $ctx['delay'] ?? 0 ) );
+
+		// Always keep a scheduled job as the safety net; it is a no-op once sent.
+		self::schedule( $log_id, $delay );
+
+		// No delay requested: send as soon as this request has answered the
+		// browser, instead of waiting for the next scheduler run.
+		if ( 0 === $delay ) {
+			self::send_after_response( $log_id );
+		}
 
 		return $log_id;
 	}
 
-	private static function schedule( int $log_id, int $delay ): void {
+	/** @var int[] */
+	private static $pending = array();
+
+	private static function send_after_response( int $log_id ): void {
+		if ( empty( self::$pending ) ) {
+			add_action( 'shutdown', array( __CLASS__, 'flush_pending' ), 1 );
+		}
+		self::$pending[] = $log_id;
+	}
+
+	public static function flush_pending(): void {
+		// Hand the response back first so the customer never waits on Meta.
+		if ( function_exists( 'fastcgi_finish_request' ) ) {
+			fastcgi_finish_request();
+		} elseif ( function_exists( 'litespeed_finish_request' ) ) {
+			litespeed_finish_request();
+		}
+
+		ignore_user_abort( true );
+		if ( function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( 60 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		}
+
+		$ids                = self::$pending;
+		self::$pending = array();
+		foreach ( $ids as $id ) {
+			self::process_job( $id );
+		}
+	}
+
+	private static function schedule( int $log_id, int $delay, int $retry = 0 ): void {
 		$when = time() + max( 5, $delay );
 
 		if ( function_exists( 'as_schedule_single_action' ) ) {
-			as_schedule_single_action( $when, self::JOB_HOOK, array( $log_id ), 'gkwa' );
+			as_schedule_single_action( $when, self::JOB_HOOK, array( $log_id, $retry ), 'gkwa' );
 		} else {
-			wp_schedule_single_event( $when, self::JOB_HOOK, array( $log_id ) );
+			wp_schedule_single_event( $when, self::JOB_HOOK, array( $log_id, $retry ) );
 		}
 	}
 
 	/**
 	 * Background job: perform the send and record the outcome.
 	 */
-	public static function process_job( $log_id ): void {
+	public static function process_job( $log_id, $retry = 0 ): void {
 		$log_id = (int) $log_id;
-		$row    = GKWA_DB::log_get( $log_id );
 
-		if ( ! $row || ! in_array( $row['status'], array( 'queued', 'retry' ), true ) ) {
+		// Claim the row so the immediate send and the scheduled safety net can
+		// never both deliver the same message.
+		if ( ! GKWA_DB::log_claim( $log_id, (bool) $retry ) ) {
+			return;
+		}
+
+		$row = GKWA_DB::log_get( $log_id );
+		if ( ! $row ) {
 			return;
 		}
 
@@ -176,7 +221,7 @@ final class GKWA_Sender {
 			);
 			// 2, 10, 30 minutes.
 			$backoff = array( 1 => 120, 2 => 600, 3 => 1800 );
-			self::schedule( $log_id, $backoff[ $attempts ] ?? 1800 );
+			self::schedule( $log_id, $backoff[ $attempts ] ?? 1800, 1 );
 			return;
 		}
 

@@ -60,6 +60,30 @@ final class GKWA_Events {
 		}
 	}
 
+	/** @var array<string,bool> */
+	private static $shutdown_jobs = array();
+
+	/**
+	 * Run a job once, at the very end of this request. By then every meta write
+	 * (COD advance, tracking numbers) is committed, and the customer's message
+	 * goes out within a second or two instead of waiting for the scheduler.
+	 */
+	private static function at_shutdown( callable $job, int $id ): void {
+		$key = ( is_array( $job ) ? (string) $job[1] : 'job' ) . ':' . $id;
+		if ( isset( self::$shutdown_jobs[ $key ] ) ) {
+			return;
+		}
+		self::$shutdown_jobs[ $key ] = true;
+
+		add_action(
+			'shutdown',
+			static function () use ( $job, $id ): void {
+				call_user_func( $job, $id );
+			},
+			0
+		);
+	}
+
 	/**
 	 * Claim an order+event pair exactly once. Returns false if already claimed.
 	 */
@@ -115,7 +139,7 @@ final class GKWA_Events {
 
 	public static function on_rest_customer( $user, $request, $creating ): void {
 		if ( $creating && $user instanceof WP_User ) {
-			self::defer( self::JOB_WELCOME, array( (int) $user->ID ), 20 );
+			self::at_shutdown( array( __CLASS__, 'job_welcome' ), (int) $user->ID );
 		}
 	}
 
@@ -150,13 +174,13 @@ final class GKWA_Events {
 	/* ----------------------------------------------------- payment & ship */
 
 	public static function on_paid( $order_id ): void {
-		self::defer( self::JOB_PAID, array( (int) $order_id ), 20 );
+		self::at_shutdown( array( __CLASS__, 'job_paid' ), (int) $order_id );
 	}
 
 	public static function on_completed( $order_id ): void {
 		// An order marked Completed straight from Pending/On hold was never "paid"
 		// through the processing hook (e.g. manual COD), so confirm it as well.
-		self::defer( self::JOB_PAID, array( (int) $order_id ), 20 );
+		self::at_shutdown( array( __CLASS__, 'job_paid' ), (int) $order_id );
 
 		$order = wc_get_order( (int) $order_id );
 		if ( $order && self::claim( $order, 'delivered' ) ) {
@@ -167,7 +191,7 @@ final class GKWA_Events {
 					'customer_name' => self::first_name( $order ),
 					'order_id'      => $order->get_order_number(),
 				),
-				self::ctx( $order, array( 'delay' => 90 ) )
+				self::ctx( $order )
 			);
 		}
 	}
@@ -263,7 +287,7 @@ final class GKWA_Events {
 					'customer_name' => self::first_name( $order ),
 					'order_id'      => $order->get_order_number(),
 				),
-				self::ctx( $order, array( 'delay' => 30 ) )
+				self::ctx( $order )
 			);
 		}
 	}
@@ -288,7 +312,7 @@ final class GKWA_Events {
 					'customer_name' => self::first_name( $order ),
 					'order_id'      => $order->get_order_number(),
 				),
-				self::ctx( $order, array( 'delay' => 30 ) )
+				self::ctx( $order )
 			);
 		}
 	}
@@ -309,7 +333,7 @@ final class GKWA_Events {
 					'amount'        => self::money( abs( (float) $refund->get_amount() ) ),
 					'order_id'      => $order->get_order_number(),
 				),
-				self::ctx( $order, array( 'delay' => 30 ) )
+				self::ctx( $order )
 			);
 		}
 	}
@@ -333,7 +357,7 @@ final class GKWA_Events {
 
 		$notified = $order->get_meta( '_gkwa_shipped_ids' );
 		if ( count( $items ) > ( is_array( $notified ) ? count( $notified ) : 0 ) ) {
-			self::defer( self::JOB_SHIPMENT, array( (int) $order_id ), 45 );
+			self::at_shutdown( array( __CLASS__, 'job_shipment' ), (int) $order_id );
 		}
 	}
 

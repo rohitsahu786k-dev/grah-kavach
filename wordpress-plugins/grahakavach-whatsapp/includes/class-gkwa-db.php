@@ -152,6 +152,26 @@ final class GKWA_DB {
 		return $row ?: null;
 	}
 
+	/**
+	 * Atomically move a queued/retry row to 'sending'. A row stuck in 'sending'
+	 * for over two minutes (a crashed request) can be claimed again.
+	 */
+	public static function log_claim( int $id, bool $retry = false ): bool {
+		global $wpdb;
+
+		$affected = $wpdb->query(
+			$wpdb->prepare(
+				'UPDATE ' . self::log_table() . " SET status = 'sending', updated_at = %s WHERE id = %d AND (status = %s OR (status = 'sending' AND updated_at < %s))",
+				self::now(),
+				$id,
+				$retry ? 'retry' : 'queued',
+				self::ago( 120 )
+			)
+		);
+
+		return 1 === (int) $affected;
+	}
+
 	public static function log_update_by_wamid( string $wamid, string $status, string $error = '' ): void {
 		global $wpdb;
 

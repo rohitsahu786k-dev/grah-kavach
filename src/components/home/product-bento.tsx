@@ -97,9 +97,9 @@ export function ProductBento(_props?: {
         {/* Main Bento Grid: Left Large Card + Right Stacked Cards */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-6 items-stretch">
           {/* Left Big Card with products background (using mobile-section-img for desktop as well to prevent cropping) */}
-          <div className="relative rounded-3xl overflow-hidden border border-[#ede7df] bg-[#f8f6f2] shadow-sm flex flex-col justify-between p-6 sm:p-9 lg:p-10 min-h-[480px] xs:min-h-[520px] sm:min-h-[560px] lg:min-h-[620px]">
+          <div className="relative rounded-3xl overflow-hidden border border-[#ede7df] bg-[#f8f6f2] shadow-sm flex flex-col justify-between p-6 sm:p-9 lg:p-10 sm:min-h-[560px] lg:min-h-[620px]">
             {/* Background Image: mobile-section-img.png (1254x1254) anchored to right-bottom so products are fully visible */}
-            <div className="absolute inset-0 pointer-events-none select-none">
+            <div className="absolute inset-0 hidden sm:block pointer-events-none select-none">
               <Image
                 src="/protection-system/mobile-section-img.png"
                 alt="Graha Kavach Fire Safety Kit"
@@ -112,7 +112,7 @@ export function ProductBento(_props?: {
 
             {/* Top Right Script Text */}
             <span
-              className="absolute top-5 right-6 sm:top-6 sm:right-8 text-base sm:text-2xl font-serif italic text-zinc-500/80 pointer-events-none select-none z-10"
+              className="absolute hidden sm:block top-5 right-6 sm:top-6 sm:right-8 text-base sm:text-2xl font-serif italic text-zinc-500/80 pointer-events-none select-none z-10"
               style={{ fontFamily: "Georgia, serif" }}
             >
               Safety lives here
@@ -141,8 +141,19 @@ export function ProductBento(_props?: {
               </Link>
             </div>
 
+            {/* Phones: the artwork gets its own block so no text is drawn over the products */}
+            <div className="relative -mx-6 mt-5 aspect-square sm:hidden">
+              <Image
+                src="/protection-system/mobile-section-img.png"
+                alt="Graha Kavach Fire Safety Kit"
+                fill
+                sizes="100vw"
+                className="object-cover object-bottom"
+              />
+            </div>
+
             {/* Bottom Trust Icons Strip */}
-            <div className="relative z-10 mt-auto pt-6 flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[11px] sm:text-xs font-semibold text-zinc-800">
+            <div className="relative z-10 mt-5 sm:mt-auto sm:pt-6 flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[11px] sm:text-xs font-semibold text-zinc-800">
               <div className="flex items-center gap-1.5">
                 <Shield className="size-3.5 sm:size-4 text-[#dc2626]" />
                 <span>Trusted Protection</span>
