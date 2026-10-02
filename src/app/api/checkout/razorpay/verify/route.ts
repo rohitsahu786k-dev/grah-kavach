@@ -8,6 +8,10 @@ import {
   isRazorpayConfigured,
   verifyPaymentSignature,
 } from "@/lib/razorpay/server";
+import {
+  sendMetaCapiEvent,
+  extractClientContext,
+} from "@/lib/analytics/meta-capi";
 
 const bodySchema = z.object({
   wooOrderId: z.number().int().positive(),
@@ -19,10 +23,27 @@ const bodySchema = z.object({
 
 type WooOrder = {
   id: number;
+  number?: string;
   order_key: string;
   status: string;
   total: string;
+  currency?: string;
   payment_method: string;
+  billing?: {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone?: string;
+    city?: string;
+    state?: string;
+    postcode?: string;
+    country?: string;
+  };
+  line_items?: Array<{
+    product_id: number;
+    quantity: number;
+    total: string;
+  }>;
 };
 
 export async function POST(request: Request) {
@@ -117,6 +138,36 @@ export async function POST(request: Request) {
         revalidate: false,
       });
     }
+
+    // Report verified payment to Meta Conversions API
+    const { clientIp, clientUserAgent } = extractClientContext(request);
+    void sendMetaCapiEvent({
+      eventName: "Purchase",
+      eventId: order.number || String(wooOrderId),
+      eventSourceUrl: "https://grahakavach.in/checkout",
+      userData: {
+        email: order.billing?.email,
+        phone: order.billing?.phone,
+        firstName: order.billing?.first_name,
+        lastName: order.billing?.last_name,
+        city: order.billing?.city,
+        state: order.billing?.state,
+        postcode: order.billing?.postcode,
+        country: order.billing?.country,
+        clientIp,
+        clientUserAgent,
+      },
+      customData: {
+        value: parseFloat(order.total) || 0,
+        currency: order.currency || "INR",
+        num_items: order.line_items?.reduce((acc, i) => acc + i.quantity, 0) || 1,
+        content_type: "product",
+        contents: order.line_items?.map((i) => ({
+          id: i.product_id,
+          quantity: i.quantity,
+        })),
+      },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "@/lib/cart/use-cart";
+import { trackPurchase } from "@/lib/analytics/meta-pixel";
 
 type OrderConfirmationData = {
   orderNumber: string;
@@ -88,7 +89,21 @@ function OrderConfirmationContent() {
         const data: OrderConfirmationData = await res.json();
         setOrder(data);
         // Online orders keep the cart until the payment is confirmed.
-        if (!["pending", "failed", "cancelled"].includes(data.status)) clearCart();
+        if (!["pending", "failed", "cancelled"].includes(data.status)) {
+          clearCart();
+
+          const storageKey = `meta_purchase_tracked_${data.orderId}`;
+          if (typeof window !== "undefined" && !sessionStorage.getItem(storageKey)) {
+            sessionStorage.setItem(storageKey, "1");
+            trackPurchase({
+              orderId: data.orderNumber || String(data.orderId),
+              value: parseFloat(data.total) || 0,
+              currency: data.currency || "INR",
+              num_items: data.lineItems.reduce((acc, item) => acc + item.quantity, 0),
+              content_ids: data.lineItems.map((item) => item.productId),
+            });
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error loading order.");
       } finally {

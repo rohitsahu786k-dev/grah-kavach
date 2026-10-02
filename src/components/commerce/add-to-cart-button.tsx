@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CartIcon, CheckIcon, SpinnerIcon } from "@/components/ui/icons";
 import { useToast } from "@/components/ui/toast";
+import { trackAddToCart } from "@/lib/analytics/meta-pixel";
 import { useCart } from "@/lib/cart/cart-context";
 import { useCommerceUI } from "@/lib/commerce/ui-context";
 import type { Size } from "@/types";
@@ -65,6 +66,11 @@ export function AddToCartButton({
 
     setState("busy");
     addItem(productId, quantity);
+    trackAddToCart({
+      id: productId,
+      name: productName,
+      quantity,
+    });
 
     // A beat of "adding" before the drawer arrives: an instant panel with no
     // acknowledgement reads as if the press did nothing.

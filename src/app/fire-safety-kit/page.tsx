@@ -9,6 +9,7 @@ import { SecurePaymentStrip } from "@/components/commerce/secure-payment-strip";
 import { StockStatus } from "@/components/commerce/stock-status";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { ProductGallery } from "@/components/commerce/product-gallery";
+import { TrackProductView } from "@/components/analytics/track-view-content";
 import { fallbackPostImage, kitFallbackItems } from "@/lib/wordpress/fallback-media";
 
 import {
@@ -127,6 +128,11 @@ export default async function FireSafetyKitPage() {
 
   return (
     <main className="overflow-x-hidden pb-24 lg:pb-0">
+      <TrackProductView
+        productId={product.id}
+        productName={product.name}
+        price={parseFloat(product.price) || 2499}
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <section className="border-b border-border bg-white">

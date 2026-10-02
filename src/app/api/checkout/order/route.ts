@@ -10,6 +10,10 @@ import {
   isRazorpayConfigured,
   razorpayKeyId,
 } from "@/lib/razorpay/server";
+import {
+  sendMetaCapiEvent,
+  extractClientContext,
+} from "@/lib/analytics/meta-capi";
 
 type IdempotencyEntry = {
   response: {
@@ -224,6 +228,38 @@ export async function POST(request: Request) {
       response: result,
       timestamp: Date.now(),
     });
+
+    if (result.status === "processing") {
+      const { clientIp, clientUserAgent } = extractClientContext(request);
+      void sendMetaCapiEvent({
+        eventName: "Purchase",
+        eventId: result.orderNumber,
+        eventSourceUrl: "https://grahakavach.in/checkout",
+        userData: {
+          email: address.email,
+          phone: address.phone,
+          firstName: address.firstName,
+          lastName: address.lastName,
+          city: address.city,
+          state: address.state,
+          postcode: address.postcode,
+          country: address.country,
+          clientIp,
+          clientUserAgent,
+        },
+        customData: {
+          value: parseFloat(result.total) || 0,
+          currency: result.currency || "INR",
+          num_items: validatedCart.items.reduce((acc, i) => acc + i.quantity, 0),
+          content_type: "product",
+          contents: validatedCart.items.map((i) => ({
+            id: i.productId,
+            quantity: i.quantity,
+            item_price: i.unitPriceMinor / 100,
+          })),
+        },
+      });
+    }
 
     return NextResponse.json(result);
   } catch (error) {

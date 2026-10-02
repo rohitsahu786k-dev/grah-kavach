@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart/use-cart";
@@ -12,6 +12,7 @@ import { indianAddressSchema, type IndianAddress } from "@/lib/validation/checko
 import { payWithRazorpay } from "@/lib/razorpay/client";
 import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
+import { trackInitiateCheckout } from "@/lib/analytics/meta-pixel";
 import type { ValidatedCart } from "@/lib/cart/types";
 import type { PaymentMethodInfo } from "@/lib/woocommerce/payment-gateways";
 
@@ -26,6 +27,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const hasTrackedCheckoutRef = useRef(false);
 
   const [address, setAddress] = useState<IndianAddress>({
     firstName: "",
@@ -77,6 +79,16 @@ export default function CheckoutPage() {
       if (!cartRes.ok) throw new Error("Failed to validate cart with store.");
       const cartData: ValidatedCart = await cartRes.json();
       setValidatedCart(cartData);
+
+      if (!hasTrackedCheckoutRef.current && cartData.items.length > 0) {
+        hasTrackedCheckoutRef.current = true;
+        trackInitiateCheckout({
+          value: cartData.totalMinor / 100,
+          currency: cartData.currency || "INR",
+          num_items: cartData.items.reduce((acc, i) => acc + i.quantity, 0),
+          content_ids: cartData.items.map((i) => i.productId),
+        });
+      }
 
       // 2. Fetch Payment Methods
       const payRes = await fetch("/api/checkout/payment-methods");

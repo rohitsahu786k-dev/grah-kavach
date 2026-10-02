@@ -33,6 +33,7 @@ const str = (fallback: string) =>
 
 const publicSchema = z.object({
   NEXT_PUBLIC_SITE_URL: url("https://grahakavach.in"),
+  NEXT_PUBLIC_META_PIXEL_ID: str("1790598735635524"),
 });
 
 const serverSchema = z.object({
@@ -45,10 +46,16 @@ const serverSchema = z.object({
   // Razorpay Checkout. The secret is server-only; the key id is handed to the browser by the order API.
   RAZORPAY_KEY_ID: str(""),
   RAZORPAY_KEY_SECRET: str(""),
+  // Meta Pixel & Conversions API
+  META_PIXEL_ID: str("1790598735635524"),
+  META_CONVERSIONS_API_ACCESS_TOKEN: str(
+    "EAAatL9QUcyMBSuq2zfZBIQZBxjgsv2nO12hkcbx3BVdDArqvZA1PnliUFQZBseg1Xh1YUki93U3UmOvL8IbshGjjOZA5QhEvxTexCbvTqXIZBD95cSWQNxVYYZCeFDuPPYPSZBxihpCRkYRk6sZBkZBNDnahJtZA82ZCX1e9QQJ6ZAjMeZC05z4CJYiPD3OfZCnhdN6lgbB8gZDZD",
+  ),
 });
 
 export const publicEnv = publicSchema.parse({
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID,
 });
 
 let cachedServerEnv: z.infer<typeof serverSchema> | null = null;
@@ -68,6 +75,13 @@ export function serverEnv() {
       process.env.REVALIDATION_SECRET ?? process.env.REVALIDATE_SECRET,
     RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+    META_PIXEL_ID:
+      process.env.NEXT_PUBLIC_META_PIXEL_ID ??
+      process.env.META_PIXEL_ID ??
+      "1790598735635524",
+    META_CONVERSIONS_API_ACCESS_TOKEN:
+      process.env.META_CONVERSIONS_API_ACCESS_TOKEN ??
+      process.env.META_ACCESS_TOKEN,
   });
 
   return cachedServerEnv;

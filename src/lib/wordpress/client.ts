@@ -27,23 +27,41 @@ export async function wpGraphql<T>({
 }: WpGraphqlOptions<T>): Promise<T> {
   const { WORDPRESS_GRAPHQL_URL } = serverEnv();
 
-  let response: Response;
+  let response: Response | null = null;
+  let lastError: unknown = null;
 
-  try {
-    response = await fetch(WORDPRESS_GRAPHQL_URL, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query, variables }),
-      next: { revalidate, tags },
-    });
-  } catch (error) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      response = await fetch(WORDPRESS_GRAPHQL_URL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query, variables }),
+        next: { revalidate, tags },
+      });
+
+      if (response.ok || (response.status !== 500 && response.status !== 502 && response.status !== 503 && response.status !== 504)) {
+        break;
+      }
+      // Transient 5xx error, wait and retry
+      if (attempt < 2) {
+        await new Promise((resolve) => setTimeout(resolve, (attempt + 1) * 600));
+      }
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        await new Promise((resolve) => setTimeout(resolve, (attempt + 1) * 600));
+      }
+    }
+  }
+
+  if (!response) {
     throw new DataError(
       "unavailable",
       "wordpress",
-      `WordPress GraphQL is unavailable: ${String(error)}`,
+      `WordPress GraphQL is unavailable: ${String(lastError)}`,
     );
   }
 

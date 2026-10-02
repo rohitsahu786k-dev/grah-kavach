@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
+import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { CartRecovery } from "@/components/cart/cart-recovery";
 import { HeaderSpacer } from "@/components/layout/header-spacer";
@@ -92,6 +93,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
        * overlay is open and is read by the header, the tab bar and the drawer.
        */}
       <body className="flex min-h-full flex-col bg-white text-foreground">
+        <MetaPixel />
         <CustomerProvider>
           <WishlistProvider>
             <CartProvider>
