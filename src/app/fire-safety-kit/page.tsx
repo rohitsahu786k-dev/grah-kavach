@@ -95,11 +95,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FireSafetyKitPage() {
   const { product, content, reviews, relatedPosts } = await getKitData();
   const summary = wooProductToSummary(product);
-  const gallery = [
-    ...(content?.heroMedia ? [content.heroMedia] : []),
-    ...wooProductGallery(product),
-    ...(content?.galleryAdditions ?? []),
-  ];
+  // Product images come only from the WooCommerce product, so what is shown matches the store admin.
+  const gallery = wooProductGallery(product);
   const galleryImages = gallery.length ? gallery : summary.image ? [summary.image] : [];
   const kitItems = content?.kitContents.length
     ? content.kitContents.map((item, i) => ({
