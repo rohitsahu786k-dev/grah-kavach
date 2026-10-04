@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { LoginSheet } from "@/components/auth/login-sheet";
 import { CartRecovery } from "@/components/cart/cart-recovery";
 import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
@@ -10,6 +11,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ToastProvider } from "@/components/ui/toast";
 import { CustomerProvider } from "@/lib/auth/customer-context";
+import { LoginModalProvider } from "@/lib/auth/login-modal-context";
 import { CartProvider } from "@/lib/cart/cart-context";
 import { CommerceUIProvider } from "@/lib/commerce/ui-context";
 import { buildWhatsAppUrl } from "@/lib/config/contact";
@@ -35,17 +37,18 @@ export const metadata: Metadata = {
     template: "%s | Graha Kavach",
   },
   description:
-    "Graha Kavach is a home and workplace fire-safety brand focused on practical emergency readiness.",
-  alternates: {
-    canonical: siteConfig.frontendUrl,
-  },
+    "Graha Kavach by Speciality Geochem, Udaipur: certified home fire safety kit with fire extinguisher, fire safety ball and fire blanket. COD available, delivery across India.",
   openGraph: {
     title: "Graha Kavach",
     description: "Explore the Graha Kavach fire-safety kit for homes and workplaces.",
     url: siteConfig.frontendUrl,
     siteName: "Graha Kavach",
+    locale: "en_IN",
     type: "website",
+    images: [{ url: "/brand/graha-kavach-logo.png", width: 1200, height: 630, alt: "Graha Kavach" }],
   },
+  twitter: { card: "summary_large_image" },
+  robots: { index: true, follow: true },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -95,6 +98,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-full flex-col bg-white text-foreground">
         <MetaPixel />
         <CustomerProvider>
+          <LoginModalProvider>
           <WishlistProvider>
             <CartProvider>
               <CommerceUIProvider>
@@ -122,10 +126,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
                   <MobileBottomNav productHref={PRODUCT_HREF} whatsappUrl={whatsappUrl} />
                   <CartDrawer />
+                  <LoginSheet />
                 </ToastProvider>
               </CommerceUIProvider>
             </CartProvider>
           </WishlistProvider>
+          </LoginModalProvider>
         </CustomerProvider>
       </body>
     </html>

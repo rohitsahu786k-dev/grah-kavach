@@ -66,6 +66,21 @@ final class GKWA_Sender {
 			);
 		}
 
+		// WhatsApp rejects a message sent from a number to itself with a bare
+		// "(#100) Invalid parameter". Say so plainly instead of failing obscurely.
+		if ( $to === GKWA_Client::business_number() ) {
+			return GKWA_DB::log_insert(
+				array(
+					'phone'    => $to,
+					'template' => $template,
+					'order_id' => $order_id,
+					'user_id'  => $user_id,
+					'status'   => 'skipped',
+					'error'    => 'This is the WhatsApp Business number itself. Use a different number (for the admin alert, set another number in WhatsApp Alerts > Settings).',
+				)
+			);
+		}
+
 		if ( GKWA_Templates::is_marketing( $template ) && GKWA_DB::is_opted_out( $to ) ) {
 			return GKWA_DB::log_insert(
 				array(

@@ -9,6 +9,7 @@ import { CartIcon, HeartIcon, MenuIcon, UserIcon } from "@/components/ui/icons";
 import { useCart } from "@/lib/cart/cart-context";
 import { useCommerceUI } from "@/lib/commerce/ui-context";
 import { useCustomer } from "@/lib/auth/use-customer";
+import { useLoginModal } from "@/lib/auth/login-modal-context";
 import { useWishlist } from "@/lib/wishlist/wishlist-context";
 import { overlaysHero } from "@/lib/layout/routes";
 import { cn } from "@/lib/utils/cn";
@@ -53,6 +54,7 @@ export function HeaderBar({
   const { totalItemCount, isReady: cartReady } = useCart();
   const { count: wishlistCount, isReady: wishlistReady } = useWishlist();
   const { customer } = useCustomer();
+  const { openLogin } = useLoginModal();
 
   const isOverlayRoute = overlaysHero(pathname);
   const [scrolled, setScrolled] = useState(false);
@@ -151,14 +153,26 @@ export function HeaderBar({
             </nav>
 
             <div className="ml-auto flex items-center gap-0.5 lg:ml-0 lg:gap-1">
-              <Link
-                href={customer ? "/account" : "/account/login"}
-                aria-label={customer ? "Your account" : "Sign in"}
-                title={customer ? "Your account" : "Sign in"}
-                className="hidden size-11 place-items-center rounded-[var(--radius)] text-foreground transition-colors hover:bg-muted lg:grid"
-              >
-                <UserIcon className="size-5" />
-              </Link>
+              {customer ? (
+                <Link
+                  href="/account"
+                  aria-label="Your account"
+                  title="Your account"
+                  className="hidden size-11 place-items-center rounded-[var(--radius)] text-foreground transition-colors hover:bg-muted lg:grid"
+                >
+                  <UserIcon className="size-5" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={openLogin}
+                  aria-label="Sign in"
+                  title="Sign in"
+                  className="hidden size-11 place-items-center rounded-[var(--radius)] text-foreground transition-colors hover:bg-muted lg:grid"
+                >
+                  <UserIcon className="size-5" />
+                </button>
+              )}
 
               <Link
                 href="/wishlist"

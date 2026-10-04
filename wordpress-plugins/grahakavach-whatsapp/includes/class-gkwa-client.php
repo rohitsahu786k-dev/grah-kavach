@@ -59,6 +59,27 @@ final class GKWA_Client {
 	}
 
 	/**
+	 * The WhatsApp Business number messages are sent from, as E.164 digits.
+	 * Cached for a day; empty when it cannot be read.
+	 */
+	public static function business_number(): string {
+		$cached = get_transient( 'gkwa_business_number' );
+		if ( is_string( $cached ) ) {
+			return $cached;
+		}
+
+		$res    = self::request( 'GET', '/' . GKWA_Config::phone_id(), array( 'fields' => 'display_phone_number' ) );
+		$number = $res['ok'] ? preg_replace( '/\D/', '', (string) ( $res['data']['display_phone_number'] ?? '' ) ) : '';
+
+		// Only remember a real answer, so a temporary API failure is retried.
+		if ( '' !== $number ) {
+			set_transient( 'gkwa_business_number', $number, DAY_IN_SECONDS );
+		}
+
+		return (string) $number;
+	}
+
+	/**
 	 * @param string              $method HTTP method.
 	 * @param string              $path   Path after the version, starting with /.
 	 * @param array<string,mixed> $body   JSON body (POST) or query (GET).
@@ -113,6 +134,15 @@ final class GKWA_Client {
 		$err        = $data['error'] ?? array();
 		$error_code = (int) ( $err['code'] ?? 0 );
 		$message    = (string) ( $err['error_data']['details'] ?? $err['message'] ?? ( 'HTTP ' . $code ) );
+
+		// Meta often answers a bare "Invalid parameter"; the subcode and the
+		// user-facing text are what actually say which parameter.
+		if ( ! empty( $err['error_subcode'] ) ) {
+			$message .= ' [subcode ' . (int) $err['error_subcode'] . ']';
+		}
+		if ( ! empty( $err['error_user_msg'] ) ) {
+			$message .= ' - ' . (string) $err['error_user_msg'];
+		}
 
 		return array(
 			'ok'         => false,

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { serverEnv } from "@/lib/env";
+import { escapeHtml, sendEmail } from "@/lib/email/resend";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -114,6 +116,29 @@ export async function POST(req: Request) {
     }
 
     const wpData = await wpRes.json();
+
+    // Best-effort emails: the inquiry is already saved, so a mail failure must
+    // not turn this into an error for the visitor.
+    const safe = {
+      name: escapeHtml(name),
+      email: escapeHtml(email),
+      phone: escapeHtml(phone || "-"),
+      subject: escapeHtml(subject),
+      message: escapeHtml(message).replace(/\n/g, "<br>"),
+    };
+    await Promise.allSettled([
+      sendEmail({
+        to: serverEnv().CONTACT_NOTIFY_EMAIL,
+        replyTo: email,
+        subject: `New inquiry: ${subject.replace(/[\r\n]+/g, " ")}`,
+        html: `<p><b>Name:</b> ${safe.name}<br><b>Email:</b> ${safe.email}<br><b>Phone:</b> ${safe.phone}</p><p><b>${safe.subject}</b></p><p>${safe.message}</p>`,
+      }),
+      sendEmail({
+        to: email,
+        subject: "We received your message - Graha Kavach",
+        html: `<p>Hi ${safe.name},</p><p>Thank you for contacting Graha Kavach. We have received your message and a fire safety expert will get in touch with you shortly.</p><p>Regards,<br>Team Graha Kavach</p>`,
+      }),
+    ]);
 
     return NextResponse.json(
       {

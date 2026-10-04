@@ -46,6 +46,10 @@ const serverSchema = z.object({
   // Razorpay Checkout. The secret is server-only; the key id is handed to the browser by the order API.
   RAZORPAY_KEY_ID: str(""),
   RAZORPAY_KEY_SECRET: str(""),
+  // Resend transactional email. Key is server-only; sending is skipped when it is blank.
+  RESEND_API_KEY: str(""),
+  RESEND_FROM: str("Graha Kavach <no-reply@grahakavach.in>"),
+  CONTACT_NOTIFY_EMAIL: str("grahakavach@gmail.com"),
   // Meta Pixel & Conversions API
   META_PIXEL_ID: str("1790598735635524"),
   META_CONVERSIONS_API_ACCESS_TOKEN: str(
@@ -75,6 +79,9 @@ export function serverEnv() {
       process.env.REVALIDATION_SECRET ?? process.env.REVALIDATE_SECRET,
     RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_FROM: process.env.RESEND_FROM,
+    CONTACT_NOTIFY_EMAIL: process.env.CONTACT_NOTIFY_EMAIL,
     META_PIXEL_ID:
       process.env.NEXT_PUBLIC_META_PIXEL_ID ??
       process.env.META_PIXEL_ID ??

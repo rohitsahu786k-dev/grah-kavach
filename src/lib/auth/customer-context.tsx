@@ -32,6 +32,7 @@ export type CustomerContextType = {
     lastName: string;
     phone?: string;
   }) => Promise<void>;
+  loginWithPhone: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -120,6 +121,21 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const loginWithPhone = useCallback(async (idToken: string) => {
+    const res = await fetch("/api/auth/phone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || "Login failed. Please try again.");
+    }
+
+    setCustomer(data.customer);
+  }, []);
+
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setCustomer(null);
@@ -131,10 +147,11 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
       isLoading,
       login,
       register,
+      loginWithPhone,
       logout,
       refresh,
     }),
-    [customer, isLoading, login, register, logout, refresh],
+    [customer, isLoading, login, register, loginWithPhone, logout, refresh],
   );
 
   return (

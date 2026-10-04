@@ -2,12 +2,12 @@ import type { NextConfig } from "next";
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://*.razorpay.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://*.razorpay.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://apis.google.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com data:;
   img-src 'self' data: blob: https://admin.grahakavach.in https://grahakavach.in https://*.gravatar.com https://*.razorpay.com;
-  connect-src 'self' https://admin.grahakavach.in https://api.razorpay.com https://lumberjack.razorpay.com;
-  frame-src 'self' https://api.razorpay.com https://*.razorpay.com https://maps.google.com https://www.google.com;
+  connect-src 'self' https://admin.grahakavach.in https://api.razorpay.com https://lumberjack.razorpay.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://www.google.com https://firebaseinstallations.googleapis.com;
+  frame-src 'self' https://api.razorpay.com https://*.razorpay.com https://maps.google.com https://www.google.com https://recaptcha.google.com https://*.firebaseapp.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self' https://*.razorpay.com;
