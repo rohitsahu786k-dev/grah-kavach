@@ -9,7 +9,7 @@ import { useCustomer } from "@/lib/auth/use-customer";
 import { useLoginModal } from "@/lib/auth/login-modal-context";
 import { useOverlayBehavior } from "@/lib/hooks/use-overlay-behavior";
 import { brandAssets } from "@/lib/config/brand";
-import { PhoneLoginForm } from "./phone-login-form";
+import { LoginTabs } from "./login-tabs";
 
 const DISMISSED_KEY = "gk_login_prompt_dismissed";
 const PROMPT_DELAY_MS = 3000;
@@ -122,11 +122,11 @@ export function LoginSheet() {
             />
             <h2 className="text-xl font-medium text-foreground">Login / Sign up</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Verify your mobile number with a one-time password.
+              Sign in with a one-time password on your mobile, or with your email.
             </p>
           </div>
           <div className="mx-auto w-full max-w-sm">
-            <PhoneLoginForm onSuccess={closeLogin} />
+            <LoginTabs onSuccess={closeLogin} onNavigate={closeLogin} />
           </div>
         </div>
       </div>

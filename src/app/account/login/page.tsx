@@ -4,7 +4,7 @@ import { Suspense, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCustomer } from "@/lib/auth/use-customer";
-import { PhoneLoginForm } from "@/components/auth/phone-login-form";
+import { LoginTabs } from "@/components/auth/login-tabs";
 import { brandAssets } from "@/lib/config/brand";
 
 function LoginPanel() {
@@ -43,9 +43,12 @@ function LoginPanel() {
             />
             <h1 className="text-xl font-medium text-foreground">Login / Sign up</h1>
             <p className="mt-1 mb-6 text-sm text-muted-foreground">
-              Verify your mobile number with a one-time password.
+              Sign in with a one-time password on your mobile, or with your email.
             </p>
-            <PhoneLoginForm onSuccess={() => router.push(redirect)} />
+            <LoginTabs
+              onSuccess={() => router.push(redirect)}
+              registerHref={redirect === "/account" ? "/account/register" : `/account/register?redirect=${encodeURIComponent(redirect)}`}
+            />
           </div>
         </div>
       </div>
