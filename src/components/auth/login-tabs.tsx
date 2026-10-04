@@ -10,8 +10,8 @@ import { PhoneLoginForm } from "./phone-login-form";
 type Method = "phone" | "email";
 
 const TABS: Array<{ id: Method; label: string }> = [
-  { id: "phone", label: "Login with Phone" },
   { id: "email", label: "Login with Email" },
+  { id: "phone", label: "Login with Phone" },
 ];
 
 function EmailLoginForm({
@@ -126,7 +126,7 @@ export function LoginTabs({
   registerHref?: string;
   onNavigate?: () => void;
 }) {
-  const [method, setMethod] = useState<Method>("phone");
+  const [method, setMethod] = useState<Method>("email");
 
   return (
     <div>
