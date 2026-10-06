@@ -70,6 +70,18 @@ final class GK_Rest {
 			)
 		);
 
+		// Partial-payment (COD advance) settings, read from the Deposits & Partial
+		// Payments plugin so the storefront shows whatever is set in wp-admin.
+		register_rest_route(
+			self::NAMESPACE,
+			'/checkout-settings',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'permission_callback' => '__return_true',
+				'callback'            => array( __CLASS__, 'get_checkout_settings' ),
+			)
+		);
+
 		register_rest_route(
 			self::NAMESPACE,
 			'/health',
@@ -99,6 +111,30 @@ final class GK_Rest {
 				'callback'            => array( __CLASS__, 'handle_inquiry' ),
 			)
 		);
+	}
+
+	/**
+	 * Public, read-only: whether partial payment is on and how much it asks for.
+	 * Nothing secret is returned.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public static function get_checkout_settings(): WP_REST_Response {
+		$opts    = (array) get_option( 'awcdp_general_settings', array() );
+		$enabled = ! empty( $opts['enable_deposits'] );
+		$type    = ( isset( $opts['deposit_type'] ) && false !== strpos( (string) $opts['deposit_type'], 'percent' ) ) ? 'percent' : 'fixed';
+		$value   = isset( $opts['deposit_amount'] ) ? (float) $opts['deposit_amount'] : 0.0;
+
+		$response = new WP_REST_Response(
+			array(
+				'enabled' => $enabled && $value > 0,
+				'type'    => $type,
+				'value'   => $value,
+			)
+		);
+		$response->header( 'Cache-Control', 'public, max-age=30' );
+
+		return $response;
 	}
 
 	/**

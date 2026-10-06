@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import { COD_ADVANCE_MINOR } from "@/lib/config/checkout";
+import { getCodAdvanceConfig } from "@/lib/woocommerce/checkout-settings";
 import { isRazorpayConfigured } from "@/lib/razorpay/server";
 import { getActivePaymentGateways } from "@/lib/woocommerce/payment-gateways";
 
 export async function GET() {
   try {
-    const methods = await getActivePaymentGateways();
+    const [methods, advance] = await Promise.all([getActivePaymentGateways(), getCodAdvanceConfig()]);
     return NextResponse.json({
       methods,
-      // COD orders take a small advance online when Razorpay is available.
-      codAdvanceMinor: isRazorpayConfigured() ? COD_ADVANCE_MINOR : 0,
+      // COD orders take an advance online when Razorpay is available and the
+      // partial-payment setting in wp-admin is on. Amount is that setting, live.
+      codAdvance: isRazorpayConfigured() ? advance : { ...advance, enabled: false },
     });
   } catch (error) {
     return NextResponse.json(

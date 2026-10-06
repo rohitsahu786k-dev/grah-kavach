@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { computeAdvanceMinor, isCodMethod } from "@/lib/config/checkout";
+import { getCodAdvanceConfig } from "@/lib/woocommerce/checkout-settings";
 import { wooRequest } from "@/lib/woocommerce/client";
 import {
   fetchRazorpayOrder,
@@ -74,7 +75,20 @@ export async function POST(request: Request) {
     const rzpOrder = await fetchRazorpayOrder(razorpay_order_id);
     const totalMinor = Math.round(parseFloat(order.total) * 100);
     const isCodAdvance = isCodMethod(order.payment_method);
-    const expectedAmount = isCodAdvance ? Math.min(COD_ADVANCE_MINOR, totalMinor) : totalMinor;
+    // The advance pinned on the order when it was created; the live setting is only a fallback.
+    const pinnedAdvance = Number(
+      (order as { meta_data?: Array<{ key: string; value: unknown }> }).meta_data?.find(
+        (m) => m.key === "_cod_advance_minor",
+      )?.value ?? 0,
+    );
+    const expectedAmount = isCodAdvance
+      ? Math.min(
+          pinnedAdvance > 0
+            ? pinnedAdvance
+            : computeAdvanceMinor(await getCodAdvanceConfig(), totalMinor),
+          totalMinor,
+        )
+      : totalMinor;
     if (rzpOrder.receipt !== String(wooOrderId) || rzpOrder.amount !== expectedAmount) {
       return NextResponse.json({ error: "Payment does not match this order." }, { status: 400 });
     }
@@ -140,7 +154,7 @@ export async function POST(request: Request) {
     }
 
     // Report verified payment to Meta Conversions API
-    const { clientIp, clientUserAgent } = extractClientContext(request);
+    const { clientIp, clientUserAgent, fbp, fbc } = extractClientContext(request);
     void sendMetaCapiEvent({
       eventName: "Purchase",
       eventId: order.number || String(wooOrderId),
@@ -156,6 +170,8 @@ export async function POST(request: Request) {
         country: order.billing?.country,
         clientIp,
         clientUserAgent,
+        fbp,
+        fbc,
       },
       customData: {
         value: parseFloat(order.total) || 0,

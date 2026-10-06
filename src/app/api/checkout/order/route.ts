@@ -3,7 +3,8 @@ import { checkoutSubmissionSchema } from "@/lib/validation/checkout";
 import { validateCartServer } from "@/lib/woocommerce/cart-server";
 import { wooRequest } from "@/lib/woocommerce/client";
 import { getActivePaymentGateways } from "@/lib/woocommerce/payment-gateways";
-import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { computeAdvanceMinor, isCodMethod } from "@/lib/config/checkout";
+import { getCodAdvanceConfig } from "@/lib/woocommerce/checkout-settings";
 import { getWooCommerceUrls } from "@/lib/woocommerce/client";
 import {
   createRazorpayOrder,
@@ -104,7 +105,12 @@ export async function POST(request: Request) {
     const isCod = isCodMethod(selectedGateway.id);
     // COD takes a small advance online when Razorpay is set up; the order then
     // stays pending until that advance is paid. Without Razorpay it is plain COD.
-    const codAdvance = isCod && isRazorpayConfigured();
+    // The advance amount comes from the WordPress deposit settings, so a price
+    // change in wp-admin applies here without a deploy.
+    const advanceMinor = isCod
+      ? computeAdvanceMinor(await getCodAdvanceConfig(), validatedCart.totalMinor)
+      : 0;
+    const codAdvance = isCod && isRazorpayConfigured() && advanceMinor > 0;
     const initialStatus = isCod && !codAdvance ? "processing" : "pending";
 
     // Construct WooCommerce Order Payload
@@ -146,6 +152,8 @@ export async function POST(request: Request) {
       meta_data: [
         { key: "_idempotency_key", value: idempotencyKey },
         { key: "_source", value: "nextjs-headless" },
+        // Pinned now so the payment check later does not depend on the setting still being the same.
+        ...(codAdvance ? [{ key: "_cod_advance_minor", value: String(advanceMinor) }] : []),
         ...(address.gstin
           ? [
               { key: "_billing_gstin", value: address.gstin },
@@ -179,7 +187,7 @@ export async function POST(request: Request) {
     if (codAdvance || (selectedGateway.id === "razorpay" && isRazorpayConfigured())) {
       try {
         const rzpOrder = await createRazorpayOrder({
-          amountMinor: codAdvance ? Math.min(COD_ADVANCE_MINOR, totalMinor) : totalMinor,
+          amountMinor: codAdvance ? Math.min(advanceMinor, totalMinor) : totalMinor,
           currency: wooOrder.currency || "INR",
           receipt: String(wooOrder.id),
           wooOrderId: wooOrder.id,
@@ -230,7 +238,7 @@ export async function POST(request: Request) {
     });
 
     if (result.status === "processing") {
-      const { clientIp, clientUserAgent } = extractClientContext(request);
+      const { clientIp, clientUserAgent, fbp, fbc } = extractClientContext(request);
       void sendMetaCapiEvent({
         eventName: "Purchase",
         eventId: result.orderNumber,
@@ -246,6 +254,8 @@ export async function POST(request: Request) {
           country: address.country,
           clientIp,
           clientUserAgent,
+          fbp,
+          fbc,
         },
         customData: {
           value: parseFloat(result.total) || 0,

@@ -9,6 +9,8 @@ import { WishlistButton } from "./wishlist-button";
 import { useBuyNow } from "./use-buy-now";
 
 type Props = {
+  /** One unit's price in paise, for analytics. */
+  unitPriceMinor?: number;
   productId: number;
   productName: string;
   disabled?: boolean;
@@ -28,13 +30,14 @@ type Props = {
 export function PurchasePanel({
   productId,
   productName,
+  unitPriceMinor,
   disabled = false,
   maxQuantity,
   showBuyNow = true,
   className,
 }: Props) {
   const [quantity, setQuantity] = useState(1);
-  const { handleBuyNow: triggerBuyNow } = useBuyNow(productId);
+  const { handleBuyNow: triggerBuyNow } = useBuyNow(productId, unitPriceMinor);
 
   const max = typeof maxQuantity === "number" && maxQuantity > 0 ? Math.min(maxQuantity, 99) : 99;
 
@@ -56,6 +59,7 @@ export function PurchasePanel({
           productId={productId}
           productName={productName}
           quantity={quantity}
+          unitPriceMinor={unitPriceMinor}
           disabled={disabled}
           size="md"
           variant={showBuyNow ? "outline" : "primary"}

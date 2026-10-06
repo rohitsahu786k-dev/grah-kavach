@@ -16,6 +16,8 @@ type PurchaseActionsProps = {
   disabled?: boolean;
   maxQuantity?: number | null;
   priceLabel?: string;
+  /** One unit's price in paise, for analytics. */
+  unitPriceMinor?: number;
   /** Renders the fixed bar that sits above the phone tab bar. */
   mobile?: boolean;
 };
@@ -33,10 +35,11 @@ export function PurchaseActions({
   disabled = false,
   maxQuantity,
   priceLabel,
+  unitPriceMinor,
   mobile = false,
 }: PurchaseActionsProps) {
   const [quantity, setQuantity] = useState(1);
-  const { handleBuyNow: triggerBuyNow } = useBuyNow(productId);
+  const { handleBuyNow: triggerBuyNow } = useBuyNow(productId, unitPriceMinor);
 
   const max = typeof maxQuantity === "number" && maxQuantity > 0 ? Math.min(maxQuantity, 99) : 99;
 
@@ -63,6 +66,7 @@ export function PurchaseActions({
           <AddToCartButton
             productId={productId}
             productName={productName}
+            unitPriceMinor={unitPriceMinor}
             disabled={disabled}
             size="sm"
             variant="outline"
@@ -86,6 +90,7 @@ export function PurchaseActions({
         productId={productId}
         productName={productName}
         quantity={quantity}
+        unitPriceMinor={unitPriceMinor}
         disabled={disabled}
         variant="outline"
       />

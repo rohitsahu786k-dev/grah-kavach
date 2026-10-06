@@ -127,6 +127,7 @@ export function BuySection({
               className="mt-7"
               productId={product.id}
               productName={product.name}
+              unitPriceMinor={product.priceMinor ?? undefined}
               disabled={unavailable}
               maxQuantity={stockQuantity}
             />

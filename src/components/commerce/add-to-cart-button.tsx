@@ -13,6 +13,8 @@ type Props = {
   productId: number;
   productName?: string;
   quantity?: number;
+  /** One unit's price in paise, for the Meta Pixel event value. */
+  unitPriceMinor?: number;
   disabled?: boolean;
   /** Out-of-stock and unpublished products say why instead of failing silently. */
   unavailableLabel?: string;
@@ -36,6 +38,7 @@ export function AddToCartButton({
   productId,
   productName = "Fire Safety Kit",
   quantity = 1,
+  unitPriceMinor,
   disabled = false,
   unavailableLabel = "Out of stock",
   label = "Add to Cart",
@@ -70,6 +73,7 @@ export function AddToCartButton({
       id: productId,
       name: productName,
       quantity,
+      unitPriceMinor,
     });
 
     // A beat of "adding" before the drawer arrives: an instant panel with no

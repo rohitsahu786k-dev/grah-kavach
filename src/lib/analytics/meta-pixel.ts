@@ -83,6 +83,8 @@ export function trackAddToCart(data: {
   content_ids?: (string | number)[];
   content_type?: string;
   value?: number;
+  /** Price of one unit in paise; with `quantity` it gives the event value. */
+  unitPriceMinor?: number;
   quantity?: number;
   currency?: string;
 }): void {
@@ -93,7 +95,11 @@ export function trackAddToCart(data: {
       data.content_name || data.name || "Graha Kavach Emergency Fire Safety Kit",
     content_ids: contentIds,
     content_type: data.content_type || "product",
-    value: data.value ?? 2499,
+    value:
+      data.value ??
+      (typeof data.unitPriceMinor === "number"
+        ? (data.unitPriceMinor * (data.quantity ?? 1)) / 100
+        : 2499 * (data.quantity ?? 1)),
     currency: data.currency || "INR",
     ...(data.quantity ? { num_items: data.quantity } : {}),
   });

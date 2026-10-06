@@ -10,7 +10,7 @@ import { PaymentSelector } from "@/components/checkout/payment-selector";
 import { CheckoutReview } from "@/components/checkout/checkout-review";
 import { indianAddressSchema, type IndianAddress } from "@/lib/validation/checkout";
 import { payWithRazorpay } from "@/lib/razorpay/client";
-import { COD_ADVANCE_MINOR, isCodMethod } from "@/lib/config/checkout";
+import { computeAdvanceMinor, isCodMethod, type CodAdvanceConfig } from "@/lib/config/checkout";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import { trackInitiateCheckout } from "@/lib/analytics/meta-pixel";
 import type { ValidatedCart } from "@/lib/cart/types";
@@ -22,7 +22,7 @@ export default function CheckoutPage() {
 
   const [validatedCart, setValidatedCart] = useState<ValidatedCart | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodInfo[]>([]);
-  const [codAdvanceAvailable, setCodAdvanceAvailable] = useState(false);
+  const [codAdvance, setCodAdvance] = useState<CodAdvanceConfig | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -96,9 +96,12 @@ export default function CheckoutPage() {
         const payData = await payRes.json();
         const methods: PaymentMethodInfo[] = payData.methods || [];
         setPaymentMethods(methods);
-        setCodAdvanceAvailable((payData.codAdvanceMinor ?? 0) > 0);
+        setCodAdvance((payData.codAdvance as CodAdvanceConfig | undefined) ?? null);
         if (methods.length > 0) {
-          setSelectedPaymentMethod(methods[0].id);
+          // Partial payment (COD with an advance) is the default; the customer can
+          // switch to paying the full amount online.
+          const preferred = methods.find((m) => isCodMethod(m.id)) ?? methods[0];
+          setSelectedPaymentMethod(preferred.id);
         }
       }
     } catch (err) {
@@ -263,7 +266,7 @@ export default function CheckoutPage() {
   const isCod = isCodMethod(selectedPaymentMethod);
   const totalMinor = validatedCart?.totalMinor ?? 0;
   // COD takes an advance online; the rest is paid on delivery. The total does not change.
-  const advanceMinor = isCod && codAdvanceAvailable ? Math.min(COD_ADVANCE_MINOR, totalMinor) : 0;
+  const advanceMinor = isCod ? computeAdvanceMinor(codAdvance, totalMinor) : 0;
   const currency = validatedCart?.currency ?? "INR";
   const dueNowMinor = advanceMinor > 0 ? advanceMinor : totalMinor;
 
@@ -368,7 +371,7 @@ export default function CheckoutPage() {
               <div className="mt-4">
                 <PaymentSelector
                   methods={paymentMethods}
-                  codAdvanceMinor={codAdvanceAvailable ? COD_ADVANCE_MINOR : 0}
+                  codAdvanceMinor={computeAdvanceMinor(codAdvance, totalMinor)}
                   selectedMethod={selectedPaymentMethod}
                   onSelectMethod={setSelectedPaymentMethod}
                   disabled={submitting}

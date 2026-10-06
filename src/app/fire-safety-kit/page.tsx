@@ -183,6 +183,7 @@ export default async function FireSafetyKitPage() {
                 productId={product.id}
                 productName={product.name}
                 maxQuantity={product.stock_quantity ?? null}
+                unitPriceMinor={summary.priceMinor ?? undefined}
                 disabled={unavailable}
               />
             </div>
@@ -385,6 +386,7 @@ export default async function FireSafetyKitPage() {
         productId={product.id}
         productName={product.name}
         maxQuantity={product.stock_quantity ?? null}
+        unitPriceMinor={summary.priceMinor ?? undefined}
         disabled={unavailable}
         priceLabel={formatMinorUnitsToCurrency(summary.priceMinor, summary.currency)}
         mobile

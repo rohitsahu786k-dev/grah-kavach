@@ -45,6 +45,9 @@ export type MetaCapiUserData = {
   country?: string;
   clientIp?: string;
   clientUserAgent?: string;
+  /** Meta browser id cookie (_fbp) and click id (_fbc): they tie this server event to the ad click. */
+  fbp?: string;
+  fbc?: string;
 };
 
 export type MetaCapiCustomData = {
@@ -119,6 +122,9 @@ export async function sendMetaCapiEvent(
     if (userData.clientUserAgent) {
       formattedUserData.client_user_agent = userData.clientUserAgent;
     }
+    // Sent as-is, never hashed.
+    if (userData.fbp) formattedUserData.fbp = userData.fbp;
+    if (userData.fbc) formattedUserData.fbc = userData.fbc;
 
     const eventPayload = {
       event_name: eventName,
@@ -162,6 +168,8 @@ export async function sendMetaCapiEvent(
 export function extractClientContext(request: Request): {
   clientIp?: string;
   clientUserAgent?: string;
+  fbp?: string;
+  fbc?: string;
 } {
   const forwarded = request.headers.get("x-forwarded-for");
   const realIp = request.headers.get("x-real-ip");
@@ -169,5 +177,13 @@ export function extractClientContext(request: Request): {
   const clientIp = (cfConnectingIp || forwarded?.split(",")[0] || realIp || "").trim() || undefined;
   const clientUserAgent = request.headers.get("user-agent") || undefined;
 
-  return { clientIp, clientUserAgent };
+  const cookie = request.headers.get("cookie") || "";
+  const readCookie = (name: string) =>
+    cookie
+      .split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(`${name}=`))
+      ?.slice(name.length + 1) || undefined;
+
+  return { clientIp, clientUserAgent, fbp: readCookie("_fbp"), fbc: readCookie("_fbc") };
 }
