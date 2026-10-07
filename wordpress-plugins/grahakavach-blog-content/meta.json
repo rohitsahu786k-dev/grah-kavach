@@ -1,0 +1,77 @@
+{
+  "monthly-fire-safety-checklist": {
+    "category": "home-safety",
+    "excerpt": "A simple 10-minute monthly routine to check your extinguisher, fire ball, fire blanket, wiring and gas connections so everything works when it matters.",
+    "description": "A 10-minute monthly fire safety checklist for Indian homes: check your extinguisher, fire ball, fire blanket, wiring, gas connections and escape routes."
+  },
+  "monsoon-electrical-fire-safety": {
+    "category": "fire-prevention",
+    "excerpt": "Damp walls, leaking ACs and overloaded sockets raise the risk of electrical fires every monsoon. Here is how to prepare your home or shop.",
+    "description": "Monsoon moisture raises electrical fire risk in Indian homes and shops. Learn the warning signs, quick checks and what to keep ready before the rains."
+  },
+  "fire-safety-kit-for-rented-apartments": {
+    "category": "home-safety",
+    "excerpt": "Living in a rented flat does not mean skipping fire safety. How to choose, mount and take along a fire safety kit without damaging the walls.",
+    "description": "Renting a flat in India? Learn how to plan fire safety without drilling much: what to keep, where to place it, and how to take it along when you move."
+  },
+  "small-shop-fire-safety-kit": {
+    "category": "home-safety",
+    "excerpt": "Stock, wiring and unattended corners make preparedness important for shops and offices. A practical checklist for small business owners.",
+    "description": "A practical fire safety checklist for small shops and offices in India: stock storage, wiring, extinguisher placement, staff drills and closing-time checks."
+  },
+  "after-using-fire-safety-equipment": {
+    "category": "equipment-guides",
+    "excerpt": "The fire is out, but the job is not over. What to do after using an extinguisher, fire ball or fire blanket, and when to replace them.",
+    "description": "After using an extinguisher, fire ball or fire blanket, follow these steps: check for re-ignition, ventilate, dispose safely, recharge or replace the equipment."
+  },
+  "fire-safety-for-elderly-family-members": {
+    "category": "home-safety",
+    "excerpt": "Older family members need a plan built around slower movement, reduced hearing and medical equipment. Practical steps for safer homes.",
+    "description": "Plan fire safety for elderly family members: easy escape routes, equipment within reach, oxygen and heater cautions, and a simple routine everyone knows."
+  },
+  "electrical-panel-fire-prevention": {
+    "category": "fire-prevention",
+    "excerpt": "The distribution board is where many electrical fires begin. How apartments and shops can reduce the risk and respond safely.",
+    "description": "Electrical panel fires often start from loose connections and overload. Learn the warning signs, safe habits and the right way to respond in homes and shops."
+  },
+  "lpg-cylinder-fire-safety-home": {
+    "category": "fire-prevention",
+    "excerpt": "Most kitchen gas incidents are preventable. Safe habits for LPG cylinders, regulators and stoves, and what to do if you smell gas.",
+    "description": "LPG cylinder and gas stove safety for Indian homes: safe placement, leak checks, what to do if you smell gas, and how to respond to a cylinder fire."
+  },
+  "home-fire-risk-zones-india": {
+    "category": "home-safety",
+    "excerpt": "Kitchens, switchboards, bedrooms with chargers and balconies with stored items: the common fire risk zones in Indian homes and how to reduce them.",
+    "description": "Know the common fire risk zones in Indian homes: kitchen, switchboards, charging points, pooja area, balcony storage. Simple fixes for each zone."
+  },
+  "fire-blanket-use-kitchen-pan-fire": {
+    "category": "equipment-guides",
+    "excerpt": "A fire blanket can smother a small pan fire in seconds if you use it correctly. A step-by-step guide to deploying it safely.",
+    "description": "How to use a fire blanket on a kitchen pan fire: switch off the heat, hold the blanket as a shield, smother the flames and let it cool. Step by step."
+  },
+  "where-to-place-fire-extinguisher-at-home": {
+    "category": "equipment-guides",
+    "excerpt": "An extinguisher you cannot reach is no use. Where to mount it at home, what height, and which spots to avoid.",
+    "description": "Where to place a fire extinguisher at home: near the exit, outside the kitchen, at the right height and away from heat. Placement rules that work."
+  },
+  "complete-home-fire-safety-kit-guide": {
+    "category": "equipment-guides",
+    "excerpt": "What every Indian home should keep ready: an extinguisher, an automatic fire ball and a fire blanket, plus how each one is used and maintained.",
+    "description": "A complete guide to a home fire safety kit in India: what the extinguisher, fire ball and fire blanket each do, where to place them and how to maintain them."
+  },
+  "automatic-fire-extinguisher-balls-home-protection": {
+    "category": "equipment-guides",
+    "excerpt": "An automatic fire ball works even when nobody is home. How it operates, where to place it and what it can and cannot do.",
+    "description": "How an automatic fire extinguisher ball works, where to place it in an Indian home, its limits, and why it complements an extinguisher and fire blanket."
+  },
+  "why-never-use-water-on-oil-fires": {
+    "category": "fire-prevention",
+    "excerpt": "Water on a kitchen oil fire can turn a small flare-up into a fireball. Why it happens and what to do instead.",
+    "description": "Why you should never throw water on a kitchen oil fire, what actually happens when you do, and the safe way to put out a burning pan quickly."
+  },
+  "pass-technique-fire-extinguisher-guide": {
+    "category": "equipment-guides",
+    "excerpt": "Pull, Aim, Squeeze, Sweep: the four steps to use a dry powder fire extinguisher correctly, with tips on distance and when to leave instead.",
+    "description": "Learn the PASS technique for a dry powder fire extinguisher: Pull, Aim, Squeeze, Sweep. Correct distance, common mistakes and when to evacuate instead."
+  }
+}
