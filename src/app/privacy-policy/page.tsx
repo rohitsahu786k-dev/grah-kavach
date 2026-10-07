@@ -6,9 +6,9 @@ import { Lock, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { buildBreadcrumbSchema } from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Customer Data Protection — Graha Kavach",
+  title: "Privacy Policy & Customer Data Protection",
   description:
-    "Learn how Graha Kavach (Speciality Geochem) collects, uses, and safeguards customer personal information and order records in compliance with applicable Indian data protection laws.",
+    "How Graha Kavach (Speciality Geochem) collects, uses and safeguards customer personal information and order records under applicable Indian data protection law.",
   keywords: [
     "Graha Kavach privacy policy",
     "customer data protection India",

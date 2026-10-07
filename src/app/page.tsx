@@ -18,7 +18,6 @@ import { getProductReviews } from "@/lib/woocommerce/reviews";
 import {
   getFaqs,
   getHomePage,
-  getPageBySlug,
   getProductContent,
   getSafetyGuides,
   getTestimonials,
@@ -37,11 +36,9 @@ import type { Media } from "@/types";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const homePage = await getPageBySlug("home").catch(() => null);
-
+  // The CMS "home" page only carries the title "Home", so the home SEO is defined here.
   return buildSeoMetadata({
-    seo: homePage?.seo,
-    fallbackTitle: "Graha Kavach™ | 3-in-1 Home Fire Safety Kit — Speciality Geochem (Est. 2010)",
+    fallbackTitle: "Graha Kavach | 3-in-1 Home Fire Safety Kit — Speciality Geochem (Est. 2010)",
     fallbackDescription:
       "Certified 3-in-1 home fire protection system: 2kg ABC dry powder extinguisher, automatic flame-activated fire ball, and 550°C fibreglass blanket with wall mounts. Engineered in Udaipur with 16 years of protection roots.",
     path: "/",

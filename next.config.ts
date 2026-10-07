@@ -36,6 +36,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    const host = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://grahakavach.in").host.replace(/^www\./, "");
+
+    return [
+      // One canonical host: www.* answered 200 with a full duplicate of every page.
+      {
+        source: "/:path*",
+        has: [{ type: "host" as const, value: `www.${host}` }],
+        destination: `https://${host}/:path*`,
+        permanent: true,
+      },
+      // The CMS calls the home page "/home"; on this storefront it is "/".
+      { source: "/home", destination: "/", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

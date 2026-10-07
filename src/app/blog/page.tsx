@@ -16,19 +16,21 @@ export async function generateMetadata({ searchParams }: BlogPageProps): Promise
   const activeCat = categories.find((c) => c.slug === category);
 
   const fallbackTitle = activeCat
-    ? `${activeCat.name} Guides — Fire Safety Blog | Graha Kavach`
-    : "Fire Safety Blog & Practical Guides | Graha Kavach";
+    ? `${activeCat.name} Guides — Fire Safety Blog`
+    : "Fire Safety Blog & Practical Guides";
 
   const fallbackDescription = activeCat
     ? `Browse official Graha Kavach ${activeCat.name.toLowerCase()} articles, operating manuals, and expert fire safety recommendations.`
     : "Explore practical fire safety guides, technical operating instructions, equipment comparisons, and prevention tips curated by the Graha Kavach engineering team.";
 
-  const path = activeCat ? `/blog?category=${activeCat.slug}` : "/blog";
+  // Filtered views repeat the main list: canonical to /blog and keep them out of the index.
+  const isFiltered = Boolean(category);
 
   return buildSeoMetadata({
     fallbackTitle,
     fallbackDescription,
-    path,
+    path: "/blog",
+    noindex: isFiltered,
     keywords: [
       "fire safety blog",
       "fire prevention articles",

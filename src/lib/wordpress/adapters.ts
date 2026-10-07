@@ -237,6 +237,9 @@ export async function getPageBySlug(slug: string): Promise<WpPage | null> {
   return data.page;
 }
 
+/** WordPress sample content that must never be public. */
+const PLACEHOLDER_POST_SLUGS = new Set(["hello-world"]);
+
 export async function getPosts(first = 9): Promise<WpPost[]> {
   const data = await wpGraphql<z.infer<typeof postsResponseSchema>>({
     query: POSTS_QUERY,
@@ -246,10 +249,12 @@ export async function getPosts(first = 9): Promise<WpPost[]> {
     revalidate: Revalidate.content,
   });
 
-  return data.posts.nodes;
+  return data.posts.nodes.filter((post) => !PLACEHOLDER_POST_SLUGS.has(post.slug));
 }
 
 export async function getPostBySlug(slug: string): Promise<WpPost | null> {
+  if (PLACEHOLDER_POST_SLUGS.has(slug)) return null;
+
   const data = await wpGraphql<z.infer<typeof postResponseSchema>>({
     query: POST_BY_SLUG_QUERY,
     variables: { slug },

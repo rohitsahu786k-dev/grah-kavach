@@ -17,13 +17,12 @@ import {
   Sparkles,
   Home,
 } from "lucide-react";
-import { buildSeoMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbSchema, buildAboutPageSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = {
-  title: "About Us: 16 Years of Protection | Speciality Geochem (Est. 2010) — Graha Kavach",
+  title: "About Us: 16 Years of Fire Protection",
   description:
-    "For 16 years, Speciality Geochem (Est. 2010), Udaipur, has protected businesses from fire. Now, Graha Kavach brings certified 3-in-1 fire safety protection home for the people you love.",
+    "For 16 years, Speciality Geochem (Est. 2010), Udaipur, has protected businesses from fire. Now Graha Kavach brings certified fire safety protection home.",
   keywords: [
     "about Graha Kavach",
     "Speciality Geochem Udaipur",
