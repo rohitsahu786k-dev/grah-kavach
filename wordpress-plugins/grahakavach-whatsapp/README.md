@@ -1,6 +1,6 @@
 # Graha Kavach WhatsApp Alerts
 
-Automated WhatsApp Cloud API messages for the WooCommerce backend (`admin.grahakavach.in`) and the Next.js storefront.
+Automated WhatsApp Cloud API alerts for the WooCommerce backend (`admin.grahakavach.in`) and the Next.js storefront.
 
 | Message | Template | Triggered by |
 | --- | --- | --- |
