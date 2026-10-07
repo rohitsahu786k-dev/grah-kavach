@@ -92,7 +92,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-8">
           <ol className="flex flex-wrap items-center gap-1.5 text-xs text-foreground-muted">
@@ -178,7 +178,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Featured Image if supplied */}
         {featuredImgUrl && (
-          <div className="relative mt-8 h-72 w-full overflow-hidden rounded-2xl border border-border sm:h-96">
+          <div className="relative mt-8 h-72 w-full overflow-hidden rounded-2xl border border-border sm:h-96 lg:h-[30rem]">
             <Image
               src={featuredImgUrl}
               alt={post.featuredImage?.node?.altText || cleanTitle}
