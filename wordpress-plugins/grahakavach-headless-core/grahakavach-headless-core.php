@@ -64,6 +64,7 @@ require_once GK_HEADLESS_DIR . 'includes/class-gk-seed.php';
  * the backend recoverable even if a plugin is deactivated.
  */
 function gk_headless_bootstrap(): void {
+	GK_Urls::init();
 	GK_Noindex::init();
 	GK_Cors::init();
 	GK_Cache_Control::init();

@@ -19,6 +19,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class GK_Urls {
 
+	public static function init(): void {
+		add_filter( 'post_link', array( __CLASS__, 'filter_post_link' ), 10, 2 );
+	}
+
+	/**
+	 * Blog posts live under /blog/ on the storefront, while WordPress itself
+	 * builds /%postname%/. Without this, "View post" in wp-admin opened
+	 * admin.grahakavach.in/<slug>/ instead of the real article page.
+	 *
+	 * Only published posts are mapped; drafts keep WordPress's ?p= preview link.
+	 *
+	 * @param string  $permalink Permalink WordPress built.
+	 * @param WP_Post $post      The post.
+	 * @return string
+	 */
+	public static function filter_post_link( $permalink, $post ) {
+		if ( ! $post instanceof WP_Post || 'post' !== $post->post_type ) {
+			return $permalink;
+		}
+		if ( ! in_array( $post->post_status, array( 'publish', 'future' ), true ) ) {
+			return $permalink;
+		}
+
+		return GK_Config::frontend_url() . '/blog/' . $post->post_name;
+	}
+
 	/**
 	 * Map a backend permalink onto the storefront.
 	 *
