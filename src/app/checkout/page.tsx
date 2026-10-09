@@ -372,6 +372,7 @@ export default function CheckoutPage() {
                 <PaymentSelector
                   methods={paymentMethods}
                   codAdvanceMinor={computeAdvanceMinor(codAdvance, totalMinor)}
+                  totalMinor={totalMinor}
                   selectedMethod={selectedPaymentMethod}
                   onSelectMethod={setSelectedPaymentMethod}
                   disabled={submitting}

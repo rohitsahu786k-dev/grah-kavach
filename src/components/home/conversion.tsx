@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CodBookingNote } from "@/components/commerce/cod-booking-note";
 import { PurchasePanel } from "@/components/commerce/purchase-panel";
 import { StockStatus } from "@/components/commerce/stock-status";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { ArrowRightIcon, CheckIcon, ShieldIcon } from "@/components/ui/icons";
 import { MediaPlaceholder } from "@/components/ui/media-placeholder";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import { Clock, Flame, Headphones, Minus, Plus, ShieldCheck } from "lucide-react";
+import type { CodAdvanceConfig } from "@/lib/config/checkout";
 import type { Media, ProductSummary } from "@/types";
 
 /* ------------------------------------------------------------------ */
@@ -24,6 +26,7 @@ type BuyProps = {
   features: string[];
   unavailable: boolean;
   unpublished: boolean;
+  codAdvance?: CodAdvanceConfig | null;
 };
 
 /**
@@ -40,6 +43,7 @@ export function BuySection({
   features,
   unavailable,
   unpublished,
+  codAdvance,
 }: BuyProps) {
   const onSale =
     typeof product.regularPriceMinor === "number" &&
@@ -98,6 +102,13 @@ export function BuySection({
                 </>
               ) : null}
             </div>
+
+            <CodBookingNote
+              className="mt-4"
+              priceMinor={product.priceMinor}
+              currency={product.currency}
+              config={codAdvance}
+            />
 
             <div className="mt-3">
               <StockStatus status={product.stockStatus} quantity={stockQuantity} />
@@ -389,10 +400,12 @@ export function FaqSection({
 export function FinalCta({
   product,
   unavailable,
+  codAdvance,
 }: {
   image?: Media | null;
   product: ProductSummary;
   unavailable?: boolean;
+  codAdvance?: CodAdvanceConfig | null;
 }) {
   return (
     <section className="relative w-full overflow-hidden bg-[#070607] text-white">
@@ -454,6 +467,13 @@ export function FinalCta({
                 <ArrowRightIcon className="size-3.5 ml-1" />
               </Button>
             </div>
+            <CodBookingNote
+              className="mt-3 !px-2.5 !py-1.5 !text-xs"
+              tone="dark"
+              priceMinor={product?.priceMinor}
+              currency={product?.currency}
+              config={codAdvance}
+            />
           </div>
         </div>
 
@@ -490,6 +510,14 @@ export function FinalCta({
                 ) : null}
               </div>
             ) : null}
+
+            <CodBookingNote
+              className="mt-3"
+              tone="dark"
+              priceMinor={product?.priceMinor}
+              currency={product?.currency}
+              config={codAdvance}
+            />
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import type { ValidatedCart } from "@/lib/cart/types";
 
-import { COD_ADVANCE_LABEL } from "@/lib/config/checkout";
 
 type CheckoutReviewProps = {
   cart: ValidatedCart;
@@ -54,7 +53,7 @@ export function CheckoutReview({ cart, advanceMinor = 0 }: CheckoutReviewProps) 
       </div>
 
       {/* Breakdown */}
-      <div className="mt-6 space-y-3 border-t border-border pt-6 text-sm">
+      <div className="mt-6 space-y-3.5 border-t border-border pt-6 text-base">
         <div className="flex justify-between text-muted-foreground">
           <span>Subtotal</span>
           <span className="font-medium text-foreground">
@@ -80,38 +79,39 @@ export function CheckoutReview({ cart, advanceMinor = 0 }: CheckoutReviewProps) 
           </span>
         </div>
 
-        <div className="flex justify-between text-muted-foreground">
-          <span>Estimated Taxes</span>
-          <span className="font-medium text-foreground">
-            {cart.taxMinor > 0
-              ? formatMinorUnitsToCurrency(cart.taxMinor, cart.currency)
-              : "₹0"}
-          </span>
-        </div>
-
-        <div className="flex items-baseline justify-between border-t border-border pt-4 text-base font-semibold text-foreground">
-          <span>Total Payable</span>
-          <span className="text-2xl font-bold tracking-tight text-foreground">
-            {formatMinorUnitsToCurrency(cart.totalMinor, cart.currency)}
-          </span>
-        </div>
-
         {advanceMinor > 0 ? (
-          <div className="space-y-2 rounded-lg bg-stone-50 p-3 text-sm">
-            <div className="flex justify-between gap-3 text-foreground">
-              <span>{COD_ADVANCE_LABEL}</span>
-              <span className="shrink-0 font-semibold">
-                {formatMinorUnitsToCurrency(advanceMinor, cart.currency)}
-              </span>
-            </div>
-            <div className="flex justify-between gap-3 text-muted-foreground">
+          <>
+            <div className="flex justify-between text-base text-muted-foreground">
               <span>Balance to pay on delivery</span>
-              <span className="shrink-0 font-medium text-foreground">
+              <span className="font-medium text-foreground">
                 {formatMinorUnitsToCurrency(Math.max(0, cart.totalMinor - advanceMinor), cart.currency)}
               </span>
             </div>
+
+            <div className="flex justify-between text-base text-muted-foreground">
+              <span>Pay Now</span>
+              <span className="font-medium text-foreground">
+                {formatMinorUnitsToCurrency(advanceMinor, cart.currency)}
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className="flex justify-between text-base text-muted-foreground">
+            <span>Estimated Taxes</span>
+            <span className="font-medium text-foreground">
+              {cart.taxMinor > 0
+                ? formatMinorUnitsToCurrency(cart.taxMinor, cart.currency)
+                : "₹0"}
+            </span>
           </div>
-        ) : null}
+        )}
+
+        <div className="flex items-baseline justify-between border-t border-border pt-4 text-lg font-semibold text-foreground">
+          <span>{advanceMinor > 0 ? "Total Pay" : "Total Payable"}</span>
+          <span className="text-3xl font-bold tracking-tight text-foreground">
+            {formatMinorUnitsToCurrency(cart.totalMinor, cart.currency)}
+          </span>
+        </div>
       </div>
     </div>
   );

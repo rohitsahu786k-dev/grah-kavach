@@ -14,6 +14,7 @@ import { CompleteKit, HomeTextMarquee, TrustBar, type ProductRole } from "@/comp
 import { HowItWorks, Placement, RiskAreas } from "@/components/home/safety-education";
 import { wooProductGallery, wooProductToSummary } from "@/lib/woocommerce/adapters";
 import { getPrimaryProduct } from "@/lib/woocommerce/products";
+import { getCodAdvanceConfig } from "@/lib/woocommerce/checkout-settings";
 import { getProductReviews } from "@/lib/woocommerce/reviews";
 import {
   getFaqs,
@@ -130,7 +131,7 @@ function pickImage(gallery: Media[], keywords: string[], fallbackIndex: number):
 }
 
 export default async function Home() {
-  const product = await getPrimaryProduct();
+  const [product, codAdvance] = await Promise.all([getPrimaryProduct(), getCodAdvanceConfig()]);
   const summary = wooProductToSummary(product);
 
   const [homePage, productContent, faqs, reviews, testimonials, safetyGuides] = await Promise.all([
@@ -306,6 +307,7 @@ export default async function Home() {
         features={features}
         unavailable={unavailable}
         unpublished={unpublished}
+        codAdvance={codAdvance}
       />
 
       <Placement />
@@ -330,7 +332,7 @@ export default async function Home() {
         items={faqItems.map((faq) => ({ id: faq.id, title: faq.title, answer: faq.answer }))}
       />
 
-      <FinalCta image={kitImage} product={summary} unavailable={unavailable} />
+      <FinalCta image={kitImage} product={summary} unavailable={unavailable} codAdvance={codAdvance} />
 
       <HomeSeoContent />
     </main>

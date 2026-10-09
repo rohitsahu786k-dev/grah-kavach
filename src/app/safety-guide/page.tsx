@@ -9,6 +9,7 @@ import {
   Compass,
   Zap,
 } from "lucide-react";
+import { SafetyCarousel } from "@/components/home/safety-carousel";
 import { getPageBySlug } from "@/lib/wordpress/adapters";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
@@ -113,6 +114,25 @@ export default function SafetyGuidePage() {
           </span>
         </div>
       </div>
+
+      {/* Safety guide posters, same carousel as the homepage */}
+      <section className="bg-background-subtle py-10 lg:py-14" id="first-minute">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-col items-center gap-3 text-center">
+            <span className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">
+              From the safety guide
+            </span>
+            <h2 className="text-balance text-3xl leading-[1.12] font-medium tracking-[-0.03em] text-foreground lg:text-[44px]">
+              What to do in the first minute.
+            </h2>
+            <p className="mt-1 max-w-xl leading-7 text-foreground-muted">
+              The short version of the guide that ships with the kit. Read it before you need it.
+            </p>
+          </div>
+
+          <SafetyCarousel />
+        </div>
+      </section>
 
       {/* 1. Fire-Risk Locations in Indian Homes */}
       <section className="py-16 md:py-20" id="risk-locations">

@@ -9,6 +9,8 @@ type PaymentSelectorProps = {
   onSelectMethod: (id: string) => void;
   /** Advance taken online on COD orders, in paise. 0 when COD is plain pay-on-delivery. */
   codAdvanceMinor?: number;
+  /** Order total in paise, used to word the COD advance message. */
+  totalMinor?: number;
   disabled?: boolean;
 };
 
@@ -17,6 +19,7 @@ export function PaymentSelector({
   selectedMethod,
   onSelectMethod,
   codAdvanceMinor = 0,
+  totalMinor = 0,
   disabled = false,
 }: PaymentSelectorProps) {
   if (methods.length === 0) {
@@ -78,11 +81,11 @@ export function PaymentSelector({
                 )}
               </div>
 
-              <p className="mt-1 break-words text-xs text-muted-foreground">
+              <p className="mt-1 break-words text-sm text-muted-foreground">
                 {method.description ||
                   (method.id === "cod"
                     ? codAdvanceMinor > 0
-                      ? `Pay ₹${codAdvanceMinor / 100} online now to confirm your order. The rest is paid in cash or UPI on delivery.`
+                      ? `Pay ₹${codAdvanceMinor / 100} to confirm your order worth ₹${totalMinor / 100}. Pay the remaining ₹${Math.max(0, totalMinor - codAdvanceMinor) / 100} on delivery.`
                       : "Pay securely in cash or via UPI QR code upon doorstep delivery."
                     : "Secure instant payment via certified payment gateway.")}
               </p>
