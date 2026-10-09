@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Accordion } from "@/components/ui/accordion";
@@ -68,6 +69,29 @@ const fallbackFaqs = (price: string): Array<{ q: string; a: string }> => [
     a: "Graha Kavach is manufactured by Speciality Geochem, Udaipur, Rajasthan, which has been making fire protection products since 2010.",
   },
 ];
+
+const UPLOADS = "https://admin.grahakavach.in/wp-content/uploads";
+
+const placementImages = [
+  {
+    title: "Extinguisher",
+    caption: "Mounted in the hallway, on the way out.",
+    src: `${UPLOADS}/Fire-Extinguisher-in-Modern-Hallway.png`,
+    alt: "Fire extinguisher mounted in a modern hallway near the exit",
+  },
+  {
+    title: "Fire ball",
+    caption: "Placed near the electrical risk point.",
+    src: `${UPLOADS}/Modern-Utility-Wall-with-Fire-Safety-Ball.png`,
+    alt: "Automatic fire ball on a utility wall near the electrical distribution board",
+  },
+  {
+    title: "Fire blanket",
+    caption: "Kept in the kitchen, within easy reach.",
+    src: `${UPLOADS}/Modern-Kitchen-with-Fire-Blanket-Safety.png`,
+    alt: "Fire blanket mounted on a modern kitchen wall for quick release",
+  },
+] as const;
 
 const storySections = [
   ["Why this kit exists", "Fire preparedness is easier to act on when the core tools are grouped, visible, and understandable."],
@@ -329,8 +353,28 @@ export default async function FireSafetyKitPage() {
             <div className="mt-6 border border-warning bg-warning-subtle p-4 text-sm leading-6 text-warning">
               These previews do not replace the supplied product instructions. If a fire is growing, spreading, or blocking escape, leave and call emergency services.
             </div>
+
+            <div className="mt-6 grid grid-cols-3 gap-3">
+              {placementImages.map((item) => (
+                <figure key={item.title} className="min-w-0">
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius)] border border-border bg-background-subtle">
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      fill
+                      sizes="(max-width: 1023px) 30vw, 180px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <figcaption className="mt-2 text-xs leading-5 text-foreground-muted">
+                    <span className="block font-medium text-foreground">{item.title}</span>
+                    {item.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
-          <div className="space-y-6 leading-7 text-foreground-muted">
+          <div className="gk-article min-w-0 space-y-6 text-base leading-7">
             {content?.installation ? <div dangerouslySetInnerHTML={{ __html: content.installation }} /> : null}
             {content?.usage ? <div dangerouslySetInnerHTML={{ __html: content.usage }} /> : null}
             {content?.warnings.length ? (
