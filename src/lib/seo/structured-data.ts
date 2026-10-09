@@ -102,9 +102,37 @@ export function buildBreadcrumbSchema(
   };
 }
 
+/** A WebPage node that ties the page to the site, its breadcrumb and its main entity. */
+export function buildWebPageSchema({
+  path,
+  name,
+  description,
+  image,
+}: {
+  path: string;
+  name: string;
+  description?: string;
+  image?: string;
+}) {
+  const url = `${BASE_URL}${path}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": ["WebPage", "ItemPage"],
+    "@id": `${url}/#webpage`,
+    url,
+    name: stripHtml(name),
+    description: description ? stripHtml(description) : undefined,
+    inLanguage: "en-IN",
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+    about: { "@id": `${url}/#product` },
+    primaryImageOfPage: image ? { "@type": "ImageObject", url: image } : undefined,
+  };
+}
+
 export function buildProductSchema(
   product: WooProduct | null,
-  reviews: WooProductReview[] = []
+  reviews: WooProductReview[] = [],
+  specs: string[][] = []
 ) {
   if (!product) return null;
 
@@ -148,6 +176,18 @@ export function buildProductSchema(
     "@context": "https://schema.org",
     "@type": "Product",
     "@id": `${BASE_URL}/fire-safety-kit/#product`,
+    url: `${BASE_URL}/fire-safety-kit`,
+    mainEntityOfPage: { "@id": `${BASE_URL}/fire-safety-kit/#webpage` },
+    category: "Fire safety equipment",
+    manufacturer: { "@type": "Organization", name: "Speciality Geochem", address: { "@type": "PostalAddress", addressLocality: "Udaipur", addressRegion: "Rajasthan", addressCountry: "IN" } },
+    audience: { "@type": "Audience", audienceType: "Homeowners, kitchens, shops and small offices in India" },
+    additionalProperty: specs
+      .filter((row) => row[1] && row[2])
+      .map(([group, label, value]) => ({
+        "@type": "PropertyValue",
+        name: `${group} ${label}`.trim(),
+        value,
+      })),
     name: cleanName,
     description: cleanDescription,
     image: product.images.map((img: { src: string }) => img.src),
@@ -162,6 +202,12 @@ export function buildProductSchema(
       priceCurrency: "INR",
       price: price,
       priceValidUntil: "2027-12-31",
+      itemCondition: "https://schema.org/NewCondition",
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "INR" },
+        shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN" },
+      },
       availability: inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",

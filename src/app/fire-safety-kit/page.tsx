@@ -37,6 +37,38 @@ const fallbackSpecs = [
   ["Fire Blanket", "Heat resistance", "550°C brochure-listed heat-resistance figure"],
 ];
 
+/*
+ * Shown (and marked up as FAQPage) only when no FAQs are published in the CMS,
+ * so the page always answers the questions buyers search for. The price is
+ * filled in from the live product.
+ */
+const fallbackFaqs = (price: string): Array<{ q: string; a: string }> => [
+  {
+    q: "What is included in the Graha Kavach fire safety kit?",
+    a: "The kit has three items: a 2 kg ABC dry powder fire extinguisher, an automatic fire ball (1.3 kg) and a 1 m x 1 m fibreglass fire blanket, supplied with wall mounting hardware and a printed safety guide.",
+  },
+  {
+    q: "What is the price of the Graha Kavach home fire safety kit?",
+    a: `The complete 3-in-1 kit is priced at ${price}. Delivery is free across India.`,
+  },
+  {
+    q: "Is cash on delivery available?",
+    a: "Yes. Cash on delivery is available. A small advance paid online confirms your order and the balance is paid on delivery.",
+  },
+  {
+    q: "Which fires can the ABC fire extinguisher be used on?",
+    a: "An ABC dry powder extinguisher is designed for Class A (wood, paper, cloth), Class B (petrol, paint, oil) and Class C (flammable gases such as LPG) fires. For a small kitchen pan fire, the fire blanket is the safer first option.",
+  },
+  {
+    q: "Does the automatic fire ball need electricity?",
+    a: "No. The fire ball works without electricity or anyone operating it. It activates by itself when flame reaches it, which makes it useful near an electrical panel, gas cylinder area, garage or store room.",
+  },
+  {
+    q: "Who manufactures Graha Kavach?",
+    a: "Graha Kavach is manufactured by Speciality Geochem, Udaipur, Rajasthan, which has been making fire protection products since 2010.",
+  },
+];
+
 const storySections = [
   ["Why this kit exists", "Fire preparedness is easier to act on when the core tools are grouped, visible, and understandable."],
   ["The three protection layers", "Manual response, flame-activated support, and a smothering option each serve a different emergency role."],
@@ -61,17 +93,20 @@ async function getKitData() {
 }
 
 import { buildSeoMetadata } from "@/lib/seo/metadata";
-import { buildProductSchema, buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
+import {
+  buildBreadcrumbSchema,
+  buildFaqSchema,
+  buildOrganizationSchema,
+  buildProductSchema,
+  buildWebPageSchema,
+} from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { product, content } = await getKitData();
-  const title = content?.headline
-    ? `${content.headline} | Graha Kavach`
-    : `Graha Kavach™ Complete 3-in-1 Home Fire Safety Kit (₹2,499) — Buy Online`;
+  const { product } = await getKitData();
+  // The on-page H1 comes from the CMS headline; the search title is written for the query people type.
+  const title = "Home Fire Safety Kit: Buy Online in India";
   const description =
-    content?.heroSupportingText ||
-    stripHtml(product.short_description) ||
-    "Certified 3-in-1 domestic fire safety kit: 2kg ABC dry powder extinguisher, automatic fire ball, and 550°C fibreglass blanket with wall mounting hardware. Free delivery across India.";
+    "Buy the Graha Kavach 3-in-1 home fire safety kit: 2 kg ABC fire extinguisher, automatic fire ball and fire blanket. Free delivery across India, COD available.";
 
   return buildSeoMetadata({
     fallbackTitle: title,
@@ -111,7 +146,15 @@ export default async function FireSafetyKitPage() {
 
   const specs = content?.specifications.length ? content.specifications.map((spec) => [spec.group, spec.label, spec.value]) : fallbackSpecs;
 
-  const productSchema = buildProductSchema(product, reviews);
+  const faqItems = content?.faqs.length
+    ? content.faqs.map((faq) => ({ id: String(faq.id), q: faq.title, a: faq.answer }))
+    : fallbackFaqs(formatMinorUnitsToCurrency(summary.priceMinor, summary.currency)).map((faq, i) => ({
+        id: `faq-${i}`,
+        ...faq,
+      }));
+
+  const productSchema = buildProductSchema(product, reviews, specs as string[][]);
+  const faqSchema = buildFaqSchema(faqItems.map(({ q, a }) => ({ q, a })));
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Fire Safety Kit", path: "/fire-safety-kit" },
@@ -121,8 +164,15 @@ export default async function FireSafetyKitPage() {
     "@context": "https://schema.org",
     "@graph": [
       buildOrganizationSchema(),
+      buildWebPageSchema({
+        path: "/fire-safety-kit",
+        name: content?.headline || stripHtml(product.name),
+        description: content?.heroSupportingText || stripHtml(product.short_description),
+        image: product.images[0]?.src,
+      }),
       ...(productSchema ? [productSchema] : []),
       breadcrumbSchema,
+      ...(faqSchema ? [faqSchema] : []),
     ],
   };
 
@@ -170,7 +220,7 @@ export default async function FireSafetyKitPage() {
 
             {product.status !== "publish" ? (
               <div className="mt-6 border border-warning bg-warning-subtle p-4 text-sm text-warning">
-                This WooCommerce product is currently not published. Product details are shown from backend data, but purchase actions are disabled.
+                This product is not available to order right now.
               </div>
             ) : null}
 
@@ -189,12 +239,41 @@ export default async function FireSafetyKitPage() {
             </div>
 
             <div className="mt-8 grid gap-3 border-y border-border py-5 text-sm text-foreground-muted sm:grid-cols-3">
-              <span>WooCommerce checkout</span>
-              <span>CMS safety guide</span>
-              <span>No fake scarcity</span>
+              <span>Free delivery across India</span>
+              <span>Cash on delivery available</span>
+              <span>Made in Udaipur by Speciality Geochem</span>
             </div>
 
             <SecurePaymentStrip className="mt-6" />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-10 sm:py-14">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-10">
+          <h2 className="text-2xl font-medium text-foreground sm:text-3xl">
+            Buy a complete home fire safety kit online in India
+          </h2>
+          <div className="mt-4 space-y-4 leading-8 text-foreground-muted">
+            <p>
+              The Graha Kavach 3-in-1 fire safety kit puts three layers of protection in one box for homes, kitchens,
+              shops and small offices: a 2 kg ABC dry powder fire extinguisher for a manual first response, an
+              automatic fire ball that activates by itself when flame reaches it, and a 1 m x 1 m fibreglass fire
+              blanket for kitchen and pan fires.
+            </p>
+            <p>
+              It is made by Speciality Geochem in Udaipur, comes with wall mounting hardware and a printed safety
+              guide, and is delivered across India with cash on delivery available. Not sure where to place each
+              item? Read the{" "}
+              <Link className="text-primary underline underline-offset-4" href="/safety-guide">
+                home fire safety guide
+              </Link>{" "}
+              or see{" "}
+              <Link className="text-primary underline underline-offset-4" href="/how-it-works">
+                how the three layers work
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>
@@ -286,7 +365,7 @@ export default async function FireSafetyKitPage() {
       <section className="bg-white py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Certifications</p>
-          <h2 className="mt-3 text-3xl font-medium text-foreground">CMS-managed verified documents.</h2>
+          <h2 className="mt-3 text-3xl font-medium text-foreground">Certified and tested.</h2>
           {content?.certifications.length ? (
             <div className="mt-8 grid gap-5 md:grid-cols-3">
               {content.certifications.map((cert) => (
@@ -298,7 +377,7 @@ export default async function FireSafetyKitPage() {
             </div>
           ) : (
             <div className="mt-8 border border-dashed border-border p-6 text-foreground-muted">
-              Verified certification claims will appear here when published in the CMS.
+              Certificates and test reports are available on request. Contact us for copies.
             </div>
           )}
         </div>
@@ -309,25 +388,19 @@ export default async function FireSafetyKitPage() {
           <div className="min-w-0">
             <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">FAQ</p>
             <h2 className="mt-3 text-3xl font-medium text-foreground">Product questions.</h2>
-            {content?.faqs.length ? (
-              <Accordion
-                className="mt-8"
-                items={content.faqs.map((faq) => ({
-                  id: String(faq.id),
-                  question: faq.title,
-                  answer: <span dangerouslySetInnerHTML={{ __html: faq.answer }} />,
-                }))}
-              />
-            ) : (
-              <div className="mt-8 border border-dashed border-border bg-white p-6 text-foreground-muted">
-                Product FAQ content will appear here after it is published in the CMS.
-              </div>
-            )}
+            <Accordion
+              className="mt-8"
+              items={faqItems.map((faq) => ({
+                id: faq.id,
+                question: faq.q,
+                answer: <span dangerouslySetInnerHTML={{ __html: faq.a }} />,
+              }))}
+            />
           </div>
 
           <div className="min-w-0">
             <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Reviews</p>
-            <h2 className="mt-3 text-3xl font-medium text-foreground">WooCommerce reviews.</h2>
+            <h2 className="mt-3 text-3xl font-medium text-foreground">Customer reviews.</h2>
             {reviews.length ? (
               <div className="mt-8 grid gap-4">
                 {reviews.map((review) => (
@@ -340,7 +413,7 @@ export default async function FireSafetyKitPage() {
               </div>
             ) : (
               <div className="mt-8 border border-dashed border-border bg-white p-6 text-foreground-muted">
-                No WooCommerce reviews are published yet.
+                No reviews have been published yet.
               </div>
             )}
           </div>
