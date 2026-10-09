@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
+import { GoogleTagManagerNoScript, GoogleTags } from "@/components/analytics/google-tags";
 import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { LoginSheet } from "@/components/auth/login-sheet";
@@ -97,6 +98,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
        * overlay is open and is read by the header, the tab bar and the drawer.
        */}
       <body className="flex min-h-full flex-col bg-white text-foreground">
+        <GoogleTagManagerNoScript />
+        <GoogleTags />
         <MetaPixel />
         <CustomerProvider>
           <LoginModalProvider>

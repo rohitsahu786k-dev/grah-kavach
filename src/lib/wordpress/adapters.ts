@@ -185,10 +185,10 @@ export async function getGlobalSiteSettings(): Promise<GlobalSiteSettings> {
 
   const headerNavigation: NavItem[] = [
     { label: "Home", href: "/" },
+    { label: "About Us", href: "/about" },
     { label: "Fire Safety Kit", href: "/fire-safety-kit" },
     { label: "How It Works", href: "/how-it-works" },
     { label: "Safety Guide", href: "/safety-guide" },
-    { label: "About Us", href: "/about" },
     { label: "Blog", href: "/blog" },
     { label: "Contact", href: "/contact" },
   ];
