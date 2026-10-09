@@ -192,15 +192,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Reading UX / Article Body */}
         <div className="mt-10">
           <div
-            className="prose prose-stone max-w-none dark:prose-invert
-              prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
-              prose-h2:mt-10 prose-h2:text-2xl prose-h2:border-b prose-h2:border-border prose-h2:pb-3
-              prose-h3:mt-8 prose-h3:text-xl
-              prose-p:text-base prose-p:leading-8 prose-p:text-foreground-muted
-              prose-li:text-base prose-li:leading-7 prose-li:text-foreground-muted
-              prose-strong:text-foreground prose-strong:font-semibold
-              prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-background-subtle prose-blockquote:py-2 prose-blockquote:px-5 prose-blockquote:italic
-              prose-ol:my-4 prose-ul:my-4"
+            className="gk-article"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </div>
