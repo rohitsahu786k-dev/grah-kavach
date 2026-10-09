@@ -350,9 +350,6 @@ export default async function FireSafetyKitPage() {
           <div className="min-w-0">
             <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Placement and use</p>
             <h2 className="mt-3 text-3xl font-medium text-foreground">Use safely, and only when appropriate.</h2>
-            <div className="mt-6 border border-warning bg-warning-subtle p-4 text-sm leading-6 text-warning">
-              These previews do not replace the supplied product instructions. If a fire is growing, spreading, or blocking escape, leave and call emergency services.
-            </div>
 
             <div className="mt-6 grid grid-cols-3 gap-3">
               {placementImages.map((item) => (
