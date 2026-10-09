@@ -122,6 +122,8 @@ final class GK_Urls {
 				break;
 			case 'post':
 				$tags[] = 'wp-post:' . $post->post_name;
+				// A trashed post gets its slug suffixed; also drop the public slug's cache.
+				$tags[] = 'wp-post:' . preg_replace( '/__trashed$/', '', (string) $post->post_name );
 				$tags[] = 'wp-posts';
 				break;
 			case 'product':

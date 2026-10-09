@@ -34,8 +34,10 @@ export const CacheTag = {
 export const Revalidate = {
   /** Settings, navigation, legal copy. */
   settings: 3600,
-  /** Pages and posts. */
+  /** Pages. */
   content: 3600,
+  /** Blog posts. Short, so a removed or edited post leaves the site quickly even if the webhook fails. */
+  posts: 60,
   /** Product catalogue: name, description, images. */
   catalogue: 300,
   /** Price and stock. Short, because showing a stale price is a real problem. */

@@ -47,6 +47,8 @@ final class GK_Revalidation {
 		// Editorial content.
 		add_action( 'save_post', array( __CLASS__, 'on_save_post' ), 10, 3 );
 		add_action( 'deleted_post', array( __CLASS__, 'on_deleted_post' ), 10, 2 );
+		// Trash, restore and unpublish must also clear the public cache.
+		add_action( 'transition_post_status', array( __CLASS__, 'on_status_change' ), 10, 3 );
 
 		// Global settings and menus.
 		add_action( 'update_option_' . GK_Config::OPTION_KEY, array( __CLASS__, 'on_settings_change' ) );
@@ -110,6 +112,26 @@ final class GK_Revalidation {
 		}
 
 		self::queue( GK_Urls::tags_for_post( (int) $post_id ) );
+	}
+
+	/**
+	 * Handle a status change (publish, unpublish, trash, restore).
+	 *
+	 * @param string  $new_status New status.
+	 * @param string  $old_status Old status.
+	 * @param WP_Post $post       Post object.
+	 */
+	public static function on_status_change( $new_status, $old_status, $post ): void {
+		if ( $new_status === $old_status || ! $post instanceof WP_Post ) {
+			return;
+		}
+
+		// Only transitions into or out of the public state affect the cache.
+		if ( 'publish' !== $new_status && 'publish' !== $old_status ) {
+			return;
+		}
+
+		self::queue( GK_Urls::tags_for_post( (int) $post->ID ) );
 	}
 
 	/**

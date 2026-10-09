@@ -246,7 +246,7 @@ export async function getPosts(first = 9): Promise<WpPost[]> {
     variables: { first },
     schema: postsResponseSchema,
     tags: [CacheTag.posts],
-    revalidate: Revalidate.content,
+    revalidate: Revalidate.posts,
   });
 
   return data.posts.nodes.filter((post) => !PLACEHOLDER_POST_SLUGS.has(post.slug));
@@ -260,7 +260,7 @@ export async function getPostBySlug(slug: string): Promise<WpPost | null> {
     variables: { slug },
     schema: postResponseSchema,
     tags: [CacheTag.posts, CacheTag.post(slug)],
-    revalidate: Revalidate.content,
+    revalidate: Revalidate.posts,
   });
 
   return data.post;
