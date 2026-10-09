@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Calendar, Clock, ChevronRight, ShieldCheck, ArrowLeft, ArrowRight } from "lucide-react";
 import { getPostBySlug, getRelatedPosts } from "@/lib/wordpress/adapters";
 import { stripHtml, calculateReadingTime, formatIndianDate } from "@/lib/wordpress/format";
@@ -175,19 +174,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             />
           </div>
         </header>
-
-        {/* Featured Image if supplied */}
-        {featuredImgUrl && (
-          <div className="relative mt-8 h-72 w-full overflow-hidden rounded-2xl border border-border sm:h-96 lg:h-[30rem]">
-            <Image
-              src={featuredImgUrl}
-              alt={post.featuredImage?.node?.altText || cleanTitle}
-              fill
-              priority
-              className="object-cover"
-            />
-          </div>
-        )}
 
         {/* Reading UX / Article Body */}
         <div className="mt-10">
