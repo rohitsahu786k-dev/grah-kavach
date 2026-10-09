@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Accordion } from "@/components/ui/accordion";
@@ -8,6 +7,7 @@ import { Price } from "@/components/commerce/price";
 import { PurchaseActions } from "@/components/commerce/purchase-actions";
 import { SecurePaymentStrip } from "@/components/commerce/secure-payment-strip";
 import { StockStatus } from "@/components/commerce/stock-status";
+import { SafetyCarousel } from "@/components/home/safety-carousel";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { ProductGallery } from "@/components/commerce/product-gallery";
 import { TrackProductView } from "@/components/analytics/track-view-content";
@@ -69,29 +69,6 @@ const fallbackFaqs = (price: string): Array<{ q: string; a: string }> => [
     a: "Graha Kavach is manufactured by Speciality Geochem, Udaipur, Rajasthan, which has been making fire protection products since 2010.",
   },
 ];
-
-const UPLOADS = "https://admin.grahakavach.in/wp-content/uploads";
-
-const placementImages = [
-  {
-    title: "Extinguisher",
-    caption: "Mounted in the hallway, on the way out.",
-    src: `${UPLOADS}/Fire-Extinguisher-in-Modern-Hallway.png`,
-    alt: "Fire extinguisher mounted in a modern hallway near the exit",
-  },
-  {
-    title: "Fire ball",
-    caption: "Placed near the electrical risk point.",
-    src: `${UPLOADS}/Modern-Utility-Wall-with-Fire-Safety-Ball.png`,
-    alt: "Automatic fire ball on a utility wall near the electrical distribution board",
-  },
-  {
-    title: "Fire blanket",
-    caption: "Kept in the kitchen, within easy reach.",
-    src: `${UPLOADS}/Modern-Kitchen-with-Fire-Blanket-Safety.png`,
-    alt: "Fire blanket mounted on a modern kitchen wall for quick release",
-  },
-] as const;
 
 const storySections = [
   ["Why this kit exists", "Fire preparedness is easier to act on when the core tools are grouped, visible, and understandable."],
@@ -346,32 +323,11 @@ export default async function FireSafetyKitPage() {
       </section>
 
       <section className="bg-white py-10 sm:py-16">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-10">
-          <div className="min-w-0">
-            <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Placement and use</p>
-            <h2 className="mt-3 text-3xl font-medium text-foreground">Use safely, and only when appropriate.</h2>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+          <p className="gk-text-gradient text-sm font-medium uppercase tracking-[0.18em]">Placement and use</p>
+          <h2 className="mt-3 text-3xl font-medium text-foreground">Use safely, and only when appropriate.</h2>
 
-            <div className="mt-6 grid grid-cols-3 gap-3">
-              {placementImages.map((item) => (
-                <figure key={item.title} className="min-w-0">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius)] border border-border bg-background-subtle">
-                    <Image
-                      src={item.src}
-                      alt={item.alt}
-                      fill
-                      sizes="(max-width: 1023px) 30vw, 180px"
-                      className="object-cover"
-                    />
-                  </div>
-                  <figcaption className="mt-2 text-xs leading-5 text-foreground-muted">
-                    <span className="block font-medium text-foreground">{item.title}</span>
-                    {item.caption}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-          <div className="gk-article min-w-0 space-y-6 text-base leading-7">
+          <div className="gk-article mt-8 min-w-0 space-y-6 text-base leading-7 lg:w-[90%]">
             {content?.installation ? <div dangerouslySetInnerHTML={{ __html: content.installation }} /> : null}
             {content?.usage ? <div dangerouslySetInnerHTML={{ __html: content.usage }} /> : null}
             {content?.warnings.length ? (
@@ -386,6 +342,24 @@ export default async function FireSafetyKitPage() {
               </div>
             ) : null}
           </div>
+        </div>
+      </section>
+
+      <section className="bg-background-subtle py-10 sm:py-14" id="first-minute">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+          <div className="mb-6 flex flex-col items-center gap-3 text-center">
+            <span className="gk-text-gradient text-xs font-medium tracking-[0.18em] uppercase">
+              From the safety guide
+            </span>
+            <h2 className="text-balance text-3xl leading-[1.12] font-medium tracking-[-0.03em] text-foreground lg:text-[44px]">
+              What to do in the first minute.
+            </h2>
+            <p className="mt-1 max-w-xl leading-7 text-foreground-muted">
+              The short version of the guide that ships with the kit. Read it before you need it.
+            </p>
+          </div>
+
+          <SafetyCarousel />
         </div>
       </section>
 
