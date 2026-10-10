@@ -30,7 +30,9 @@ export async function wpGraphql<T>({
   let response: Response | null = null;
   let lastError: unknown = null;
 
-  for (let attempt = 0; attempt < 3; attempt++) {
+  const maxAttempts = 5;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       response = await fetch(WORDPRESS_GRAPHQL_URL, {
         method: "POST",
@@ -46,13 +48,13 @@ export async function wpGraphql<T>({
         break;
       }
       // Transient 5xx error, wait and retry
-      if (attempt < 2) {
-        await new Promise((resolve) => setTimeout(resolve, (attempt + 1) * 600));
+      if (attempt < maxAttempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, (attempt + 1) * 1000));
       }
     } catch (error) {
       lastError = error;
-      if (attempt < 2) {
-        await new Promise((resolve) => setTimeout(resolve, (attempt + 1) * 600));
+      if (attempt < maxAttempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, (attempt + 1) * 1000));
       }
     }
   }

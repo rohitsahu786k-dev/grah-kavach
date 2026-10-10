@@ -20,6 +20,14 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  // The shared host reports ~53 CPUs, so Next spawned 53 build workers: that exhausted the
+  // 3 GB memory limit and flooded WordPress with parallel requests (503). Keep the build small.
+  experimental: {
+    cpus: 2,
+    workerThreads: false,
+    staticGenerationMaxConcurrency: 4,
+    staticGenerationRetryCount: 3,
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
