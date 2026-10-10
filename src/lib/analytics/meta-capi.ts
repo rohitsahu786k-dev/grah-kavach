@@ -4,8 +4,7 @@ export const META_PIXEL_ID =
   process.env.NEXT_PUBLIC_META_PIXEL_ID || "1790598735635524";
 
 export const META_CONVERSIONS_API_ACCESS_TOKEN =
-  process.env.META_CONVERSIONS_API_ACCESS_TOKEN ||
-  "EAAatL9QUcyMBSuq2zfZBIQZBxjgsv2nO12hkcbx3BVdDArqvZA1PnliUFQZBseg1Xh1YUki93U3UmOvL8IbshGjjOZA5QhEvxTexCbvTqXIZBD95cSWQNxVYYZCeFDuPPYPSZBxihpCRkYRk6sZBkZBNDnahJtZA82ZCX1e9QQJ6ZAjMeZC05z4CJYiPD3OfZCnhdN6lgbB8gZDZD";
+  process.env.META_CONVERSIONS_API_ACCESS_TOKEN || "";
 
 function sha256(value: string): string {
   return crypto.createHash("sha256").update(value).digest("hex");

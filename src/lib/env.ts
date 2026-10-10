@@ -52,9 +52,7 @@ const serverSchema = z.object({
   CONTACT_NOTIFY_EMAIL: str("grahakavach@gmail.com"),
   // Meta Pixel & Conversions API
   META_PIXEL_ID: str("1790598735635524"),
-  META_CONVERSIONS_API_ACCESS_TOKEN: str(
-    "EAAatL9QUcyMBSuq2zfZBIQZBxjgsv2nO12hkcbx3BVdDArqvZA1PnliUFQZBseg1Xh1YUki93U3UmOvL8IbshGjjOZA5QhEvxTexCbvTqXIZBD95cSWQNxVYYZCeFDuPPYPSZBxihpCRkYRk6sZBkZBNDnahJtZA82ZCX1e9QQJ6ZAjMeZC05z4CJYiPD3OfZCnhdN6lgbB8gZDZD",
-  ),
+  META_CONVERSIONS_API_ACCESS_TOKEN: str(""),
 });
 
 export const publicEnv = publicSchema.parse({
