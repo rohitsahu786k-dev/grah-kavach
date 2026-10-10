@@ -43,7 +43,12 @@ export function MetaPixel() {
             s.parentNode.insertBefore(t,s)}(window,document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '${pixelId}');
-            fbq('track', 'PageView');
+            var eid='PageView-'+Date.now()+'-'+Math.random().toString(36).slice(2,10);
+            fbq('track', 'PageView', {}, {eventID: eid});
+            try{fetch('/api/analytics/meta-capi',{method:'POST',keepalive:true,
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({eventName:'PageView',eventId:eid,eventSourceUrl:location.href})
+            }).catch(function(){})}catch(e){}
           `,
         }}
       />

@@ -23,34 +23,68 @@ export function fbq(...args: unknown[]): void {
   }
 }
 
-/** Fires a PageView event on the Meta Pixel. */
+/** Fires a PageView event (browser Pixel + server Conversions API). */
 export function pageview(): void {
-  fbq("track", "PageView");
+  trackMetaEvent("PageView");
 }
 
 export type PixelEventOptions = {
   eventID?: string;
 };
 
+function newEventId(eventName: string): string {
+  const rand =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return `${eventName}-${rand}`;
+}
+
 /**
- * Tracks a custom or standard Meta Pixel event with optional eventID deduplication.
+ * Sends the same event to the server-side Conversions API. Meta merges it with
+ * the browser event through the shared event id, so a visit is still counted
+ * when the browser Pixel is blocked or dropped.
+ */
+function sendServerEvent(
+  eventName: string,
+  eventId: string,
+  params?: Record<string, unknown>,
+): void {
+  try {
+    void fetch("/api/analytics/meta-capi", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        eventName,
+        eventId,
+        eventSourceUrl: window.location.href,
+        customData: params,
+      }),
+    }).catch(() => {});
+  } catch {
+    // Tracking must never break the page.
+  }
+}
+
+/**
+ * Tracks a standard or custom event in the browser Pixel and on the server.
+ * A shared eventID is generated when none is given, for deduplication.
  */
 export function trackMetaEvent(
   eventName: string,
   params?: Record<string, unknown>,
   options?: PixelEventOptions,
 ): void {
-  if (typeof window === "undefined" || typeof window.fbq !== "function") {
-    return;
-  }
+  if (typeof window === "undefined") return;
 
-  if (options?.eventID) {
-    window.fbq("track", eventName, params, { eventID: options.eventID });
-  } else if (params) {
-    window.fbq("track", eventName, params);
-  } else {
-    window.fbq("track", eventName);
+  const eventID = options?.eventID || newEventId(eventName);
+
+  if (typeof window.fbq === "function") {
+    window.fbq("track", eventName, params ?? {}, { eventID });
   }
+  // Purchase is already sent server-side by the checkout routes.
+  if (eventName !== "Purchase") sendServerEvent(eventName, eventID, params);
 }
 
 /** Tracks a ViewContent event (e.g. visiting the product details page). */

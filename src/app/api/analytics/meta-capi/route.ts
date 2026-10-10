@@ -24,6 +24,17 @@ const capiRequestSchema = z.object({
   customData: z.record(z.string(), z.unknown()).optional(),
 });
 
+/** Browser-originated events only; keeps the public endpoint from being used for arbitrary events. */
+const ALLOWED_EVENTS = new Set([
+  "PageView",
+  "ViewContent",
+  "AddToCart",
+  "InitiateCheckout",
+  "AddPaymentInfo",
+  "Contact",
+  "Lead",
+]);
+
 export async function POST(request: Request) {
   try {
     const json = await request.json();
@@ -36,9 +47,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const { clientIp, clientUserAgent } = extractClientContext(request);
+    const { clientIp, clientUserAgent, fbp, fbc } = extractClientContext(request);
     const { eventName, eventId, eventSourceUrl, userData, customData } =
       parsed.data;
+
+    // Purchase is sent by the checkout routes with verified order data.
+    if (!ALLOWED_EVENTS.has(eventName)) {
+      return NextResponse.json({ error: "Event not allowed" }, { status: 400 });
+    }
 
     const result = await sendMetaCapiEvent({
       eventName,
@@ -48,6 +64,8 @@ export async function POST(request: Request) {
         ...userData,
         clientIp,
         clientUserAgent,
+        fbp,
+        fbc,
       },
       customData,
     });
