@@ -72,6 +72,7 @@ final class GKWA_Admin {
 			'access_token'       => $keep( 'access_token' ),
 			'app_secret'         => $keep( 'app_secret' ),
 			'verify_token'       => $keep( 'verify_token' ),
+			'contacts_api_key'  => $keep( 'contacts_api_key' ),
 			'language'           => sanitize_text_field( (string) ( $input['language'] ?? 'en_US' ) ) ?: 'en_US',
 			'country_code'       => preg_replace( '/\D/', '', (string) ( $input['country_code'] ?? '91' ) ) ?: '91',
 			'admin_phone'        => preg_replace( '/\D/', '', (string) ( $input['admin_phone'] ?? '' ) ),
@@ -246,6 +247,7 @@ final class GKWA_Admin {
 				self::secret_row( 'Access token', 'access_token', 'GKWA_ACCESS_TOKEN', 'System User token with whatsapp_business_messaging + whatsapp_business_management, expiry "Never".' );
 				self::secret_row( 'App secret', 'app_secret', 'GKWA_APP_SECRET', 'Meta app -> Settings -> Basic. Used only to verify webhook signatures.' );
 				self::secret_row( 'Webhook verify token', 'verify_token', 'GKWA_VERIFY_TOKEN', 'Any long random string; you type the same value into Meta when adding the webhook.' );
+				self::secret_row( 'Contacts API key', 'contacts_api_key', 'GKWA_CONTACTS_API_KEY', 'Any long random string. Whoever holds it can read the contacts list at /wp-json/gk-whatsapp/v1/contacts.' );
 				?>
 			</table>
 

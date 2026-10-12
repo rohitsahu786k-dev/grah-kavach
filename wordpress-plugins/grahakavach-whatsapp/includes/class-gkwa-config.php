@@ -35,6 +35,7 @@ final class GKWA_Config {
 			'access_token'       => '',
 			'app_secret'         => '',
 			'verify_token'       => '',
+			'contacts_api_key'  => '',
 			'language'           => 'en_US',
 			'country_code'       => '91',
 			'admin_phone'        => '',
@@ -83,6 +84,10 @@ final class GKWA_Config {
 
 	public static function verify_token(): string {
 		return self::secret( 'GKWA_VERIFY_TOKEN', 'verify_token' );
+	}
+
+	public static function contacts_api_key(): string {
+		return self::secret( 'GKWA_CONTACTS_API_KEY', 'contacts_api_key' );
 	}
 
 	public static function phone_id(): string {

@@ -60,7 +60,7 @@ final class GKWA_Contacts {
 	 * @return bool|WP_Error
 	 */
 	public static function authorize( WP_REST_Request $request ) {
-		$key = defined( 'GKWA_CONTACTS_API_KEY' ) ? trim( (string) GKWA_CONTACTS_API_KEY ) : '';
+		$key = GKWA_Config::contacts_api_key();
 
 		if ( '' !== $key ) {
 			$header = (string) $request->get_header( 'authorization' );

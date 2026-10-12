@@ -58,7 +58,7 @@ Templates stay PENDING until Meta approves them (a few minutes to 24 hours); mes
 
 One row per WhatsApp number, for building ad audiences and excluding buyers.
 
-1. Add a long random key to `wp-config.php`:
+1. Set a long random key, either in WooCommerce -> WhatsApp Alerts -> Settings -> "Contacts API key", or in `wp-config.php`:
 
    ```php
    define( 'GKWA_CONTACTS_API_KEY', '<long random string>' );
