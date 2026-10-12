@@ -36,6 +36,7 @@ require_once GKWA_DIR . 'includes/class-gkwa-sender.php';
 require_once GKWA_DIR . 'includes/class-gkwa-events.php';
 require_once GKWA_DIR . 'includes/class-gkwa-carts.php';
 require_once GKWA_DIR . 'includes/class-gkwa-webhook.php';
+require_once GKWA_DIR . 'includes/class-gkwa-contacts.php';
 require_once GKWA_DIR . 'includes/class-gkwa-admin.php';
 
 add_action(
@@ -54,6 +55,7 @@ add_action(
 		GKWA_Sender::init();
 		GKWA_Carts::init();
 		GKWA_Webhook::init();
+		GKWA_Contacts::init();
 		GKWA_Admin::init();
 
 		// Order events need WooCommerce; without it the plugin stays inert.

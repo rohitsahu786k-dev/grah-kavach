@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class GKWA_DB {
 
-	private const DB_VERSION = '1';
+	private const DB_VERSION = '2';
 
 	public static function log_table(): string {
 		global $wpdb;
@@ -30,6 +30,11 @@ final class GKWA_DB {
 		return $wpdb->prefix . 'gkwa_optout';
 	}
 
+	public static function contacts_table(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'gkwa_contacts';
+	}
+
 	public static function install(): void {
 		global $wpdb;
 
@@ -39,6 +44,7 @@ final class GKWA_DB {
 		$log     = self::log_table();
 		$carts   = self::carts_table();
 		$optout  = self::optout_table();
+		$contact = self::contacts_table();
 
 		dbDelta(
 			"CREATE TABLE {$log} (
@@ -88,6 +94,23 @@ final class GKWA_DB {
 				phone VARCHAR(20) NOT NULL,
 				created_at DATETIME NOT NULL,
 				PRIMARY KEY  (phone)
+			) {$charset};"
+		);
+
+		dbDelta(
+			"CREATE TABLE {$contact} (
+				phone VARCHAR(20) NOT NULL,
+				name VARCHAR(100) NOT NULL DEFAULT '',
+				first_inbound_at DATETIME NULL,
+				last_inbound_at DATETIME NULL,
+				ad_id VARCHAR(64) NOT NULL DEFAULT '',
+				ctwa_clid VARCHAR(255) NOT NULL DEFAULT '',
+				ad_headline VARCHAR(255) NOT NULL DEFAULT '',
+				ad_source_url VARCHAR(500) NOT NULL DEFAULT '',
+				created_at DATETIME NOT NULL,
+				updated_at DATETIME NOT NULL,
+				PRIMARY KEY  (phone),
+				KEY updated_at (updated_at)
 			) {$charset};"
 		);
 
@@ -221,6 +244,48 @@ final class GKWA_DB {
 				'SELECT COUNT(*) FROM ' . self::log_table() . " WHERE phone = %s AND template LIKE 'gk\\_cart\\_reminder%%' AND status <> 'skipped' AND created_at > %s",
 				$phone,
 				self::ago( $days * DAY_IN_SECONDS )
+			)
+		);
+	}
+
+	/* ------------------------------------------------------------ contacts */
+
+	/**
+	 * Record a customer's inbound message: name, first/last time, and the click-to-WhatsApp
+	 * ad it came from. The first ad that brought a number in is kept (first-touch).
+	 *
+	 * @param array<string,string> $ad ad_id, ctwa_clid, ad_headline, ad_source_url (any may be empty).
+	 */
+	public static function touch_contact( string $phone, string $name, int $timestamp, array $ad = array() ): void {
+		global $wpdb;
+
+		$when  = gmdate( 'Y-m-d H:i:s', $timestamp > 0 ? $timestamp : time() );
+		$now   = self::now();
+		$table = self::contacts_table();
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO {$table} (phone, name, first_inbound_at, last_inbound_at, ad_id, ctwa_clid, ad_headline, ad_source_url, created_at, updated_at)
+				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+				ON DUPLICATE KEY UPDATE
+					name = IF(VALUES(name) <> '', VALUES(name), name),
+					first_inbound_at = LEAST(COALESCE(first_inbound_at, VALUES(first_inbound_at)), VALUES(first_inbound_at)),
+					last_inbound_at = GREATEST(COALESCE(last_inbound_at, VALUES(last_inbound_at)), VALUES(last_inbound_at)),
+					ad_id = IF(ad_id = '', VALUES(ad_id), ad_id),
+					ctwa_clid = IF(ctwa_clid = '', VALUES(ctwa_clid), ctwa_clid),
+					ad_headline = IF(ad_headline = '', VALUES(ad_headline), ad_headline),
+					ad_source_url = IF(ad_source_url = '', VALUES(ad_source_url), ad_source_url),
+					updated_at = VALUES(updated_at)",
+				$phone,
+				substr( $name, 0, 100 ),
+				$when,
+				$when,
+				substr( (string) ( $ad['ad_id'] ?? '' ), 0, 64 ),
+				substr( (string) ( $ad['ctwa_clid'] ?? '' ), 0, 255 ),
+				substr( (string) ( $ad['ad_headline'] ?? '' ), 0, 255 ),
+				substr( (string) ( $ad['ad_source_url'] ?? '' ), 0, 500 ),
+				$now,
+				$now
 			)
 		);
 	}

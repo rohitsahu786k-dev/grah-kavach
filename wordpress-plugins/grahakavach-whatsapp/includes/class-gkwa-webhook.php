@@ -92,8 +92,15 @@ final class GKWA_Webhook {
 					foreach ( (array) ( $value['statuses'] ?? array() ) as $status ) {
 						self::handle_status( (array) $status );
 					}
+					$names = array();
+					foreach ( (array) ( $value['contacts'] ?? array() ) as $contact ) {
+						$wa_id = preg_replace( '/\D/', '', (string) ( $contact['wa_id'] ?? '' ) );
+						if ( '' !== $wa_id ) {
+							$names[ $wa_id ] = (string) ( $contact['profile']['name'] ?? '' );
+						}
+					}
 					foreach ( (array) ( $value['messages'] ?? array() ) as $message ) {
-						self::handle_message( (array) $message );
+						self::handle_message( (array) $message, $names );
 					}
 				}
 			}
@@ -122,13 +129,28 @@ final class GKWA_Webhook {
 	}
 
 	/**
-	 * @param array<string,mixed> $message Inbound message.
+	 * @param array<string,mixed>  $message Inbound message.
+	 * @param array<string,string> $names   Profile names keyed by WhatsApp ID.
 	 */
-	private static function handle_message( array $message ): void {
+	private static function handle_message( array $message, array $names = array() ): void {
 		$from = preg_replace( '/\D/', '', (string) ( $message['from'] ?? '' ) );
 		if ( '' === $from ) {
 			return;
 		}
+
+		// Keep who wrote, when, and which click-to-WhatsApp ad brought them in.
+		$referral = (array) ( $message['referral'] ?? array() );
+		GKWA_DB::touch_contact(
+			$from,
+			(string) ( $names[ $from ] ?? '' ),
+			(int) ( $message['timestamp'] ?? 0 ),
+			array(
+				'ad_id'         => (string) ( $referral['source_id'] ?? '' ),
+				'ctwa_clid'     => (string) ( $referral['ctwa_clid'] ?? '' ),
+				'ad_headline'   => (string) ( $referral['headline'] ?? '' ),
+				'ad_source_url' => (string) ( $referral['source_url'] ?? '' ),
+			)
+		);
 
 		$text = '';
 		if ( 'text' === ( $message['type'] ?? '' ) ) {

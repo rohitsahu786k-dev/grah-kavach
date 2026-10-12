@@ -53,3 +53,47 @@ Templates stay PENDING until Meta approves them (a few minutes to 24 hours); mes
 - **Delivered message**: it fires on status `Completed`. If Advanced Shipment Tracking is set to auto-complete orders when shipped, turn the delivered message off in Settings.
 - **Consent**: cart reminders are MARKETING. Add a line to the privacy policy and checkout saying order updates and reminders are sent on WhatsApp, and keep the STOP handling on.
 - **Phone numbers** are normalised to `91XXXXXXXXXX`. Orders without a valid mobile are logged as `skipped`, never an error.
+
+## Contacts API (audience data)
+
+One row per WhatsApp number, for building ad audiences and excluding buyers.
+
+1. Add a long random key to `wp-config.php`:
+
+   ```php
+   define( 'GKWA_CONTACTS_API_KEY', '<long random string>' );
+   ```
+
+2. Call it:
+
+   ```
+   GET https://admin.grahakavach.in/wp-json/gk-whatsapp/v1/contacts?updated_after=2026-10-01&page=1&per_page=100
+   Authorization: Bearer <GKWA_CONTACTS_API_KEY>
+   ```
+
+   `updated_after` is optional (ISO 8601 or `Y-m-d`); `per_page` is at most 200. A logged-in user who can manage WooCommerce may also call it. Without the key and without that role the endpoint returns 401.
+
+3. Response:
+
+   ```json
+   {
+     "total": 42, "page": 1, "per_page": 100, "pages": 1,
+     "contacts": [{
+       "phone": "919812345678",
+       "name": "Asha Verma",
+       "first_message_at": "2026-10-02T06:10:00+00:00",
+       "last_message_at": "2026-10-05T11:02:00+00:00",
+       "first_reply_at": "2026-10-02T06:12:00+00:00",
+       "last_reply_at": "2026-10-04T09:30:00+00:00",
+       "messages_sent": 3,
+       "lead_status": "ordered",
+       "orders": 1, "order_amount": 2499, "currency": "INR",
+       "opted_out": false, "opted_out_at": null,
+       "ad": { "ad_id": "1203...", "ctwa_clid": "AR...", "headline": "...", "source_url": "..." }
+     }]
+   }
+   ```
+
+`lead_status` is `ordered` (a paid order is linked to the number), `not_interested` (replied STOP), `interested` (replied, or has an active/clicked cart) or `no_reply` (we messaged, they never answered). Opted-out numbers are still listed so they can be excluded.
+
+Notes: replies, profile name and ad referral (`ad_id`, `ctwa_clid`) are stored from the moment this version is installed, so earlier conversations have no reply times or ad data. Orders are linked to a number through the message log, so only orders that triggered a message are counted. Subscribe the Meta webhook to **messages** (step 5 above) or no replies are recorded.
