@@ -48,7 +48,7 @@ export function FounderSection({ notesHtml }: Props) {
 
             {/* Concise Story */}
             <p className="mt-4 text-sm sm:text-base leading-relaxed text-foreground-muted">
-              Based in Udaipur, Rajasthan, Rakesh Mishra established <strong className="text-foreground font-semibold">Speciality Geochem with roots dating back to 2010</strong>. Over 16 years of helping protect workplaces and businesses from fire, he expanded it into a premier manufacturing enterprise across two RIICO production units, engineering certified fire safety equipment and industrial minerals. He created <strong className="text-foreground font-semibold">Graha Kavach</strong> to bring that same uncompromising standard directly to family homes.
+              Based in Udaipur, Rajasthan, Rakesh Mishra established <strong className="text-foreground font-semibold">Speciality Geochem with roots dating back to 2010</strong>. With over 15 years of helping protect workplaces and businesses from fire, he expanded it into a premier manufacturing enterprise across two RIICO production units, engineering certified fire safety equipment and industrial minerals. He created <strong className="text-foreground font-semibold">Graha Kavach</strong> to bring that same uncompromising standard to homes across India.
             </p>
 
             {notesHtml ? (

@@ -234,8 +234,8 @@ export function FaqSection({
         ? [...items, ...FALLBACK_10_FAQS.slice(items.length)]
         : FALLBACK_10_FAQS;
 
-  // Default open question 06 ("Can I use water on an oil or grease fire?") matching reference image
-  const [openId, setOpenId] = useState<string>("6");
+  // First question open by default.
+  const [openId, setOpenId] = useState<string>("1");
 
   const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? "" : id));
@@ -315,7 +315,7 @@ export function FaqSection({
               const numStr = String(index + 1).padStart(2, "0");
               const itemId = String(faq.id || index + 1);
               const isOpen = openId === itemId || openId === numStr;
-              const isHighlight = numStr === "06" || faq.title.toLowerCase().includes("water");
+              const isHighlight = faq.title.toLowerCase().includes("water");
 
               return (
                 <div

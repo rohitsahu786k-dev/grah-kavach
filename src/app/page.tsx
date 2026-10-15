@@ -17,7 +17,6 @@ import { getPrimaryProduct } from "@/lib/woocommerce/products";
 import { getCodAdvanceConfig } from "@/lib/woocommerce/checkout-settings";
 import { getProductReviews } from "@/lib/woocommerce/reviews";
 import {
-  getFaqs,
   getHomePage,
   getProductContent,
   getSafetyGuides,
@@ -39,9 +38,9 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   // The CMS "home" page only carries the title "Home", so the home SEO is defined here.
   return buildSeoMetadata({
-    fallbackTitle: "Graha Kavach | 3-in-1 Home Fire Safety Kit — Speciality Geochem (Est. 2010)",
+    fallbackTitle: "Fire Extinguisher for Home - 3-in-1 Kit | Graha Kavach",
     fallbackDescription:
-      "Certified 3-in-1 home fire protection system: 2kg ABC dry powder extinguisher, automatic flame-activated fire ball, and 550°C fibreglass blanket with wall mounts. Engineered in Udaipur with 16 years of protection roots.",
+      "Graha Kavach 3-in-1 fire safety kit: 2 kg ABC fire extinguisher for home, automatic fire ball and fire blanket. Free delivery across India.",
     path: "/",
     keywords: [
       "home fire safety kit",
@@ -66,12 +65,99 @@ export async function generateMetadata(): Promise<Metadata> {
 /* no certifications, no ratings, no claims about performance.         */
 /* ------------------------------------------------------------------ */
 
-const FALLBACK_TRUST = [
-  { title: "Three-in-one safety kit", text: "Extinguisher, fire ball and blanket together." },
-  { title: "Practical installation", text: "Bracket, stand and fixings included in the box." },
-  { title: "Made in Udaipur", text: "Manufactured by Speciality Geochem, Rajasthan." },
-  { title: "Preparedness focused", text: "Built around what a household can actually use." },
+const HOME_TRUST = [
+  { title: "Three-in-one safety kit", text: "2 kg ABC fire extinguisher, fire ball and fire blanket together" },
+  { title: "Ready to mount", text: "Bracket, stand and fixings included in the box" },
+  { title: "Made in India", text: "Manufactured by Speciality Geochem, Udaipur, delivered across India" },
+  { title: "Built for real homes", text: "Designed for kitchens, electrical panels and everyday risk spots" },
 ];
+
+const HOME_KIT_CONTENTS = [
+  {
+    title: "2 kg ABC Dry Powder Fire Extinguisher",
+    summary: "Manual first response for small, early-stage fires when it is safe to approach",
+  },
+  {
+    title: "Automatic Fire Extinguisher Ball",
+    summary:
+      "Flame-activated support for risk points such as an electrical panel, gas cylinder area or store room",
+  },
+  {
+    title: "Fire Blanket, 1 m x 1 m",
+    summary:
+      "Smothers a small contained fire by cutting off oxygen, especially useful for kitchen pan fires",
+  },
+  {
+    title: "Extinguisher Wall Bracket",
+    summary: "Keeps the extinguisher visible, upright and easy to lift in an emergency",
+  },
+  {
+    title: "Fire Ball Stand",
+    summary: "Holds the fire ball near the risk point you want covered",
+  },
+  {
+    title: "Screws and Wall Plugs",
+    summary: "Five screws and five wall plugs supplied for the bracket and fire ball stand",
+  },
+];
+
+const HOME_IMAGE_CARDS = [
+  { caption: "Electrical panel", alt: "Fire ball and fire extinguisher for home near an electrical panel" },
+  { caption: "Living area", alt: "ABC fire extinguisher mounted in a home living area" },
+  { caption: "Kitchen", alt: "Fire blanket and kitchen fire extinguisher within reach of the stove" },
+  { caption: "Gas cylinder and store room", alt: "Automatic fire ball placed near a gas cylinder area" },
+];
+
+const HOME_FAQS = [
+  {
+    q: "What is inside the Graha Kavach fire safety kit?",
+    a: "The kit has a 2 kg ABC dry powder fire extinguisher, an automatic fire ball and a 1 m x 1 m fire blanket. It also includes a wall bracket, a fire ball stand, five screws and five wall plugs, so it is ready to mount.",
+  },
+  {
+    q: "Which is the best fire extinguisher for home use?",
+    a: "It depends on the risks in your home. A 2 kg ABC dry powder extinguisher suits most small household fires, and pairing it with a fire blanket and an automatic fire ball adds coverage for kitchen and electrical risk points.",
+  },
+  {
+    q: "When should I use this kit?",
+    a: "Use it on small, early-stage fires only. If a fire is spreading or you cannot reach the exit safely, leave the house and call 101 or 112.",
+  },
+  {
+    q: "What is the extinguisher capacity?",
+    a: "The extinguisher is a 2 kg ABC dry powder unit. It is compact and easy to lift, with a discharge time of roughly 10-12 seconds.",
+  },
+  {
+    q: "Can I use an ABC fire extinguisher in a home kitchen?",
+    a: "It can handle small fires involving solids, liquids and gases. For burning oil in a pan, cover it with the fire blanket instead of spraying.",
+  },
+  {
+    q: "How does the automatic fire ball work?",
+    a: "Place it near a risk point such as an electrical panel, gas cylinder area or store room. It releases its powder when flame reaches it. It needs no electricity and no one has to operate it.",
+  },
+  {
+    q: "Where should I place each item?",
+    a: "Keep the extinguisher visible and reachable on your way out. Keep the blanket near the kitchen, within reach without crossing the cooking area. Set the fire ball near the electrical or gas risk point it is meant to cover.",
+  },
+  {
+    q: "Can I use water on an oil or grease fire?",
+    a: "No. Water can spread burning oil and cause a flare-up. Use the fire blanket for a small pan fire.",
+  },
+  {
+    q: "Do you deliver the fire safety kit across India?",
+    a: "Yes. Graha Kavach delivers across India with free delivery. You can also choose Cash on Delivery by booking with Rs 199 and paying the remaining Rs 2,300 on delivery.",
+  },
+  {
+    q: "Is this fire safety kit suitable for flats and apartments?",
+    a: "Yes. The kit is compact, and the bracket, stand, screws and wall plugs are included, so you can mount it in a flat, house or shop.",
+  },
+  {
+    q: "Does the kit replace the fire service?",
+    a: "No. It is meant for small, early-stage fires. If a fire is spreading, evacuate first and call 101 or 112.",
+  },
+  {
+    q: "How often should I check the kit?",
+    a: "Check the extinguisher gauge and the physical condition of all three items every month, and follow the manufacturer's guidance for replacement or servicing.",
+  },
+].map((faq, index) => ({ id: String(index + 1), title: faq.q, answer: faq.a }));
 
 const FALLBACK_ROLES: Array<Omit<ProductRole, "image">> = [
   {
@@ -104,15 +190,6 @@ const FALLBACK_FEATURES = [
   "Wall bracket, screws and wall plugs included",
 ];
 
-const FALLBACK_KIT_CONTENTS = [
-  "ABC Extinguisher",
-  "Fire Ball",
-  "Fire Blanket",
-  "Wall Bracket",
-  "Fire Ball Stand",
-  "Screws and Wall Plugs",
-].map((title) => ({ title, summary: "" }));
-
 /**
  * Picks the gallery image that matches a product by name.
  *
@@ -134,7 +211,7 @@ export default async function Home() {
   const [product, codAdvance] = await Promise.all([getPrimaryProduct(), getCodAdvanceConfig()]);
   const summary = wooProductToSummary(product);
 
-  const [homePage, productContent, faqs, reviews, testimonials, safetyGuides] = await Promise.all([
+  const [homePage, productContent, reviews, testimonials, safetyGuides] = await Promise.all([
     getHomePage().catch((err) => {
       console.error("Failed to load homePage from CMS:", err);
       return null;
@@ -142,10 +219,6 @@ export default async function Home() {
     getProductContent(product.slug).catch((err) => {
       console.error("Failed to load productContent from CMS:", err);
       return null;
-    }),
-    getFaqs(8).catch((err) => {
-      console.error("Failed to load faqs:", err);
-      return [];
     }),
     getProductReviews(product.id).catch((err) => {
       console.error("Failed to load product reviews:", err);
@@ -187,7 +260,7 @@ export default async function Home() {
     stripHtml(product.short_description) ||
     "An extinguisher for when you can act, a fire ball for when nobody is there, and a blanket for the kitchen — packed together with the hardware to mount them.";
 
-  const trustItems = homePage?.trustItems?.length ? homePage.trustItems : FALLBACK_TRUST;
+  const trustItems = HOME_TRUST;
 
   /* The carousel replaces the built hero whenever banners exist in the CMS. */
   const hasBanners =
@@ -207,15 +280,13 @@ export default async function Home() {
         image: [extinguisherImage, ballImage, blanketImage][index] ?? null,
       }));
 
-  const kitContents = productContent?.kitContents.length
-    ? productContent.kitContents.map((item) => ({ title: item.title, summary: item.summary }))
-    : FALLBACK_KIT_CONTENTS;
+  const kitContents = HOME_KIT_CONTENTS;
 
   const features = productContent?.keyBenefits.length
     ? productContent.keyBenefits.map((benefit) => benefit.title)
     : FALLBACK_FEATURES;
 
-  const faqItems = productContent?.faqs.length ? productContent.faqs : faqs;
+  const faqItems = HOME_FAQS;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -294,6 +365,7 @@ export default async function Home() {
         intro={homePage?.featureCarouselIntro || ""}
         images={homePage?.featureCarouselImages ?? []}
         autoplaySeconds={homePage?.featureCarouselAutoplay ?? 5}
+        cards={HOME_IMAGE_CARDS}
       />
 
       <RiskAreas />

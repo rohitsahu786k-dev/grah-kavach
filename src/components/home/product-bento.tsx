@@ -48,12 +48,13 @@ export function ProductBento(_props?: {
             <h2 className="mt-3.5 text-3xl leading-[1.12] font-bold tracking-tight text-foreground sm:text-4xl lg:text-[44px]">
               Three products.
               <br />
-              <span className="text-[#dc2626]">One calm</span> first response.
+              <span className="text-[#dc2626]">One complete fire extinguisher kit</span> for your home.
             </h2>
 
             <p className="mt-3.5 max-w-xl text-sm sm:text-base leading-relaxed text-foreground-muted">
               Built like a layered safety wardrobe for the home: one piece you use by hand, one that
-              waits near risk, and one that smothers kitchen flame.
+              waits near the risk, and one that smothers kitchen flames. Together they make the fire
+              extinguisher for home use that covers more than one kind of fire.
             </p>
           </div>
 

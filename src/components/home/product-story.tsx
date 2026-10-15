@@ -209,9 +209,9 @@ export function CompleteKit({
               Six pieces. Nothing left to source separately.
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-foreground-muted">
-              The extinguisher, the fire ball, the blanket, and the bracket, stand and fixings to
-              mount all three — packed as one order, so there is no second trip to a hardware store
-              before any of it can actually go on the wall.
+              The extinguisher, the fire ball, the blanket, plus the bracket, stand and fixings to
+              mount all three, packed as one order. There is no second trip to a hardware store
+              before it can go on the wall.
             </p>
 
             {contents.length > 0 ? (

@@ -30,6 +30,7 @@ export type FeatureSlide = {
   key: string;
   src: string;
   alt: string;
+  caption?: string;
   width: number;
   height: number;
   ratio: string;
@@ -289,6 +290,9 @@ export function FeatureCarousel({ slides, autoplaySeconds, label = "Featured" }:
                 style={{ aspectRatio: slide.ratio }}
               />
             </div>
+            {slide.caption ? (
+              <p className="mt-3 text-center text-sm font-medium text-foreground">{slide.caption}</p>
+            ) : null}
           </li>
         ))}
       </ul>

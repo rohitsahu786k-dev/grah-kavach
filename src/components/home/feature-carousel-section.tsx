@@ -7,9 +7,11 @@ type Props = {
   intro: string;
   images: Media[];
   autoplaySeconds: number | null;
+  /** Short caption and alt text, matched to the images by position. */
+  cards?: Array<{ caption: string; alt: string }>;
 };
 
-export function FeatureCarouselSection({ title, intro, images, autoplaySeconds }: Props) {
+export function FeatureCarouselSection({ title, intro, images, autoplaySeconds, cards = [] }: Props) {
   if (images.length === 0) return null;
 
   const slides: FeatureSlide[] = images
@@ -17,7 +19,8 @@ export function FeatureCarouselSection({ title, intro, images, autoplaySeconds }
     .map((image, position) => ({
       key: `${image.id || image.url}-${position}`,
       src: image.url,
-      alt: image.alt || "",
+      alt: cards[position]?.alt || image.alt || "",
+      caption: cards[position]?.caption,
       width: image.width ?? 1200,
       height: image.height ?? 700,
       ratio: image.width && image.height ? `${image.width} / ${image.height}` : "16 / 9",
