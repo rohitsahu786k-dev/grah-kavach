@@ -1,18 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Shield, Flame, ArrowRight, AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
-import { getPageBySlug } from "@/lib/wordpress/adapters";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbSchema, buildHowToSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPageBySlug("how-it-works");
+const QUICK_ANSWERS = [
+  {
+    q: "How does a fire extinguisher ball work?",
+    a: "It bursts when a flame touches it, spreading fire-suppressing powder and sounding an alarm. It needs no power or person to start.",
+  },
+  {
+    q: "How do I use a fire extinguisher for the first time?",
+    a: "Remember PASS: Pull the pin, Aim at the base, Squeeze the lever, Sweep side to side, from about 3 metres away.",
+  },
+  {
+    q: "How do I use a fire blanket on an oil fire?",
+    a: "Pull the tapes, shield your hands, lay the blanket over the pan, turn off the gas, and leave it until cool. Never use water.",
+  },
+];
 
+export async function generateMetadata(): Promise<Metadata> {
   return buildSeoMetadata({
-    seo: page?.seo,
-    fallbackTitle: "How It Works: 3-Layered Home Fire Protection | Graha Kavach",
+    fallbackTitle: "How to Use a Fire Extinguisher, Fire Ball & Fire Blanket",
     fallbackDescription:
-      "Discover how the Graha Kavach 3-in-1 Fire Safety Kit provides complete multi-stage defense: 24/7 automatic suppression, instant kitchen smothering, and active PASS knockdown.",
+      "Learn how to use a fire extinguisher (PASS), how a fire extinguisher ball works and how to use a fire blanket on a kitchen fire. Step by step.",
     path: "/how-it-works",
     keywords: [
       "how fire extinguisher works",
@@ -55,10 +66,10 @@ export default function HowItWorksPage() {
               Multi-Layer Defense
             </span>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
-              How the 3-in-1 System Protects Your Home.
+              How to Use a Fire Extinguisher, Fire Ball and Fire Blanket at Home
             </h1>
             <p className="mt-6 text-lg leading-8 text-foreground-muted sm:text-xl">
-              No single fire tool solves every residential emergency. Graha Kavach layers 24/7 autonomous protection, clean kitchen smothering, and active chemical knockdown into one coordinated system.
+              No single fire tool solves every home emergency. This page explains how each part of the Graha Kavach kit works: how to use a fire extinguisher on a spreading fire, how a fire extinguisher ball works on its own, and how to use a fire blanket on a kitchen fire.
             </p>
           </div>
         </div>
@@ -90,14 +101,14 @@ export default function HowItWorksPage() {
               </div>
 
               <h3 className="mt-5 text-xl font-bold text-foreground">
-                Automatic Fire Extinguisher Ball
+                How Does a Fire Ball Work?
               </h3>
               <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-primary">
                 1.3 kg • MAP Powder • Flame Activated
               </p>
 
               <p className="mt-4 text-sm leading-relaxed text-foreground-muted">
-                Mounted 30 cm above unmonitored hazards like the kitchen LPG cylinder or the main MCB panel. Operates automatically while you sleep or work.
+                Mount it 30 cm above the LPG cylinder, MCB panel or inverter. When a flame touches it, the fire ball bursts on its own, an automatic fire extinguisher for home, day or night.
               </p>
 
               <div className="mt-6 space-y-2 border-t border-border pt-4 text-xs text-foreground-muted">
@@ -111,7 +122,7 @@ export default function HowItWorksPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>120 dB acoustic alarm alerts residents</span>
+                  <span>120 dB alarm alerts everyone at home</span>
                 </div>
               </div>
             </div>
@@ -126,28 +137,28 @@ export default function HowItWorksPage() {
               </div>
 
               <h3 className="mt-5 text-xl font-bold text-foreground">
-                High-Temp Fire Blanket
+                How to Use a Fire Blanket
               </h3>
               <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-primary">
                 1m x 1m • 550°C Rated Pure Fibreglass
               </p>
 
               <p className="mt-4 text-sm leading-relaxed text-foreground-muted">
-                Mounted on the kitchen wall within instant arm’s reach. Starves oil and grease fires instantly without dangerous chemical powder residue or splattering.
+                Keep this fire blanket for kitchen use within arm’s reach of the stove. Pull the tapes, lay it over the burning pan, turn off the gas and leave it until cool.
               </p>
 
               <div className="mt-6 space-y-2 border-t border-border pt-4 text-xs text-foreground-muted">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>Smothers burning oil without steam explosion</span>
+                  <span>Pull both tapes down to release</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>Quick-release downward pull tape design</span>
+                  <span>Lay it over the pan, never throw it</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  <span>Serves as emergency bodily heat escape shield</span>
+                  <span>Smothers oil fires without splattering</span>
                 </div>
               </div>
             </div>
@@ -162,14 +173,14 @@ export default function HowItWorksPage() {
               </div>
 
               <h3 className="mt-5 text-xl font-bold text-foreground">
-                2kg ABC Powder Extinguisher
+                How to Use a Fire Extinguisher
               </h3>
               <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-primary">
                 2 kg • Pressurised MAP • Multi-Class
               </p>
 
               <p className="mt-4 text-sm leading-relaxed text-foreground-muted">
-                Your primary active response tool for rapidly spreading fires in living rooms, furniture, curtains, wiring, and vehicle garages.
+                Your main tool for spreading fires in curtains, furniture and wiring. Stand 3 metres away and follow PASS: Pull the pin, Aim low, Squeeze the lever, Sweep side to side.
               </p>
 
               <div className="mt-6 space-y-2 border-t border-border pt-4 text-xs text-foreground-muted">
@@ -245,7 +256,11 @@ export default function HowItWorksPage() {
                 </span>
               </div>
               <p className="mt-4 text-sm text-foreground-muted">
-                <strong>Action Sequence:</strong> Grab the extinguisher, pull the safety pin, stand 3 metres away with your back to an open exit, and squeeze the handle while sweeping side to side at the base of the fire until suppressed.
+                <strong>Action Sequence:</strong> Grab the extinguisher, pull the safety pin, stand 3 metres away with your back to an open exit, and squeeze the handle while sweeping side to side at the base of the fire until suppressed. For the full step-by-step checklist, read our{" "}
+                <Link href="/safety-guide" className="font-semibold text-primary underline-offset-2 hover:underline">
+                  home fire safety guide
+                </Link>
+                .
               </p>
             </div>
           </div>
@@ -269,14 +284,35 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Quick Answers */}
+      <section className="border-t border-border bg-background-subtle py-16 md:py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            How It Works: Quick Answers
+          </h2>
+          <div className="mt-8 space-y-4">
+            {QUICK_ANSWERS.map((item) => (
+              <div key={item.q} className="rounded-xl border border-border bg-white p-6 shadow-sm">
+                <h3 className="text-base font-bold text-foreground">{item.q}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer CTA */}
       <section className="py-16 text-center">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-            Equip Your Home with the Complete Kit
+            Get All 3 Tools in One Fire Safety Kit for Home
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-foreground-muted">
-            All three life-saving devices shipped together in one protective package with complete mounting hardware.
+            All three devices ship together in one{" "}
+            <Link href="/fire-safety-kit" className="font-semibold text-primary underline-offset-2 hover:underline">
+              fire safety kit for home
+            </Link>
+            , with mounting hardware. It is the simplest way to set up a <strong>fire extinguisher for home</strong> along with a fire ball and fire blanket.
           </p>
           <div className="mt-6 flex justify-center gap-4">
             <Link

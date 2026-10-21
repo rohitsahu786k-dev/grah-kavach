@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Phone, Mail, MapPin, MessageSquare, Clock, ShieldCheck } from "lucide-react";
 import {
   getFaqs,
   getGlobalSiteSettings,
-  getPageBySlug,
   getProductContent,
   getSafetyGuides,
 } from "@/lib/wordpress/adapters";
@@ -20,13 +20,10 @@ import {
 } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPageBySlug("contact-us");
-
   return buildSeoMetadata({
-    seo: page?.seo,
-    fallbackTitle: "Contact Fire Safety Team | Graha Kavach, Udaipur",
+    fallbackTitle: "Contact Graha Kavach | Fire Safety Kit Orders & Bulk Supply",
     fallbackDescription:
-      "Get in touch with Graha Kavach fire safety specialists for product inquiries, bulk orders, residential safety consultations, and customer support in Udaipur, Rajasthan (+91 98290 82077).",
+      "Call +91 9610251841 or WhatsApp Graha Kavach, Udaipur, for fire safety kit orders, bulk fire extinguisher supply for societies and home safety advice.",
     path: "/contact",
     keywords: [
       "contact Graha Kavach",
@@ -86,10 +83,21 @@ export default async function ContactPage() {
             Direct Support & Consultation
           </span>
           <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
-            Contact Graha Kavach
+            Contact Graha Kavach: Orders, Bulk Supply and Fire Safety Advice
           </h1>
           <p className="mt-3 text-base text-foreground-muted sm:text-lg">
             Whether you need fire safety recommendations for your home, have questions about your order, or need apartment society guidance, our team is here to assist you.
+          </p>
+          <p className="mt-3 text-base text-foreground-muted sm:text-lg">
+            Have a question before you buy? Our team in Udaipur helps families choose the right{" "}
+            <Link href="/" className="font-semibold text-primary underline-offset-2 hover:underline">
+              fire extinguisher for home
+            </Link>{" "}
+            use, tracks orders, and quotes bulk supply for apartment societies, schools and offices. Want to order now? Buy the{" "}
+            <Link href="/fire-safety-kit" className="font-semibold text-primary underline-offset-2 hover:underline">
+              3-in-1 fire safety kit online
+            </Link>{" "}
+            with free delivery across India.
           </p>
         </div>
 
@@ -175,6 +183,13 @@ export default async function ContactPage() {
                   <p className="mt-1 text-sm font-medium leading-relaxed text-foreground whitespace-pre-line">
                     {address}
                   </p>
+                  <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
+                    Graha Kavach is the home brand of Speciality Geochem, a{" "}
+                    <Link href="/about" className="font-semibold text-primary underline-offset-2 hover:underline">
+                      fire extinguisher manufacturer in India
+                    </Link>{" "}
+                    since 2010.
+                  </p>
                 </div>
               </div>
 
@@ -235,6 +250,7 @@ export default async function ContactPage() {
        */}
       <div className="mt-16 -mb-12 md:-mb-16">
         <SafetyGuides
+          ctaLabel="Read the full home fire safety guide"
           guides={safetyGuides.map((g) => ({ id: g.id, title: g.title, summary: g.summary }))}
         />
 

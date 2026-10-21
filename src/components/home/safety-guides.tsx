@@ -14,9 +14,10 @@ export type GuideStep = {
 type Props = {
   guides?: GuideStep[];
   slides?: SafetySlide[];
+  ctaLabel?: string;
 };
 
-export function SafetyGuides({ guides: _guides, slides }: Props) {
+export function SafetyGuides({ guides: _guides, slides, ctaLabel = "Read the full safety guide" }: Props) {
   return (
     <section className="bg-background-subtle py-10 lg:py-14">
       <Container width="default">
@@ -36,7 +37,7 @@ export function SafetyGuides({ guides: _guides, slides }: Props) {
 
         <div className="mt-14 flex justify-center">
           <Button href="/safety-guide" size="lg">
-            Read the full safety guide
+            {ctaLabel}
             <ArrowRightIcon className="size-4" />
           </Button>
         </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   ShieldAlert,
   Flame,
@@ -10,18 +11,14 @@ import {
   Zap,
 } from "lucide-react";
 import { SafetyCarousel } from "@/components/home/safety-carousel";
-import { getPageBySlug } from "@/lib/wordpress/adapters";
 import { buildSeoMetadata } from "@/lib/seo/metadata";
 import { buildBreadcrumbSchema, buildFaqSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPageBySlug("safety-guide");
-
   return buildSeoMetadata({
-    seo: page?.seo,
-    fallbackTitle: "Complete Home Fire Safety Guide | Graha Kavach",
+    fallbackTitle: "Home Fire Safety Guide: Tips & Checklist | Graha Kavach",
     fallbackDescription:
-      "Authoritative guide to domestic fire preparedness based on official Graha Kavach instructions: PASS protocol, Fire Ball deployment, Fire Blanket smothering, and emergency procedures.",
+      "Free home fire safety guide with fire safety tips, a fire safety checklist for home and what to do in a fire: PASS method, kitchen fires, evacuation.",
     path: "/safety-guide",
     keywords: [
       "home fire safety guide",
@@ -36,7 +33,19 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-const faqs = [
+const faqs: Array<{ q: string; a: string; link?: { text: string; href: string } }> = [
+  {
+    q: "What is the recommended fire extinguisher for home?",
+    a: "For most Indian homes, a 2 kg ABC dry powder extinguisher is the recommended choice, because it covers ordinary, oil, gas and electrical fires. For a full comparison, read our best fire extinguisher for home in India guide.",
+    link: {
+      text: "best fire extinguisher for home in India",
+      href: "/blog/best-fire-extinguisher-for-home-in-india-types-size-guide",
+    },
+  },
+  {
+    q: "What should I do first in a house fire?",
+    a: "Alert everyone, get people out, and call 101 or 112. Fight the fire only if it is small, you have a clear exit behind you, and you have the right equipment.",
+  },
   {
     q: "How often should I inspect the Fire Extinguisher?",
     a: "Inspect the pressure gauge once every month. Ensure the needle is resting firmly inside the green zone. If the needle drops into the red 'Recharge' zone, have the cylinder serviced immediately.",
@@ -57,6 +66,18 @@ const faqs = [
     q: "Why should water never be poured on a burning oil pan?",
     a: "Burning oil exceeds 300°C. Water poured onto it sinks and instantly vaporises into steam, expanding by 1,700 times. This violently ejects the burning oil into a massive fireball that can engulf the entire kitchen.",
   },
+];
+
+const CHECKLIST = [
+  "The extinguisher pressure gauge needle is in the green zone.",
+  "The extinguisher pin and seal are intact, and the cylinder is on its bracket near an exit.",
+  "The fire ball is undamaged and still within its shelf life.",
+  "A fire blanket pouch is on the kitchen wall and both pull tapes hang free.",
+  "No overloaded sockets or extension boards near the inverter or TV.",
+  "LPG regulators are switched off at night and when you travel.",
+  "Diyas and incense are never left burning unattended.",
+  "Main door and corridor exits are clear, and keys are kept in one known place.",
+  "Everyone at home knows PASS and the numbers 101 and 112.",
 ];
 
 export default function SafetyGuidePage() {
@@ -91,7 +112,7 @@ export default function SafetyGuidePage() {
               Official Safety Manual
             </span>
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Home Fire Safety & Operating Guide
+              Home Fire Safety Guide: Tips, Checklist and What to Do in a Fire
             </h1>
             <p className="mt-6 text-lg leading-8 text-foreground-muted sm:text-xl">
               Strict technical instructions based on the official Graha Kavach user manual. Learn how to identify hazards, position equipment, execute the PASS protocol, and react decisively during an emergency.
@@ -114,6 +135,14 @@ export default function SafetyGuidePage() {
           </span>
         </div>
       </div>
+
+      <section className="border-b border-border bg-white py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="max-w-3xl text-sm leading-relaxed text-foreground-muted sm:text-base">
+            This home fire safety guide covers what to do in a fire, where fires start in Indian homes, where to mount your equipment and a simple fire safety checklist for home. In a life-threatening fire, get everyone out first and call 101 (fire) or 112 (emergency).
+          </p>
+        </div>
+      </section>
 
       {/* Safety guide posters, same carousel as the homepage */}
       <section className="bg-background-subtle py-10 lg:py-14" id="first-minute">
@@ -144,7 +173,7 @@ export default function SafetyGuidePage() {
             High-Risk Fire Zones in Indian Residences
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-foreground-muted">
-            Over 85% of domestic fire tragedies originate in one of these five specific zones. Proper awareness enables early mitigation.
+            Most home fires in India start in one of these six zones. Proper awareness enables early mitigation.
           </p>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -155,7 +184,11 @@ export default function SafetyGuidePage() {
               </div>
               <h3 className="mt-4 text-base font-bold text-foreground">1. Kitchen Cooking Zone</h3>
               <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
-                Overheated frying oils, unattended gas burners, and degraded rubber LPG hoses. Cooking oil is flammable above 300°C and must never meet water.
+                Overheated frying oils, unattended gas burners, and degraded rubber LPG hoses. Cooking oil is flammable above 300°C and must never meet water. Keep a fire blanket and one of the right{" "}
+                <Link href="/" className="font-semibold text-primary underline-offset-2 hover:underline">
+                  kitchen fire extinguishers
+                </Link>{" "}
+                within reach of the stove, never behind it.
               </p>
             </div>
 
@@ -227,7 +260,11 @@ export default function SafetyGuidePage() {
             Where to Mount & Position Your Equipment
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-foreground-muted">
-            Equipment that cannot be reached during an emergency is useless. Follow these exact positioning guidelines.
+            Equipment that cannot be reached during an emergency is useless. The Graha Kavach{" "}
+            <Link href="/fire-safety-kit" className="font-semibold text-primary underline-offset-2 hover:underline">
+              fire safety kit
+            </Link>{" "}
+            ships with brackets, a wall stand and screws for all three positions below.
           </p>
 
           <div className="mt-10 grid gap-8 md:grid-cols-3">
@@ -286,7 +323,11 @@ export default function SafetyGuidePage() {
             Operating the Extinguisher: The PASS Technique
           </h2>
           <p className="mt-3 max-w-2xl text-sm text-foreground-muted">
-            Remember the four-step protocol. Stand 3 to 4 metres away with an exit behind you before initiating.
+            Remember the four-step protocol. For pictures of all three tools in action, see{" "}
+            <Link href="/how-it-works" className="font-semibold text-primary underline-offset-2 hover:underline">
+              how to use a fire extinguisher, fire ball and fire blanket
+            </Link>
+            . Stand 3 to 4 metres away with an exit behind you before initiating.
           </p>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -458,8 +499,11 @@ export default function SafetyGuidePage() {
             Section 6 • Emergency Protocol
           </span>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Critical Emergency Do&apos;s &amp; Don&apos;ts
+            Fire Safety Tips: Do&apos;s and Don&apos;ts in an Emergency
           </h2>
+          <p className="mt-3 max-w-2xl text-sm text-foreground-muted">
+            These fire safety tips decide what happens in the first two minutes. Read them once with everyone at home, including elders and domestic help.
+          </p>
 
           <div className="mt-10 grid gap-8 md:grid-cols-2">
             {/* DO */}
@@ -536,11 +580,35 @@ export default function SafetyGuidePage() {
         </div>
       </section>
 
-      {/* 8. Safety FAQs */}
-      <section className="border-t border-border bg-background-subtle py-16 md:py-20" id="faqs">
+      {/* 8. Home Checklist */}
+      <section className="border-t border-border bg-background-subtle py-16 md:py-20" id="checklist">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-            Section 8 • Frequently Asked Questions
+            Section 8 • Home Checklist
+          </span>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Fire Safety Checklist for Home
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm text-foreground-muted">
+            Run through this fire safety checklist for home once a month. It takes about 10 minutes.
+          </p>
+
+          <ul className="mt-8 grid max-w-4xl gap-3 rounded-xl border border-border bg-white p-6 shadow-sm sm:grid-cols-2">
+            {CHECKLIST.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-xs leading-relaxed text-foreground-muted">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 9. Safety FAQs */}
+      <section className="border-t border-border py-16 md:py-20" id="faqs">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Section 9 • Frequently Asked Questions
           </span>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Safety & Maintenance FAQs
@@ -554,7 +622,17 @@ export default function SafetyGuidePage() {
                   {faq.q}
                 </h3>
                 <p className="mt-3 text-xs leading-relaxed text-foreground-muted">
-                  {faq.a}
+                  {faq.link ? (
+                    <>
+                      {faq.a.split(faq.link.text)[0]}
+                      <Link href={faq.link.href} className="font-semibold text-primary underline-offset-2 hover:underline">
+                        {faq.link.text}
+                      </Link>
+                      {faq.a.split(faq.link.text)[1]}
+                    </>
+                  ) : (
+                    faq.a
+                  )}
                 </p>
               </div>
             ))}

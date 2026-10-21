@@ -20,9 +20,9 @@ import {
 import { buildBreadcrumbSchema, buildAboutPageSchema, buildOrganizationSchema } from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = {
-  title: "About Us: 16 Years of Fire Protection",
+  title: "Fire Extinguisher Manufacturers in India",
   description:
-    "For 16 years, Speciality Geochem (Est. 2010), Udaipur, has protected businesses from fire. Now Graha Kavach brings certified fire safety protection home.",
+    "Graha Kavach by Speciality Geochem, Udaipur: fire extinguisher manufacturer and fire safety equipment supplier in India since 2010. ISO and CE certified.",
   keywords: [
     "about Graha Kavach",
     "Speciality Geochem Udaipur",
@@ -119,11 +119,11 @@ export default function AboutPage() {
             </span>
 
             <h1 className="mt-5 text-3xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-[48px] lg:leading-[1.15]">
-              We’ve Protected Businesses for 16 Years. Now, We’re Bringing That Protection Home.
+              16 Years as a Fire Extinguisher Manufacturer. Now, We’re Bringing That Protection Home.
             </h1>
 
             <p className="mt-5 text-lg font-medium leading-relaxed text-foreground sm:text-xl">
-              For the people you love. The memories you cherish. And everything you’ve worked hard to build.
+              Graha Kavach is the home safety brand of Speciality Geochem, a fire safety equipment manufacturer in Udaipur since 2010. For the people you love.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -212,7 +212,7 @@ export default function AboutPage() {
                       <Home className="size-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-foreground">All 3 Critical Devices in One Box</h3>
+                      <h3 className="text-base font-bold text-foreground">All 3 Critical Devices in One Fire Safety Kit</h3>
                       <p className="text-xs text-muted-foreground">Engineered for Indian residences</p>
                     </div>
                   </div>
@@ -230,6 +230,13 @@ export default function AboutPage() {
                       <span><strong>550°C Fire Blanket:</strong> Instant kitchen oil flame smothering and personal wrap.</span>
                     </li>
                   </ul>
+                  <p className="mt-3 text-xs leading-relaxed text-foreground-muted">
+                    Everything ships together in our{" "}
+                    <Link href="/fire-safety-kit" className="font-semibold text-primary underline-offset-2 hover:underline">
+                      home fire safety kit
+                    </Link>
+                    , with wall brackets and screws included.
+                  </p>
                 </div>
 
                 <div className="rounded-2xl border border-border bg-white p-5 shadow-xs">
@@ -382,11 +389,11 @@ export default function AboutPage() {
               </div>
 
               <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-                16 Years of Manufacturing & Fire Engineering Experience
+                Fire Extinguisher Manufacturers in India Since 2010
               </h2>
 
               <p className="mt-5 text-sm sm:text-base leading-relaxed text-foreground-muted">
-                Drawing upon manufacturing infrastructure established since 2010 across two RIICO production units, Speciality Geochem produces extinguishing formulations, thermal fuses, and safety hardware that comply with rigorous national and international quality benchmarks.
+                Graha Kavach is made by Speciality Geochem, one of the few fire safety equipment manufacturers in India that designs, fills and tests its own products. Since 2010 we have run two RIICO production units in Udaipur, Rajasthan, serving businesses with certified manufacturing. Every Graha Kavach fire extinguisher, fire ball and fire blanket is checked in-house before it ships. As an extinguisher manufacturer, not a reseller, we control quality from raw material to the final box.
               </p>
 
               <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
@@ -444,19 +451,27 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="rounded-3xl border border-border bg-white p-8 shadow-xs sm:p-10">
             <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              Why an Udaipur home needs a fire safety kit
+              Why every Indian home needs a fire safety kit
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-foreground-muted sm:text-base">
-              Udaipur&apos;s older city homes with dense, aging wiring and its newer apartment blocks running air conditioners, inverters and kitchen appliances off a single distribution board share the same weak point: an electrical panel or MCB box that rarely gets a second look until something goes wrong. Add a kitchen where an LPG cylinder, hot oil and cotton or synthetic fabric all sit within arm&apos;s reach of each other, and the two most common domestic fire risks in any Rajasthan home are already present before anyone has thought about buying a fire extinguisher. A fire safety kit for home use in Udaipur is not about a rare event — its whole point is that when a pan catches fire or a plug point sparks, the right tool is already mounted on the wall instead of being something you wish you had ordered last week.
+              From old city homes with aging wiring to new high-rise flats, Indian homes share the same risks: LPG cylinders, overloaded MCB panels, inverter batteries and pooja diyas. Most homes still have no fire extinguisher at all. A{" "}
+              <Link href="/" className="font-semibold text-primary underline-offset-2 hover:underline">
+                fire extinguisher for home
+              </Link>
+              , kept with a fire ball and a fire blanket, lets your family act in the first minute, before a small fire spreads. Not sure what to buy? Read our{" "}
+              <Link href="/blog/fire-extinguisher-for-home-buying-guide-india" className="font-semibold text-primary underline-offset-2 hover:underline">
+                fire extinguisher buying guide for India
+              </Link>
+              .
             </p>
           </div>
 
           <div className="rounded-3xl border border-border bg-white p-8 shadow-xs sm:p-10">
             <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              Made in Udaipur — not just sold here
+              Made in Udaipur, supplied across India
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-foreground-muted sm:text-base">
-              Most fire safety kits listed online are shipped in from somewhere else. Graha Kavach is manufactured by Speciality Geochem, based in Udaipur, Rajasthan, working in the region since 2010. That matters for two practical reasons: replacement parts, refills and support questions are answered by people working in the same state, not a call centre reading from a script; and buying fire safety equipment made in Udaipur keeps the manufacturing and the after-sales relationship in the same place. For a Rajasthan-based household or small business searching for a fire extinguisher supplier near Udaipur, or a fire safety kit made in Rajasthan rather than resold from elsewhere, this is that product.
+              Most fire safety kits listed online are imported and resold. Graha Kavach is different: we are the manufacturer and the fire extinguisher supplier. That means one point of contact for quality, warranty and refills, and direct delivery to all 28 states and 8 union territories.
             </p>
           </div>
         </div>
@@ -558,6 +573,24 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Suppliers in India */}
+      <section className="border-b border-border bg-stone-50/60 py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-border bg-white p-8 shadow-xs sm:p-10">
+            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              Fire Extinguisher Suppliers in India for Homes, Societies and Offices
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-foreground-muted sm:text-base">
+              Families can order the complete kit online with free delivery and cash on delivery. Apartment societies, schools, offices and resellers looking for reliable fire safety equipment suppliers can buy direct from the factory. Share your requirement and our team will send a bulk quote and placement advice.{" "}
+              <Link href="/contact" className="font-semibold text-primary underline-offset-2 hover:underline">
+                Contact us for bulk orders
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Closing CTA */}
       <section className="bg-primary py-16 md:py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
@@ -568,7 +601,7 @@ export default function AboutPage() {
             For the people and memories that make tomorrow worth protecting.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-primary-subtle sm:text-lg">
-            Equip your home with the complete 3-in-1 Graha Kavach Fire Safety Kit. Automatic vigilance, kitchen smothering, and active knockdown—delivered directly from our Udaipur facility.
+            Equip your home with the complete 3-in-1 Graha Kavach Fire Safety Kit, made and supplied directly by a fire extinguisher manufacturer you can verify. Automatic vigilance, kitchen smothering, and active knockdown—delivered directly from our Udaipur facility.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Accordion } from "@/components/ui/accordion";
@@ -43,6 +44,21 @@ const fallbackSpecs = [
  * so the page always answers the questions buyers search for. The price is
  * filled in from the live product.
  */
+const kitPageFaqs: Array<{ q: string; a: string }> = [
+  {
+    q: "What is the price of the Graha Kavach fire safety kit?",
+    a: "The complete 3-in-1 fire safety kit costs ₹2,499 (MRP ₹2,999). This includes the 2 kg ABC fire extinguisher, the automatic fire ball, the fire blanket and all mounting hardware, with free delivery across India.",
+  },
+  {
+    q: "Is a fire extinguisher kit better than a single fire extinguisher?",
+    a: "Yes, for most homes. A single extinguisher needs someone awake and nearby. The kit adds a fire ball that works automatically and a fire blanket for oil fires, where an extinguisher can spread burning oil.",
+  },
+  {
+    q: "Is this fire safety kit suitable for a small flat or rented home?",
+    a: "Yes. The 2 kg extinguisher and fire blanket fit on a kitchen or hallway wall, and the fire ball mounts above the MCB panel or inverter. Screws and wall plugs are included.",
+  },
+];
+
 const fallbackFaqs = (price: string): Array<{ q: string; a: string }> => [
   {
     q: "What is included in the Graha Kavach fire safety kit?",
@@ -70,11 +86,66 @@ const fallbackFaqs = (price: string): Array<{ q: string; a: string }> => [
   },
 ];
 
-const storySections = [
-  ["Why this kit exists", "Fire preparedness is easier to act on when the core tools are grouped, visible, and understandable."],
-  ["The three protection layers", "Manual response, flame-activated support, and a smothering option each serve a different emergency role."],
-  ["Where to place each item", "Keep each product accessible, visible, and positioned according to supplied instructions."],
+const linkClass = "text-primary underline underline-offset-4";
+
+const storySections: Array<[string, ReactNode]> = [
+  [
+    "Why Buy a Fire Extinguisher Combo?",
+    <>
+      One{" "}
+      <Link className={linkClass} href="/">
+        fire extinguisher for home
+      </Link>{" "}
+      can&apos;t handle every fire. This combo gives each fire the right tool, in one box.
+    </>,
+  ],
+  [
+    "3 Layers, One Fire Safety Kit",
+    <>
+      Extinguisher for you, fire ball that works on its own, blanket for kitchen fires. See{" "}
+      <Link className={linkClass} href="/how-it-works">
+        how each layer works
+      </Link>
+      .
+    </>,
+  ],
+  [
+    "Where to place each item",
+    <>
+      Keep each item visible and within reach. Our{" "}
+      <Link className={linkClass} href="/safety-guide">
+        home fire safety guide
+      </Link>{" "}
+      shows exact mounting heights.
+    </>,
+  ],
   ["Fire emergency do/don't", "Prioritize people, call emergency services when needed, and never fight a fire that is growing or blocking escape."],
+];
+
+/* Copy for the three kit items, matched by product so it applies to CMS and fallback items alike. */
+const kitItemCopy: Array<[RegExp, { title: string; summary: string }]> = [
+  [
+    /ball/i,
+    {
+      title: "Automatic Fire Extinguisher Ball",
+      summary: "1.3 kg MAP powder fire ball that bursts on contact with flame, even when no one is home.",
+    },
+  ],
+  [
+    /blanket/i,
+    {
+      title: "Fire Blanket for Kitchen, 1 m x 1 m",
+      summary: "550°C fibreglass fire safety blanket for pan and oil fires. Pull the tapes and cover the flame.",
+    },
+  ],
+  [
+    /extinguisher/i,
+    {
+      title: "2 kg ABC Fire Extinguisher Cylinder",
+      summary:
+        "Fire extinguisher ABC type for wood, cloth, paper, oil, LPG and electrical fires. Small enough for a kitchen or hallway wall.",
+    },
+  ],
 ];
 
 async function getKitData() {
@@ -105,9 +176,9 @@ import {
 export async function generateMetadata(): Promise<Metadata> {
   const { product } = await getKitData();
   // The on-page H1 comes from the CMS headline; the search title is written for the query people type.
-  const title = "Home Fire Safety Kit: Buy Online in India";
+  const title = "Fire Safety Kit for Home | 3-in-1 Fire Extinguisher Kit";
   const description =
-    "Buy the Graha Kavach 3-in-1 home fire safety kit: 2 kg ABC fire extinguisher, automatic fire ball and fire blanket. Free delivery across India, COD available.";
+    "Buy the Graha Kavach fire safety kit for home: 2 kg ABC fire extinguisher, automatic fire ball and fire blanket in one combo. Free delivery, COD.";
 
   return buildSeoMetadata({
     fallbackTitle: title,
@@ -135,7 +206,7 @@ export default async function FireSafetyKitPage() {
   // Product images come only from the WooCommerce product, so what is shown matches the store admin.
   const gallery = wooProductGallery(product);
   const galleryImages = gallery.length ? gallery : summary.image ? [summary.image] : [];
-  const kitItems = content?.kitContents.length
+  const baseKitItems = content?.kitContents.length
     ? content.kitContents.map((item, i) => ({
         id: item.id,
         title: item.title,
@@ -143,16 +214,21 @@ export default async function FireSafetyKitPage() {
         image: item.image ?? kitFallbackItems[i % kitFallbackItems.length].image,
       }))
     : kitFallbackItems;
+  const kitItems = baseKitItems.map((item) => {
+    const copy = kitItemCopy.find(([pattern]) => pattern.test(item.title))?.[1];
+    return copy ? { ...item, ...copy } : item;
+  });
   const unavailable = product.status !== "publish" || summary.stockStatus === "outofstock";
 
   const specs = content?.specifications.length ? content.specifications.map((spec) => [spec.group, spec.label, spec.value]) : fallbackSpecs;
 
-  const faqItems = content?.faqs.length
+  const existingFaqs = content?.faqs.length
     ? content.faqs.map((faq) => ({ id: String(faq.id), q: faq.title, a: faq.answer }))
     : fallbackFaqs(formatMinorUnitsToCurrency(summary.priceMinor, summary.currency)).map((faq, i) => ({
         id: `faq-${i}`,
         ...faq,
       }));
+  const faqItems = [...kitPageFaqs.map((faq, i) => ({ id: `kit-faq-${i}`, ...faq })), ...existingFaqs];
 
   const productSchema = buildProductSchema(product, reviews, specs as string[][]);
   const faqSchema = buildFaqSchema(faqItems.map(({ q, a }) => ({ q, a })));
@@ -203,7 +279,7 @@ export default async function FireSafetyKitPage() {
           <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
             <Badge tone="primary">Fire Safety Kit</Badge>
             <h1 className="mt-4 break-words text-3xl font-medium leading-tight sm:text-4xl text-foreground lg:text-5xl">
-              {content?.headline || product.name}
+              Fire Safety Kit for Home: 3-in-1 Fire Extinguisher Combo
             </h1>
             <p className="mt-4 text-base leading-7 sm:mt-5 sm:text-lg sm:leading-8 text-foreground-muted">
               {content?.heroSupportingText || stripHtml(product.short_description)}
@@ -257,10 +333,10 @@ export default async function FireSafetyKitPage() {
           </h2>
           <div className="mt-4 space-y-4 leading-8 text-foreground-muted">
             <p>
-              The Graha Kavach 3-in-1 fire safety kit puts three layers of protection in one box for homes, kitchens,
-              shops and small offices: a 2 kg ABC dry powder fire extinguisher for a manual first response, an
-              automatic fire ball that activates by itself when flame reaches it, and a 1 m x 1 m fibreglass fire
-              blanket for kitchen and pan fires.
+              The Graha Kavach fire safety kit puts three layers of protection in one box: a 2 kg ABC fire
+              extinguisher, an automatic fire extinguisher ball and a 1 m x 1 m fire blanket. It is a complete fire
+              extinguisher kit for Indian homes, covering kitchen, electrical and furniture fires with one order. Buy
+              online at ₹2,499 with free delivery across India and cash on delivery.
             </p>
             <p>
               It is made by Speciality Geochem in Udaipur, comes with wall mounting hardware and a printed safety
@@ -272,6 +348,10 @@ export default async function FireSafetyKitPage() {
               or see{" "}
               <Link className="text-primary underline underline-offset-4" href="/how-it-works">
                 how the three layers work
+              </Link>
+              . Before you pay, read our{" "}
+              <Link className="text-primary underline underline-offset-4" href="/blog/fire-extinguisher-for-home-buying-guide-india">
+                Fire Extinguisher for Home: Complete Buying Guide for India (2026)
               </Link>
               .
             </p>
