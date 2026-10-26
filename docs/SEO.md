@@ -122,7 +122,7 @@ Host: https://grahakavach.in
 
 ## Redirects (SEO manager)
 
-Manage redirects in WordPress admin under **Redirects** (left menu). Available to administrators and the Yoast **SEO Manager** / **SEO Editor** roles.
+Manage redirects in WordPress admin under **Redirects** (left menu). Available to administrators and the Yoast **SEO Manager** / **SEO Editor** roles and WooCommerce **Shop Manager**.
 
 - Add a rule: old path, new path or full grahakavach.in URL (no external sites), and a type (301 permanent, 302/307 temporary, 308, or 410 Gone for removed pages). Tick the wildcard box to also match everything below the old path.
 - Edit, enable/disable, delete in bulk, search, import from CSV (`old-path,new-path,code,note`) and export.

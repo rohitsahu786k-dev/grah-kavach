@@ -7,7 +7,8 @@
  * public `gk/v1/redirects` endpoint, and are applied by the Next.js proxy.
  *
  * Who can use it: administrators, plus the Yoast "SEO Manager" and "SEO
- * Editor" roles (anyone with `wpseo_manage_options` or `wpseo_bulk_edit`),
+ * Editor" roles and WooCommerce Shop Managers (anyone with `wpseo_manage_options`,
+ * `wpseo_bulk_edit` or `manage_woocommerce`),
  * through the `gk_manage_redirects` capability.
  *
  * @package GrahaKavach\HeadlessCore
@@ -57,7 +58,7 @@ final class GK_Redirects {
 	}
 
 	/**
-	 * Give admins and Yoast SEO roles the redirect capability.
+	 * Give admins, Yoast SEO roles and WooCommerce Shop Managers the redirect capability.
 	 *
 	 * @param array $allcaps All capabilities of the user.
 	 * @return array
@@ -65,7 +66,7 @@ final class GK_Redirects {
 	public static function grant_cap( $allcaps, $caps = array(), $args = array(), $user = null ): array {
 		$allcaps = (array) $allcaps;
 
-		if ( ! empty( $allcaps['manage_options'] ) || ! empty( $allcaps['wpseo_manage_options'] ) || ! empty( $allcaps['wpseo_bulk_edit'] ) ) {
+		if ( ! empty( $allcaps['manage_options'] ) || ! empty( $allcaps['wpseo_manage_options'] ) || ! empty( $allcaps['wpseo_bulk_edit'] ) || ! empty( $allcaps['manage_woocommerce'] ) ) {
 			$allcaps[ self::CAP ] = true;
 		}
 
