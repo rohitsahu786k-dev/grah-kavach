@@ -38,7 +38,7 @@ export function buildOrganizationSchema() {
         addressCountry: "IN",
       },
     },
-    telephone: "+91-9829082077",
+    telephone: "+91-9610251841",
     email: "grahakavach@gmail.com",
     address: {
       "@type": "PostalAddress",
@@ -50,7 +50,7 @@ export function buildOrganizationSchema() {
     },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+91-9829082077",
+      telephone: "+91-9610251841",
       contactType: "customer service",
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
@@ -58,9 +58,8 @@ export function buildOrganizationSchema() {
     sameAs: [
       "https://specialitygeochem.com/",
       "https://therakeshmishra.com/",
-      "https://facebook.com",
-      "https://instagram.com",
-      "https://linkedin.com",
+      "https://www.facebook.com/profile.php?id=61592687387001",
+      "https://www.instagram.com/grahakavach/",
     ],
   };
 }
@@ -207,6 +206,21 @@ export function buildProductSchema(
         "@type": "OfferShippingDetails",
         shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "INR" },
         shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN" },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 0,
+            maxValue: 1,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 3,
+            maxValue: 7,
+            unitCode: "DAY",
+          },
+        },
       },
       availability: inStock
         ? "https://schema.org/InStock"
@@ -296,7 +310,7 @@ export function buildLocalBusinessSchema() {
     name: "Graha Kavach — Speciality Geochem",
     description: "Certified fire safety equipment manufacturing and 3-in-1 domestic fire safety kits in Udaipur, Rajasthan.",
     url: BASE_URL,
-    telephone: "+91-9829082077",
+    telephone: "+91-9610251841",
     email: "grahakavach@gmail.com",
     image: `${BASE_URL}/brand/graha-kavach-logo.png`,
     address: {

@@ -237,8 +237,8 @@ export default function OrderDetailPage({
           <div className="mt-4 space-y-1 text-xs">
             <p>
               <span className="text-stone-400">Phone:</span>{" "}
-              <a href="tel:+919829082077" className="font-medium text-white underline">
-                +91 98290 82077
+              <a href="tel:+919610251841" className="font-medium text-white underline">
+                +91 96102 51841
               </a>
             </p>
             <p>

@@ -397,8 +397,8 @@ export default function TrackOrderPage() {
               </h4>
               <p className="mt-1 text-xs text-muted-foreground">
                 If your delivery is delayed or you require address changes before dispatch, reach out directly to our Udaipur dispatch desk at{" "}
-                <a href="tel:+919829082077" className="font-semibold text-primary underline">
-                  +91 98290 82077
+                <a href="tel:+919610251841" className="font-semibold text-primary underline">
+                  +91 96102 51841
                 </a>{" "}
                 or email{" "}
                 <a href="mailto:support@grahakavach.in" className="font-semibold text-primary underline">
