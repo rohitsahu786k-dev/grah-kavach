@@ -63,7 +63,7 @@ The Next.js storefront automatically injects Google-compliant Schema.org JSON-LD
 
 | Schema Type | Applied Where | Details |
 |---|---|---|
-| **Organization** | Homepage, Contact | Brand name, logo, phone (`+91 9610251841`), email, Udaipur address, social links. |
+| **Organization** | Homepage, Contact | Brand name, logo, phone (`+91 9610251841`), email, Udaipur address, social links (Facebook, Instagram). |
 | **WebSite** | Homepage | Site name, canonical URL, language `en-IN`. |
 | **Product & Offer** | Homepage, `/fire-safety-kit` | Name, description, image gallery, SKU, price (₹2,499), currency (`INR`), stock status, seller (`Speciality Geochem`). |
 | **AggregateRating & Review** | `/fire-safety-kit` | **Strict Integrity**: Only output if real approved reviews exist in WooCommerce (`rating_count > 0`). Never fabricated. |
@@ -117,3 +117,15 @@ Host: https://grahakavach.in
 - [x] **Image SEO**: Meaningful `alt` text applied on all images; no keyword stuffing.
 - [x] **404 Handling**: Proper 404 response with helpful navigation back to the homepage.
 - [x] **Mobile Optimization & Core Web Vitals**: Responsive images with `sizes` and `priority` on LCP hero visuals.
+
+---
+
+## Redirects (SEO manager)
+
+Manage redirects in WordPress admin under **Redirects** (left menu). Available to administrators and the Yoast **SEO Manager** / **SEO Editor** roles.
+
+- Add a rule: old path, new path or full grahakavach.in URL (no external sites), and a type (301 permanent, 302/307 temporary, 308, or 410 Gone for removed pages). Tick the wildcard box to also match everything below the old path.
+- Edit, enable/disable, delete in bulk, search, import from CSV (`old-path,new-path,code,note`) and export.
+- The plugin blocks loops, duplicate sources and reserved paths (`/api`, `/_next`, `/wp-admin`, `/robots.txt`, `/sitemap.xml`, and the home page).
+- Rules are served from `https://admin.grahakavach.in/wp-json/gk/v1/redirects` and applied by `src/proxy.ts` on the storefront. Changes go live within about a minute, with no deploy. If WordPress is unreachable, the storefront serves pages normally.
+- Redirects set in `next.config.ts` (www to non-www, `/home` to `/`) run first and are not editable here.

@@ -3,7 +3,7 @@
  * Plugin Name:       Graha Kavach Headless Core
  * Plugin URI:        https://grahakavach.in
  * Description:       Project-specific integration code for the Graha Kavach headless stack. Keeps backend noindex, exposes global settings to GraphQL without ACF Pro, signs revalidation webhooks to Next.js, and applies a strict CORS allowlist.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Graha Kavach
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'GK_HEADLESS_VERSION', '1.0.0' );
+define( 'GK_HEADLESS_VERSION', '1.1.0' );
 define( 'GK_HEADLESS_FILE', __FILE__ );
 define( 'GK_HEADLESS_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -49,6 +49,7 @@ require_once GK_HEADLESS_DIR . 'includes/class-gk-graphql.php';
 require_once GK_HEADLESS_DIR . 'includes/class-gk-rest.php';
 require_once GK_HEADLESS_DIR . 'includes/class-gk-revalidation.php';
 require_once GK_HEADLESS_DIR . 'includes/class-gk-admin.php';
+require_once GK_HEADLESS_DIR . 'includes/class-gk-redirects.php';
 require_once GK_HEADLESS_DIR . 'includes/class-gk-structured.php';
 require_once GK_HEADLESS_DIR . 'includes/class-gk-cpt.php';
 require_once GK_HEADLESS_DIR . 'includes/class-gk-model.php';
@@ -73,6 +74,7 @@ function gk_headless_bootstrap(): void {
 	GK_Rest::init();
 	GK_Revalidation::init();
 	GK_Admin::init();
+	GK_Redirects::init();
 
 	// Phase 3 content model.
 	GK_CPT::init();

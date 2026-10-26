@@ -15,3 +15,4 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 delete_option( 'gk_headless_settings' );
+delete_option( 'gk_redirects' );
