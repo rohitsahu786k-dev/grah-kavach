@@ -1,0 +1,122 @@
+/* Book Now landing page: only what Tailwind utilities cannot express. */
+
+.lp-root {
+  font-family: var(--font-lp-mukta), var(--font-lp-manrope), sans-serif;
+  color: var(--foreground);
+  background: var(--muted);
+  min-height: 100vh;
+}
+
+.lp-display {
+  font-family: var(--font-lp-manrope), var(--font-lp-mukta), sans-serif;
+}
+
+.lp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-lp-manrope), var(--font-lp-mukta), sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  text-decoration: none;
+  background: linear-gradient(110deg, #b30f16, #e01820 34%, #ff3b1f 62%, #f87818);
+  box-shadow: 0 4px 14px rgba(224, 24, 32, 0.28);
+}
+
+.lp-btn:hover {
+  color: #fff;
+}
+
+.lp-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.lp-btn:focus-visible,
+.lp-input:focus-visible {
+  outline: 3px solid rgba(224, 24, 32, 0.35);
+  outline-offset: 2px;
+}
+
+.lp-timer {
+  font-family: var(--font-lp-manrope), sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.lp-input {
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 0 14px;
+  font-family: var(--font-lp-mukta), sans-serif;
+  font-size: 17px;
+  color: var(--foreground);
+  background: #fff;
+}
+
+.lp-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.lp-pulse {
+  animation: lp-pulse 1.6s ease-in-out infinite;
+  will-change: transform;
+  transform-origin: center;
+}
+
+.lp-dot {
+  animation: lp-blink 1s ease-in-out infinite;
+}
+
+.lp-ticker {
+  animation: lp-ticker 18s linear infinite;
+  will-change: transform;
+}
+
+@keyframes lp-pulse {
+  0%,
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+  50% {
+    transform: scale3d(1.04, 1.04, 1);
+  }
+}
+
+@keyframes lp-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes lp-ticker {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-pulse,
+  .lp-dot,
+  .lp-ticker {
+    animation: none;
+  }
+}

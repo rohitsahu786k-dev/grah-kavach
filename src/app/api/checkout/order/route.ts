@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkoutSubmissionSchema } from "@/lib/validation/checkout";
+import { checkoutSubmissionSchema, landingSubmissionSchema } from "@/lib/validation/checkout";
 import { validateCartServer } from "@/lib/woocommerce/cart-server";
 import { wooRequest } from "@/lib/woocommerce/client";
 import { getActivePaymentGateways } from "@/lib/woocommerce/payment-gateways";
@@ -48,7 +48,9 @@ export async function POST(request: Request) {
   try {
     cleanIdempotencyStore();
     const rawBody = await request.json();
-    const parsed = checkoutSubmissionSchema.safeParse(rawBody);
+    // The /book-now funnel sends a shorter form (no email), marked with its source.
+    const isLanding = (rawBody as { source?: unknown } | null)?.source === "landing";
+    const parsed = (isLanding ? landingSubmissionSchema : checkoutSubmissionSchema).safeParse(rawBody);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -151,7 +153,7 @@ export async function POST(request: Request) {
       customer_note: address.orderNotes || "",
       meta_data: [
         { key: "_idempotency_key", value: idempotencyKey },
-        { key: "_source", value: "nextjs-headless" },
+        { key: "_source", value: isLanding ? "nextjs-landing" : "nextjs-headless" },
         // Pinned now so the payment check later does not depend on the setting still being the same.
         ...(codAdvance ? [{ key: "_cod_advance_minor", value: String(advanceMinor) }] : []),
         ...(address.gstin

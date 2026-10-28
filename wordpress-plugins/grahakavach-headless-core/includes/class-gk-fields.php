@@ -218,6 +218,12 @@ final class GK_Fields {
 			self::group( 'about', __( 'About Page Content', 'grahakavach-headless-core' ), GK_Model::about(), self::where_page( $about_id ) );
 		}
 
+		// Campaign landing page (/book-now).
+		$landing_id = GK_Landing::page_id();
+		if ( $landing_id ) {
+			self::group( 'landing', __( 'Landing Page Content', 'grahakavach-headless-core' ), GK_Landing::fields(), self::where_page( $landing_id ) );
+		}
+
 		// Product supplemental content.
 		//
 		// Registered unconditionally. A `post_type_exists( 'product' )` guard

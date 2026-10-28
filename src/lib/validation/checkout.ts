@@ -130,5 +130,18 @@ export const checkoutSubmissionSchema = z.object({
   idempotencyKey: z.string().min(10, "Idempotency key is missing"),
 });
 
+/**
+ * The /book-now form asks for less: no email, and a single name field, so the
+ * last name and email may be empty.
+ */
+export const landingAddressSchema = indianAddressSchema.extend({
+  lastName: z.string().trim().max(50, "Name is too long").optional().default(""),
+  email: z.string().trim().email("Enter a valid email address").max(100).or(z.literal("")).default(""),
+});
+
+export const landingSubmissionSchema = checkoutSubmissionSchema.extend({
+  address: landingAddressSchema,
+});
+
 export type IndianAddress = z.infer<typeof indianAddressSchema>;
 export type CheckoutSubmission = z.infer<typeof checkoutSubmissionSchema>;

@@ -17,6 +17,7 @@
  *   grahaKavachSettings
  *   grahaKavachHomepage
  *   grahaKavachAbout
+ *   grahaKavachLanding
  *   grahaKavachProductContent(productId: Int, slug: String)
  *   grahaKavachFaqs / Certifications / Testimonials / SafetyGuides / KitItems
  *
@@ -120,6 +121,11 @@ final class GK_Content_GraphQL {
 			'GrahaKavachRoleRow'        => array( 'title', 'role', 'text' ),
 			'GrahaKavachWarningRow'     => array( 'level', 'title', 'text' ),
 			'GrahaKavachLabelValueRow'  => array( 'label', 'value' ),
+			'GrahaKavachTextRow'        => array( 'text' ),
+			'GrahaKavachTitleTextFocusRow' => array( 'title', 'text', 'focus' ),
+			'GrahaKavachLabelFocusRow'  => array( 'label', 'focus' ),
+			'GrahaKavachQuoteRow'       => array( 'quote', 'name' ),
+			'GrahaKavachQaRow'          => array( 'q', 'a' ),
 		);
 
 		foreach ( $shapes as $type => $columns ) {
@@ -466,6 +472,26 @@ final class GK_Content_GraphQL {
 					$id = GK_CPT::page_id_by_slug( 'home', 'Home' );
 
 					return $id ? self::values( $id, GK_Model::homepage() ) : array();
+				},
+			)
+		);
+
+		// ---- Landing page -------------------------------------------------
+		register_graphql_object_type(
+			'GrahaKavachLanding',
+			array( 'fields' => self::fields_for( GK_Landing::fields(), $refs ) )
+		);
+
+		register_graphql_field(
+			'RootQuery',
+			'grahaKavachLanding',
+			array(
+				'type'        => 'GrahaKavachLanding',
+				'description' => __( 'Structured content of the /book-now campaign landing page.', 'grahakavach-headless-core' ),
+				'resolve'     => static function () {
+					$id = GK_Landing::page_id();
+
+					return $id ? self::values( $id, GK_Landing::fields() ) : array();
 				},
 			)
 		);

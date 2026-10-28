@@ -8,6 +8,7 @@ import {
   FAQS_QUERY,
   GLOBAL_SETTINGS_QUERY,
   HOMEPAGE_QUERY,
+  LANDING_QUERY,
   PAGE_BY_SLUG_QUERY,
   PAGES_INDEX_QUERY,
   POST_BY_SLUG_QUERY,
@@ -19,6 +20,7 @@ import {
 import {
   wpAboutSchema,
   wpFaqSchema,
+  wpLandingSchema,
   wpMediaSchema,
   wpPageIndexSchema,
   wpPageSchema,
@@ -306,6 +308,25 @@ export async function getHomePage() {
   }
 }
 
+const landingResponseSchema = z.object({ grahaKavachLanding: wpLandingSchema.nullable() });
+
+/** Content of the /book-now landing page. Null when it cannot be loaded. */
+export async function getLanding() {
+  try {
+    const data = await wpGraphql<z.infer<typeof landingResponseSchema>>({
+      query: LANDING_QUERY,
+      schema: landingResponseSchema,
+      tags: [CacheTag.page("book-now")],
+      revalidate: Revalidate.content,
+    });
+
+    return data.grahaKavachLanding;
+  } catch (error) {
+    console.warn("Failed to fetch landing page content:", error);
+    return null;
+  }
+}
+
 export async function getProductContent(slug: string): Promise<WpProductContent | null> {
   const data = await wpGraphql<z.infer<typeof productContentResponseSchema>>({
     query: PRODUCT_CONTENT_QUERY,
@@ -410,6 +431,8 @@ const RESERVED_PAGE_SLUGS = new Set([
   "blog",
   "contact",
   "wishlist",
+  // The campaign landing page has its own route and funnel.
+  "book-now",
 ]);
 
 export type PolicyPage = { slug: string; title: string; href: string; order: number };

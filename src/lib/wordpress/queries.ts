@@ -229,6 +229,44 @@ export const HOMEPAGE_QUERY = `
   }
 `;
 
+export const LANDING_QUERY = `
+  query Landing {
+    grahaKavachLanding {
+      topbarText endTime endsAt timerLabel timerUnits stickyLabel lockLabel
+      headerTagline ctaShort ctaLabel ctaSticky ctaOffer
+      heroBadge heroTitleBefore heroTitleHighlight heroTitleAfter heroText
+      heroImage { ${mediaFields} }
+      heroImageTag nowLabel nowNote laterLabel laterNote
+      heroTrust { text }
+      ticker { text }
+      whyEyebrow whyTitle statBig statText statSource
+      whyPoints { ${titleTextFields} }
+      kitEyebrow kitTitle
+      kitItems { title text focus }
+      kitImages { ${mediaFields} }
+      kitExtra
+      kitBadges { text }
+      offerTitle
+      offerPoints { text }
+      offerNote stepsTitle
+      steps { ${titleTextFields} }
+      whereTitle
+      whereImage { ${mediaFields} }
+      whereCaption
+      whereTiles { label focus }
+      whereTileImages { ${mediaFields} }
+      reviews { quote name }
+      trustBold trustText faqTitle
+      faqs { q a }
+      finalKicker finalTitle finalText contactLabel phone footerText
+      detailsTitle detailsSub detailsNote payTitle paySecure
+      doneTitle doneText
+      doneSteps { text }
+      doneWhatsappLabel whatsappKeyword doneHomeLabel
+    }
+  }
+`;
+
 export const PRODUCT_CONTENT_QUERY = `
   query ProductContent($slug: String) {
     grahaKavachProductContent(slug: $slug) {

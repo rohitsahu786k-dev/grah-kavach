@@ -5,6 +5,7 @@ import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { LoginSheet } from "@/components/auth/login-sheet";
 import { CartRecovery } from "@/components/cart/cart-recovery";
+import { ChromeGate } from "@/components/layout/chrome-gate";
 import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { ScrollToTopOnNav } from "@/components/layout/scroll-to-top-on-nav";
@@ -116,21 +117,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     Skip to content
                   </a>
 
-                  <SiteHeader />
-                  <HeaderSpacer />
+                  <ChromeGate
+                    before={
+                      <>
+                        <SiteHeader />
+                        <HeaderSpacer />
+                      </>
+                    }
+                    after={
+                      <>
+                        <SiteFooter />
 
-                  <div id="main" className="flex-1">
+                        {/* Reserves the height of the fixed tab bar on phones. */}
+                        <div aria-hidden="true" className="gk-bottom-nav-offset" />
+
+                        <MobileBottomNav productHref={PRODUCT_HREF} whatsappUrl={whatsappUrl} />
+                        <CartDrawer />
+                        <LoginSheet />
+                      </>
+                    }
+                  >
                     {children}
-                  </div>
-
-                  <SiteFooter />
-
-                  {/* Reserves the height of the fixed tab bar on phones. */}
-                  <div aria-hidden="true" className="gk-bottom-nav-offset" />
-
-                  <MobileBottomNav productHref={PRODUCT_HREF} whatsappUrl={whatsappUrl} />
-                  <CartDrawer />
-                  <LoginSheet />
+                  </ChromeGate>
                 </ToastProvider>
               </CommerceUIProvider>
             </CartProvider>

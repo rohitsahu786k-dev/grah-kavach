@@ -252,7 +252,99 @@ export const wpAboutSchema = z.object({
   ctaUrl: cmsString,
 });
 
+const textRow = z.object({ text: z.string().min(1) });
+
+/** The /book-now campaign landing page. Every field is optional so a half-filled page still renders. */
+export const wpLandingSchema = z.object({
+  topbarText: cmsString,
+  endTime: cmsString,
+  endsAt: cmsString,
+  timerLabel: cmsString,
+  timerUnits: cmsString,
+  stickyLabel: cmsString,
+  lockLabel: cmsString,
+  headerTagline: cmsString,
+  ctaShort: cmsString,
+  ctaLabel: cmsString,
+  ctaSticky: cmsString,
+  ctaOffer: cmsString,
+  heroBadge: cmsString,
+  heroTitleBefore: cmsString,
+  heroTitleHighlight: cmsString,
+  heroTitleAfter: cmsString,
+  heroText: cmsString,
+  heroImage: wpMediaSchema.nullable().optional(),
+  heroImageTag: cmsString,
+  nowLabel: cmsString,
+  nowNote: cmsString,
+  laterLabel: cmsString,
+  laterNote: cmsString,
+  heroTrust: z.array(textRow).nullable().optional().transform((v) => v ?? []),
+  ticker: z.array(textRow).nullable().optional().transform((v) => v ?? []),
+  whyEyebrow: cmsString,
+  whyTitle: cmsString,
+  statBig: cmsString,
+  statText: cmsString,
+  statSource: cmsString,
+  whyPoints: z.array(wpTitleTextRowSchema).nullable().optional().transform((v) => v ?? []),
+  kitEyebrow: cmsString,
+  kitTitle: cmsString,
+  kitItems: z
+    .array(z.object({ title: z.string().min(1), text: z.string().min(1), focus: z.string().min(1) }))
+    .nullable()
+    .optional()
+    .transform((v) => v ?? []),
+  kitImages: z.array(wpMediaSchema).nullable().optional().transform((v) => v ?? []),
+  kitExtra: cmsString,
+  kitBadges: z.array(textRow).nullable().optional().transform((v) => v ?? []),
+  offerTitle: cmsString,
+  offerPoints: z.array(textRow).nullable().optional().transform((v) => v ?? []),
+  offerNote: cmsString,
+  stepsTitle: cmsString,
+  steps: z.array(wpTitleTextRowSchema).nullable().optional().transform((v) => v ?? []),
+  whereTitle: cmsString,
+  whereImage: wpMediaSchema.nullable().optional(),
+  whereCaption: cmsString,
+  whereTiles: z
+    .array(z.object({ label: z.string().min(1), focus: z.string().min(1) }))
+    .nullable()
+    .optional()
+    .transform((v) => v ?? []),
+  whereTileImages: z.array(wpMediaSchema).nullable().optional().transform((v) => v ?? []),
+  reviews: z
+    .array(z.object({ quote: z.string().min(1), name: z.string().min(1) }))
+    .nullable()
+    .optional()
+    .transform((v) => v ?? []),
+  trustBold: cmsString,
+  trustText: cmsString,
+  faqTitle: cmsString,
+  faqs: z
+    .array(z.object({ q: z.string().min(1), a: z.string().min(1) }))
+    .nullable()
+    .optional()
+    .transform((v) => v ?? []),
+  finalKicker: cmsString,
+  finalTitle: cmsString,
+  finalText: cmsString,
+  contactLabel: cmsString,
+  phone: cmsString,
+  footerText: cmsString,
+  detailsTitle: cmsString,
+  detailsSub: cmsString,
+  detailsNote: cmsString,
+  payTitle: cmsString,
+  paySecure: cmsString,
+  doneTitle: cmsString,
+  doneText: cmsString,
+  doneSteps: z.array(textRow).nullable().optional().transform((v) => v ?? []),
+  doneWhatsappLabel: cmsString,
+  whatsappKeyword: cmsString,
+  doneHomeLabel: cmsString,
+});
+
 export type WpMedia = z.infer<typeof wpMediaSchema>;
+export type WpLanding = z.infer<typeof wpLandingSchema>;
 export type WpFaq = z.infer<typeof wpFaqSchema>;
 export type WpCertification = z.infer<typeof wpCertificationSchema>;
 export type WpKitItem = z.infer<typeof wpKitItemSchema>;

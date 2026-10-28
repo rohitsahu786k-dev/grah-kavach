@@ -52,7 +52,7 @@ type PayInput = {
   currency: string;
   name?: string;
   description?: string;
-  prefill?: Partial<{ name: string; email: string; contact: string }>;
+  prefill?: Partial<{ name: string; email: string; contact: string; method: string }>;
   one_click_checkout?: boolean;
 };
 
