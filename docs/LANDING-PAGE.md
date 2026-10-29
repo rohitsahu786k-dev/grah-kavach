@@ -18,7 +18,7 @@ The booking steps for a page are at `/lp/<slug>/book` (`/book-now/details` for t
 | All copy, button labels, FAQ, timer | The tabs of the page's "Landing Page Content" box |
 | Images | Same tabs; pick from the **Media Library** (alt text is set there) |
 | SEO title, description, social card, noindex | The **Yoast SEO** box on the page |
-| Which product it sells | **Page settings** tab > WooCommerce product (slug) |
+| Which product it sells | **Page settings** tab > WooCommerce product (slug). Empty uses the main kit, `graha-kavach-complete-fire-safety-kit` |
 | Prices and discount | That WooCommerce product (regular price and sale price) |
 | Amount paid now (balance on delivery) | WooCommerce **Deposits & Partial Payments** |
 | Countdown on or off | **Page settings** tab > Hide the countdown |
@@ -43,7 +43,7 @@ A booking is a normal WooCommerce COD order with the advance collected through R
 
 ## How it works
 
-Every landing page is a WordPress page under a private **Landing Pages** parent. That parent is what shows the editor fields, serves the page at `/lp/<slug>`, and keeps it out of the policy-page list and the catch-all route. Do not move landing pages out from under it. Plugin v1.3.2 or later is required.
+Every landing page is a WordPress page under a private **Landing Pages** parent. That parent is what shows the editor fields, serves the page at `/lp/<slug>`, and keeps it out of the policy-page list and the catch-all route. Do not move landing pages out from under it. Plugin v1.3.3 or later is required.
 
 ## First setup
 

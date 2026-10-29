@@ -223,7 +223,7 @@ final class GK_Landing {
 
 		return array(
 			// ---- Page settings -------------------------------------------
-			array( 'name' => 'lp_product_slug', 'label' => 'WooCommerce product', 'type' => 'text', 'gql' => 'productSlug', 'tab' => 'Page settings', 'hint' => 'Slug of the product this page sells, e.g. fire-safety-kit. The price, the discount and the payment come from this product. Empty means fire-safety-kit.' ),
+			array( 'name' => 'lp_product_slug', 'label' => 'WooCommerce product', 'type' => 'text', 'gql' => 'productSlug', 'tab' => 'Page settings', 'hint' => 'Slug of the WooCommerce product this page sells (the last part of its product address). The price, the discount and the payment come from this product. Leave empty for the main kit, graha-kavach-complete-fire-safety-kit.' ),
 			array( 'name' => 'lp_hide_timer', 'label' => 'Hide the countdown', 'type' => 'true_false', 'gql' => 'hideTimer', 'tab' => 'Page settings', 'hint' => 'Tick for a campaign with no deadline. Every timer disappears from the page and the booking steps.' ),
 
 			// ---- Offer & timer -------------------------------------------
@@ -511,10 +511,6 @@ final class GK_Landing {
 			if ( $empty( $name ) ) {
 				update_field( $name, $value, $page_id );
 			}
-		}
-
-		if ( $empty( 'lp_product_slug' ) ) {
-			update_field( 'lp_product_slug', 'fire-safety-kit', $page_id );
 		}
 
 		$images = array();
