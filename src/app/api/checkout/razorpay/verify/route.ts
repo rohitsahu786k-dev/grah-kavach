@@ -96,10 +96,22 @@ export async function POST(request: Request) {
     if (isCodAdvance && order.status === "pending") {
       // Advance received: the order is confirmed, the balance is collected on delivery.
       const balance = ((totalMinor - expectedAmount) / 100).toFixed(2);
+
+      // The booking page does not require an email. If the customer typed one into the
+      // payment window, use it, so the confirmation email and the PDF invoice reach them.
+      // It goes in the same update as the status change, so the email sees it.
+      let billingEmail = "";
+      if (!order.billing?.email) {
+        const payment = await fetchRazorpayPayment(razorpay_payment_id).catch(() => null);
+        const candidate = typeof payment?.email === "string" ? payment.email.trim() : "";
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidate)) billingEmail = candidate;
+      }
+
       await wooRequest({
         path: `/orders/${wooOrderId}`,
         method: "PUT",
         body: {
+          ...(billingEmail ? { billing: { email: billingEmail } } : {}),
           status: "processing",
           transaction_id: razorpay_payment_id,
           meta_data: [

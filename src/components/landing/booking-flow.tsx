@@ -40,7 +40,7 @@ export type BookingMoney = {
 
 type Step = "details" | "pay" | "done";
 type Method = "upi" | "card" | "netbanking";
-type Fields = { name: string; phone: string; pin: string; city: string; address: string; state: string };
+type Fields = { name: string; phone: string; email: string; pin: string; city: string; address: string; state: string };
 type Errors = Partial<Record<keyof Fields, string>>;
 
 const STORAGE_KEY_PREFIX = "gk_booking_done";
@@ -67,6 +67,7 @@ function validate(f: Fields, needsState: boolean): Errors {
   if (f.name.trim().length < 2) errors.name = "अपना पूरा नाम लिखिए।";
   if (!/^[6-9]\d{9}$/.test(cleanPhone(f.phone))) errors.phone = "10 अंक का सही मोबाइल नंबर लिखिए।";
   if (!/^[1-9][0-9]{5}$/.test(f.pin.trim())) errors.pin = "6 अंक का सही पिनकोड लिखिए।";
+  if (f.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) errors.email = "सही ईमेल लिखिए, या इसे खाली छोड़ दीजिए।";
   if (f.city.trim().length < 2) errors.city = "शहर का नाम लिखिए।";
   if (f.address.trim().length < 3) errors.address = "मकान नं., गली और कॉलोनी लिखिए।";
   if (needsState && !f.state) errors.state = "राज्य चुनिए।";
@@ -158,7 +159,7 @@ export function BookingFlow({
   countdown: CountdownConfig;
 }) {
   const [step, setStep] = useState<Step>("details");
-  const [fields, setFields] = useState<Fields>({ name: "", phone: "", pin: "", city: "", address: "", state: "" });
+  const [fields, setFields] = useState<Fields>({ name: "", phone: "", email: "", pin: "", city: "", address: "", state: "" });
   const [errors, setErrors] = useState<Errors>({});
   // The PIN whose lookup came back without a state; only then does the form ask for one.
   const [failedPin, setFailedPin] = useState("");
@@ -259,7 +260,7 @@ export function BookingFlow({
             address: {
               firstName: nameParts[0],
               lastName: nameParts.slice(1).join(" "),
-              email: "",
+              email: fields.email.trim(),
               phone: fields.phone,
               address1: fields.address.trim(),
               city: fields.city.trim(),
@@ -310,7 +311,7 @@ export function BookingFlow({
         ...current.razorpay,
         name: "Graha Kavach",
         description: `Booking #${current.orderNumber}`,
-        prefill: { name: fields.name.trim(), contact: cleanPhone(fields.phone), method },
+        prefill: { name: fields.name.trim(), contact: cleanPhone(fields.phone), ...(fields.email.trim() ? { email: fields.email.trim() } : {}), method },
         one_click_checkout: false,
       });
 
@@ -376,6 +377,9 @@ export function BookingFlow({
             </Field>
             <Field id="gk-phone" label="मोबाइल नंबर (WhatsApp वाला)" error={errors.phone}>
               <input id="gk-phone" type="tel" inputMode="numeric" autoComplete="tel" placeholder="10 अंक" value={fields.phone} onChange={update("phone")} aria-invalid={Boolean(errors.phone)} aria-describedby={errors.phone ? "gk-phone-error" : undefined} className="lp-input" />
+            </Field>
+            <Field id="gk-email" label="ईमेल (वैकल्पिक, बिल भेजने के लिए)" error={errors.email}>
+              <input id="gk-email" type="email" inputMode="email" autoComplete="email" value={fields.email} onChange={update("email")} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "gk-email-error" : undefined} className="lp-input" />
             </Field>
             <div className="grid grid-cols-2 gap-2.5">
               <Field id="gk-pin" label="पिनकोड" error={errors.pin}>
