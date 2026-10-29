@@ -70,15 +70,15 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
     landing.whereTitle || landing.whereImage || landing.whereTiles.length || landing.reviews.length || landing.trustBold || landing.trustText,
   );
   const eyebrow = "text-[13px] font-bold tracking-[0.04em] text-primary";
-  const h2 = "m-0 text-[27px] leading-[1.2] font-extrabold";
+  const h2 = "m-0 text-[22px] leading-[1.25] font-extrabold";
 
   return (
-    <div className="mx-auto max-w-[480px] bg-white text-[17px] leading-normal">
+    <div className="mx-auto max-w-[480px] bg-white text-base leading-normal">
       {timerOn && landing.topbarText ? (
-        <div className="flex items-center justify-center gap-2.5 bg-foreground px-4 py-[9px] text-sm font-semibold text-white">
+        <div className="flex items-center justify-center gap-2 bg-foreground px-3 py-2 text-[12.5px] font-semibold text-white">
           <span className="lp-dot size-2 rounded-full bg-accent" />
           <span>{t(landing.topbarText)}</span>
-          <Timer className="rounded-md bg-primary px-2 py-0.5 text-sm" />
+          <Timer className="rounded-md bg-primary px-1.5 py-0.5 text-[12.5px]" />
         </div>
       ) : null}
 
@@ -90,7 +90,7 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
             <div className="lp-display text-xs leading-[1.3] font-semibold text-muted-foreground">{landing.headerTagline}</div>
           ) : null}
         </div>
-        <Link href={bookHref} className="lp-btn !min-h-11 !px-[18px] !text-[15px]">
+        <Link href={bookHref} className="lp-btn !min-h-10 !px-4 !text-sm whitespace-nowrap">
           {landing.ctaShort}
         </Link>
       </header>
@@ -103,12 +103,12 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
               {landing.heroBadge}
             </div>
           ) : null}
-          <h1 className="m-0 text-[36px] leading-[1.15] font-extrabold">
+          <h1 className="m-0 text-[29px] leading-[1.2] font-extrabold">
             {landing.heroTitleBefore}
             <br />
             <span className="text-primary">{landing.heroTitleHighlight}</span> {landing.heroTitleAfter}
           </h1>
-          <p className="m-0 text-[17px] leading-normal text-foreground-muted">
+          <p className="m-0 text-[15.5px] leading-[1.55] text-foreground-muted">
             <Rich text={t(landing.heroText)} />
           </p>
 
@@ -142,17 +142,17 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-0.5 rounded-xl border border-red-200 bg-primary-subtle px-4 py-3.5">
               <div className="text-sm font-semibold text-foreground-muted">{landing.nowLabel}</div>
-              <div className="lp-display text-[38px] leading-[1.1] font-extrabold text-primary">{money(pricing.advanceMinor)}</div>
+              <div className="lp-display text-[30px] leading-[1.1] font-extrabold text-primary">{money(pricing.advanceMinor)}</div>
               <div className="text-[13px] leading-[1.3] font-semibold">{landing.nowNote}</div>
             </div>
             <div className="flex flex-col gap-0.5 rounded-xl border border-border bg-muted px-4 py-3.5">
               <div className="text-sm font-semibold text-foreground-muted">{landing.laterLabel}</div>
-              <div className="lp-display text-[38px] leading-[1.1] font-extrabold">{money(pricing.priceMinor - pricing.advanceMinor)}</div>
+              <div className="lp-display text-[30px] leading-[1.1] font-extrabold">{money(pricing.priceMinor - pricing.advanceMinor)}</div>
               <div className="text-[13px] leading-[1.3] text-foreground-muted">{landing.laterNote}</div>
             </div>
           </div>
 
-          <BookButton href={bookHref} label={bookLabel} className="lp-pulse !min-h-[60px] !text-xl" />
+          <BookButton href={bookHref} label={bookLabel} className="lp-pulse !min-h-14 !text-lg" />
           {landing.heroTrust.length ? (
             <div className="flex flex-wrap justify-center gap-3 text-sm font-semibold text-foreground-muted">
               {landing.heroTrust.map((row) => (
@@ -185,8 +185,8 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
           </div>
           {landing.statBig ? (
             <div className="flex flex-col gap-2 rounded-[14px] bg-foreground px-5 py-[22px] text-white">
-              <div className={`lp-display font-extrabold text-accent ${landing.statBig.length > 14 ? "text-[36px] leading-[1.15]" : "text-[44px] leading-none"}`}>{landing.statBig}</div>
-              <div className="text-[17px] leading-[1.45]">{landing.statText}</div>
+              <div className={`lp-display font-extrabold text-accent ${landing.statBig.length > 14 ? "text-[27px] leading-[1.2]" : "text-[38px] leading-none"}`}>{landing.statBig}</div>
+              <div className="text-[15px] leading-[1.5]">{landing.statText}</div>
               <div className="text-[13px] text-[#a8a29e]">{landing.statSource}</div>
             </div>
           ) : null}
@@ -197,8 +197,8 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
                   {index + 1}
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <div className="text-lg leading-[1.3] font-bold">{point.title}</div>
-                  <div className="text-base leading-[1.45] text-foreground-muted">{point.text}</div>
+                  <div className="text-[16.5px] leading-[1.3] font-bold">{point.title}</div>
+                  <div className="text-[14.5px] leading-[1.5] text-foreground-muted">{point.text}</div>
                 </div>
               </li>
             ))}
@@ -226,8 +226,8 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
                     <Photo media={image} focus={item.focus} sizes="96px" className="size-24 shrink-0 rounded-[10px] object-cover" />
                   ) : null}
                   <div className="flex flex-col gap-0.5">
-                    <div className="text-lg leading-[1.3] font-bold">{item.title}</div>
-                    <div className="text-[15px] leading-[1.45] text-foreground-muted">{item.text}</div>
+                    <div className="text-[16.5px] leading-[1.3] font-bold">{item.title}</div>
+                    <div className="text-[14px] leading-[1.5] text-foreground-muted">{item.text}</div>
                   </div>
                 </li>
               );
@@ -258,7 +258,7 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
               {landing.offerPoints.map((point) => (
                 <li key={point.text} className="flex items-center gap-3 rounded-xl border border-orange-200 bg-white px-4 py-3.5">
                   <CheckIcon />
-                  <div className="text-lg leading-[1.3] font-bold">{t(point.text)}</div>
+                  <div className="text-[16.5px] leading-[1.3] font-bold">{t(point.text)}</div>
                 </li>
               ))}
             </ul>
@@ -289,8 +289,8 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
                   {index + 1}
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <div className="text-lg leading-[1.3] font-bold">{t(step.title)}</div>
-                  <div className="text-base leading-[1.45] text-foreground-muted">{t(step.text)}</div>
+                  <div className="text-[16.5px] leading-[1.3] font-bold">{t(step.title)}</div>
+                  <div className="text-[14.5px] leading-[1.5] text-foreground-muted">{t(step.text)}</div>
                 </div>
               </li>
             ))}
@@ -356,8 +356,8 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
             <div className="flex flex-col gap-2.5">
               {landing.faqs.map((faq) => (
                 <div key={faq.q} className="flex flex-col gap-1 rounded-xl bg-muted p-4">
-                  <h3 className="m-0 text-[17px] leading-[1.3] font-bold">{t(faq.q)}</h3>
-                  <p className="m-0 text-base leading-normal text-foreground-muted">
+                  <h3 className="m-0 text-[15.5px] leading-[1.35] font-bold">{t(faq.q)}</h3>
+                  <p className="m-0 text-sm leading-[1.55] text-foreground-muted">
                     {t(faq.a)
                       .split("{br}")
                       .map((line, index) => (
@@ -377,12 +377,12 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
           {timerOn ? (
             <>
               <div className="text-sm font-semibold text-accent">{t(landing.finalKicker)}</div>
-              <Timer dayStyle="small" dayWord={dayWord} className={`leading-none text-white ${showDays ? "text-[44px]" : "text-[52px]"}`} />
+              <Timer dayStyle="small" dayWord={dayWord} className={`leading-none text-white ${showDays ? "text-[32px]" : "text-[42px]"}`} />
             </>
           ) : null}
-          <div className="mt-1 text-[30px] leading-[1.2] font-extrabold">{landing.finalTitle}</div>
-          <div className="text-base leading-normal text-[#a8a29e]">{landing.finalText}</div>
-          <BookButton href={bookHref} label={bookLabel} className="lp-pulse mt-1 !min-h-[60px] !text-xl" />
+          <div className="mt-1 text-[24px] leading-[1.25] font-extrabold">{landing.finalTitle}</div>
+          <div className="text-[14.5px] leading-normal text-[#a8a29e]">{landing.finalText}</div>
+          <BookButton href={bookHref} label={bookLabel} className="lp-pulse mt-1 !min-h-14 !text-lg" />
           {phone ? (
             <div className="mt-1.5 text-base text-[#d6d3d1]">
               {landing.contactLabel}{" "}
@@ -396,16 +396,15 @@ export function LandingView({ landing, pricing, bookHref, logo }: Props) {
       </main>
 
       {/* Sticky bar */}
-      <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-white px-4 py-2.5 shadow-[0_-6px_20px_rgba(26,26,26,0.08)]">
+      <div className="sticky bottom-0 z-10 flex items-center justify-between gap-2.5 border-t border-border bg-white px-3 py-2 shadow-[0_-6px_20px_rgba(26,26,26,0.08)]">
         {timerOn ? (
-          <div className="flex flex-col">
-            <div className="text-xs leading-[1.3] font-bold text-primary">{t(landing.stickyLabel)}</div>
-            <Timer className="text-xl leading-[1.2] text-foreground" />
+          <div className="flex min-w-0 flex-1 items-baseline gap-1.5 whitespace-nowrap">
+            <span className="min-w-0 truncate text-[11px] leading-tight font-bold text-primary">{t(landing.stickyLabel)}</span>
+            <Timer className="shrink-0 text-[15px] leading-tight text-foreground" />
           </div>
         ) : null}
-        <Link href={bookHref} className={`lp-btn lp-pulse !min-h-12 !px-5 !text-[17px] ${timerOn ? "" : "w-full"}`}>
+        <Link href={bookHref} className={`lp-btn lp-pulse !min-h-11 !px-3.5 !text-[15px] whitespace-nowrap ${timerOn ? "shrink-0" : "w-full"}`}>
           {t(landing.ctaSticky || landing.ctaLabel)}
-          <ArrowIcon size={20} />
         </Link>
       </div>
     </div>

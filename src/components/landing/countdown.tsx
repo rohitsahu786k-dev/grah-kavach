@@ -90,20 +90,20 @@ export function TimerBoxes({ units }: { units: string[] }) {
   const compact = values.length > 3;
 
   return (
-    <div className={`flex items-start justify-center ${compact ? "gap-1.5" : "gap-2"}`}>
+    <div className={`flex items-start justify-center ${compact ? "gap-1" : "gap-1.5"}`}>
       {values.map((value, index) => (
-        <div key={index} className={`flex items-start ${compact ? "gap-1.5" : "gap-2"}`}>
-          {index > 0 ? <div className={`lp-timer text-accent ${compact ? "text-[28px] leading-[54px]" : "text-[32px] leading-[60px]"}`}>:</div> : null}
+        <div key={index} className={`flex items-start ${compact ? "gap-1" : "gap-1.5"}`}>
+          {index > 0 ? <div className={`lp-timer text-accent ${compact ? "text-xl leading-[46px]" : "text-2xl leading-[52px]"}`}>:</div> : null}
           <div className="flex flex-col items-center gap-1">
             <div
               className={`lp-timer rounded-[10px] bg-[#2a2a2a] text-center leading-none ${
-                compact ? "min-w-[62px] px-1 py-2.5 text-[34px]" : "min-w-[78px] px-1.5 py-2.5 text-[40px]"
+                compact ? "min-w-[54px] px-1 py-2 text-[27px]" : "min-w-[68px] px-1.5 py-2 text-[34px]"
               } ${index === values.length - 1 ? "text-accent" : "text-white"}`}
               suppressHydrationWarning
             >
               {value}
             </div>
-            <div className="text-[13px] text-[#a8a29e]">{labels[index] ?? ""}</div>
+            <div className="text-xs text-[#a8a29e]">{labels[index] ?? ""}</div>
           </div>
         </div>
       ))}

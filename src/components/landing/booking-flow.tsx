@@ -83,7 +83,7 @@ function LockBar({ label }: { label: string }) {
   if (!timer || !label) return null;
 
   return (
-    <div className="-mx-5 flex items-center justify-center gap-2.5 bg-foreground px-4 py-2 text-sm font-semibold text-white">
+    <div className="-mx-5 flex items-center justify-center gap-2.5 bg-foreground px-3 py-2 text-[12.5px] font-semibold text-white">
       <span>{label}</span>
       <Timer className="rounded-md bg-primary px-2 py-0.5" />
     </div>
@@ -347,11 +347,11 @@ export function BookingFlow({
     <div className="flex items-center justify-between gap-3 rounded-[10px] border border-red-200 bg-primary-subtle px-4 py-3">
       <div className="flex flex-col">
         <div className="text-[13px] font-semibold text-foreground-muted">अभी देना है</div>
-        <div className="lp-display text-2xl leading-[1.1] font-extrabold text-primary">{money.advance}</div>
+        <div className="lp-display text-[22px] leading-[1.1] font-extrabold text-primary">{money.advance}</div>
       </div>
       <div className="flex flex-col text-right">
         <div className="text-[13px] font-semibold text-foreground-muted">डिलीवरी पर</div>
-        <div className="lp-display text-2xl leading-[1.1] font-extrabold">{money.balance}</div>
+        <div className="lp-display text-[22px] leading-[1.1] font-extrabold">{money.balance}</div>
       </div>
     </div>
   );
@@ -367,7 +367,7 @@ export function BookingFlow({
             <div className="text-[13px] font-semibold text-muted-foreground">चरण 1 / 3 · आपकी जानकारी</div>
           </div>
           <div className="flex flex-col gap-0.5">
-            <h1 className="m-0 text-[26px] leading-[1.2] font-extrabold">{content.detailsTitle}</h1>
+            <h1 className="m-0 text-[23px] leading-[1.2] font-extrabold">{content.detailsTitle}</h1>
             <div className="text-[15px] text-foreground-muted">{content.detailsSub}</div>
           </div>
 
@@ -426,7 +426,7 @@ export function BookingFlow({
             <Progress step={2} />
             <div className="text-[13px] font-semibold text-muted-foreground">चरण 2 / 3 · बुकिंग राशि</div>
           </div>
-          <h1 className="m-0 text-[26px] leading-[1.2] font-extrabold">{content.payTitle}</h1>
+          <h1 className="m-0 text-[23px] leading-[1.2] font-extrabold">{content.payTitle}</h1>
 
           <div className="flex flex-col gap-2.5 rounded-[14px] bg-foreground p-[18px] text-white">
             <div className="flex justify-between gap-3 text-base">
@@ -446,7 +446,7 @@ export function BookingFlow({
             <div className="h-px bg-[#3f3f3f]" />
             <div className="flex items-center justify-between gap-3">
               <div className="text-lg font-bold">अभी देना है</div>
-              <div className="lp-display text-[32px] leading-none font-extrabold text-accent">{money.advance}</div>
+              <div className="lp-display text-[28px] leading-none font-extrabold text-accent">{money.advance}</div>
             </div>
           </div>
 
@@ -504,8 +504,8 @@ export function BookingFlow({
               <circle cx="64" cy="64" r="56" fill="#fef2f2" stroke="#e01820" strokeWidth="6" />
               <path d="M42 66l15 15 29-32" fill="none" stroke="#e01820" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <h1 className="m-0 text-[30px] leading-[1.2] font-extrabold">{content.doneTitle}</h1>
-            <div className="text-[17px] leading-normal text-foreground-muted">{content.doneText}</div>
+            <h1 className="m-0 text-[26px] leading-[1.2] font-extrabold">{content.doneTitle}</h1>
+            <div className="text-[15.5px] leading-normal text-foreground-muted">{content.doneText}</div>
             {bookingId ? (
               <div className="rounded-[10px] border border-border-strong px-[18px] py-2.5 text-[15px] text-foreground-muted">
                 बुकिंग ID <span className="lp-display font-extrabold text-foreground">{bookingId}</span>
