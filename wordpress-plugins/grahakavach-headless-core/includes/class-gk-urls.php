@@ -77,6 +77,11 @@ final class GK_Urls {
 	 * @return string
 	 */
 	public static function for_post( int $post_id ): string {
+		// Landing pages live at /book-now and /lp/<slug>, not at their WordPress path.
+		if ( class_exists( 'GK_Landing' ) && GK_Landing::is_landing( $post_id ) ) {
+			return GK_Config::frontend_url() . GK_Landing::path( (string) get_post_field( 'post_name', $post_id ) );
+		}
+
 		$permalink = get_permalink( $post_id );
 
 		return $permalink ? self::to_frontend( $permalink ) : '';
@@ -119,6 +124,10 @@ final class GK_Urls {
 
 			case 'page':
 				$tags[] = 'wp-page:' . $post->post_name;
+				if ( class_exists( 'GK_Landing' ) && GK_Landing::is_landing( (int) $post->ID ) ) {
+					// The list of landing pages feeds the sitemap and the static routes.
+					$tags[] = 'wp-landings';
+				}
 				break;
 			case 'post':
 				$tags[] = 'wp-post:' . $post->post_name;

@@ -51,6 +51,9 @@ export async function POST(request: Request) {
     // The /book-now funnel sends a shorter form (no email), marked with its source.
     const isLanding = (rawBody as { source?: unknown } | null)?.source === "landing";
     const parsed = (isLanding ? landingSubmissionSchema : checkoutSubmissionSchema).safeParse(rawBody);
+    const landingSlug = isLanding
+      ? String((rawBody as { landing?: unknown }).landing ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80)
+      : "";
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -154,6 +157,8 @@ export async function POST(request: Request) {
       meta_data: [
         { key: "_idempotency_key", value: idempotencyKey },
         { key: "_source", value: isLanding ? "nextjs-landing" : "nextjs-headless" },
+        // Which landing page the order came from, for ad reporting.
+        ...(isLanding && landingSlug ? [{ key: "_landing_page", value: landingSlug }] : []),
         // Pinned now so the payment check later does not depend on the setting still being the same.
         ...(codAdvance ? [{ key: "_cod_advance_minor", value: String(advanceMinor) }] : []),
         ...(address.gstin

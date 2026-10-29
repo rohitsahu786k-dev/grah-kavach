@@ -1,29 +1,50 @@
-# Book Now landing page (/book-now)
+# Landing pages (/book-now and /lp/<slug>)
 
-A Hindi campaign page and a three-step booking funnel. Everything on it is managed in WordPress.
+Hindi campaign pages with a three-step booking funnel, all in the Graha Kavach look. Create as many as you need in WordPress; each one only needs its text and images changed.
 
-| What | Where in wp-admin |
+## Make a new landing page
+
+1. wp-admin > **Landing Pages** (left menu).
+2. Enter a **Page name** and pick **Start from**: the starter content, or a copy of any existing landing page (copy is the quickest way to run a variation).
+3. **Create draft and edit** opens the page. Fill the tabs, set the **Yoast SEO** box, then **Publish**.
+4. The page is live at `https://grahakavach.in/lp/<slug>` within a few minutes. The slug comes from the page name; change it in the page's Permalink box if you want something shorter. The first page keeps `https://grahakavach.in/book-now`.
+
+The booking steps for a page are at `/lp/<slug>/book` (`/book-now/details` for the first page). They are `noindex` and blocked in robots.txt.
+
+## What each page controls
+
+| What | Where |
 |---|---|
-| All copy, buttons, FAQ, timer settings | **Pages > Book Now**, "Landing Page Content" tabs |
-| Images | Same screen; pick from the **Media Library** (alt text is set there) |
-| SEO title, description, social card, noindex | The **Yoast SEO** box on the same page |
-| Price, regular price, discount | The WooCommerce product `fire-safety-kit` |
-| Amount paid now (the balance is paid on delivery) | WooCommerce **Deposits & Partial Payments** |
+| All copy, button labels, FAQ, timer | The tabs of the page's "Landing Page Content" box |
+| Images | Same tabs; pick from the **Media Library** (alt text is set there) |
+| SEO title, description, social card, noindex | The **Yoast SEO** box on the page |
+| Which product it sells | **Page settings** tab > WooCommerce product (slug) |
+| Prices and discount | That WooCommerce product (regular price and sale price) |
+| Amount paid now (balance on delivery) | WooCommerce **Deposits & Partial Payments** |
+| Countdown on or off | **Page settings** tab > Hide the countdown |
 
 ## Prices in the copy
 
-Do not type prices into the text. Use these tokens and the storefront fills in the live figure, so the page can never show an amount the checkout does not charge:
+Do not type prices into the text. Use these tokens and the page fills in the live figure, so it can never show an amount the checkout does not charge:
 
-`{price}` offer price, `{mrp}` regular price, `{discount}` difference, `{advance}` paid now, `{balance}` paid on delivery, `{end}` offer end time. Wrap words in `**double asterisks**` for bold.
+`{price}` offer price, `{mrp}` regular price, `{discount}` difference, `{advance}` paid now, `{balance}` paid on delivery, `{end}` offer end time. Wrap words in `**double asterisks**` for bold. In FAQ answers `{br}` starts a new line, and in the offer note `{timer}` shows the live countdown.
+
+## Hiding sections
+
+Leave a section's fields empty and it disappears: Why it matters, What is in the kit, Offer box, How booking works, Where it goes, Reviews, FAQ. Reviews stay hidden until you add real ones. Tick "Hide the countdown" for a campaign with no deadline; every timer and the "time left" bars go away.
 
 ## Countdown
 
-Runs in India time. By default it counts to the daily cut-off in "Offer ends daily at" and restarts the next day. To run a real campaign with an end date, fill "Fixed offer end"; the timer then stops at zero. The price itself always follows WooCommerce, so end a sale there too.
+Runs in India time. By default it counts to the daily cut-off in "Offer ends daily at" and restarts the next day. For a real campaign end date, fill "Fixed offer end" (for example `2026-10-31 23:59`); the timer then shows days too ("02d 05:12:33") and stops at zero. The /book-now page is set to end on 31 Oct 2026, 11:59 pm. The price itself always follows WooCommerce, so end the sale there too.
 
-## Funnel
+## Orders
 
-`/book-now` (landing) > `/book-now/details` (details, pay, confirmed). The order is a normal WooCommerce COD order with the advance collected through Razorpay, created by the same API as the main checkout (source `nextjs-landing`). The details and payment steps are `noindex` and disallowed in robots.txt. The store header, footer and tab bar are hidden on these routes.
+A booking is a normal WooCommerce COD order with the advance collected through Razorpay, created by the same API as the main checkout. The order carries `_source = nextjs-landing` and `_landing_page = <slug>`, so you can see which page an order came from. The store header, footer and tab bar are hidden on landing routes.
+
+## How it works
+
+Every landing page is a WordPress page under a private **Landing Pages** parent. That parent is what shows the editor fields, serves the page at `/lp/<slug>`, and keeps it out of the policy-page list and the catch-all route. Do not move landing pages out from under it. Plugin v1.3.2 or later is required.
 
 ## First setup
 
-Upload the plugin (v1.2.0 or later) and open wp-admin once. The "Book Now" page is created, and starter copy, the five images and a Yoast title and description are written into any empty fields, once. Check the placeholders the design left open: **customer reviews** (hidden until real ones are added), and the **cancellation / refund FAQ** (add one row in the FAQ tab: `Question|Answer`).
+Upload the plugin and open wp-admin once. The first page (`/book-now`) is created or moved under the parent, and starter copy, the five images and a Yoast title and description are written into empty fields, once. Then check the one item the design left open: **customer reviews** (the design had placeholders, so none are published; add real ones in the Reviews & trust tab as `Quote|Name`).

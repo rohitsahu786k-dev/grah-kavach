@@ -14,6 +14,7 @@ export default function robots(): MetadataRoute.Robots {
           "/cart",
           "/checkout",
           "/book-now/details",
+          "/lp/*/book",
           "/order-confirmation",
           "/track-order",
           "/api/",

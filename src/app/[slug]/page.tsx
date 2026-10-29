@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: CmsPageProps): Promise<Metada
   if (isReservedPageSlug(slug)) return {};
 
   const page = await getPageBySlug(slug);
-  if (!page) return {};
+  if (!page || page.gkIsLanding) return {};
 
   return buildSeoMetadata({
     seo: page.seo,
@@ -60,7 +60,7 @@ export default async function CmsPage({ params }: CmsPageProps) {
 
   const page = await getPageBySlug(slug);
 
-  if (!page) notFound();
+  if (!page || page.gkIsLanding) notFound();
 
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },

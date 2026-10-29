@@ -219,9 +219,16 @@ final class GK_Fields {
 		}
 
 		// Campaign landing page (/book-now).
-		$landing_id = GK_Landing::page_id();
-		if ( $landing_id ) {
-			self::group( 'landing', __( 'Landing Page Content', 'grahakavach-headless-core' ), GK_Landing::fields(), self::where_page( $landing_id ) );
+		// Shown on every page that sits under the private "Landing Pages" parent.
+		GK_Landing::page_id();
+		$landing_parent = GK_Landing::parent_id();
+		if ( $landing_parent ) {
+			self::group(
+				'landing',
+				__( 'Landing Page Content', 'grahakavach-headless-core' ),
+				GK_Landing::fields(),
+				array( array( array( 'param' => 'page_parent', 'operator' => '==', 'value' => (string) $landing_parent ) ) )
+			);
 		}
 
 		// Product supplemental content.

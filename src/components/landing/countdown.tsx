@@ -3,66 +3,107 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { secondsLeft, splitSeconds, type CountdownConfig } from "@/lib/landing/countdown";
 
-type Parts = { hh: string; mm: string; ss: string };
+type Parts = { dd: string; hh: string; mm: string; ss: string };
+type Clock = { parts: Parts; /** A fixed multi-day deadline shows days too. */ showDays: boolean };
 
-const PLACEHOLDER: Parts = { hh: "00", mm: "00", ss: "00" };
-const CountdownContext = createContext<Parts>(PLACEHOLDER);
+const PLACEHOLDER: Parts = { dd: "00", hh: "00", mm: "00", ss: "00" };
+const CountdownContext = createContext<Clock | null>({ parts: PLACEHOLDER, showDays: false });
 
 /**
  * One ticking clock shared by every timer on the page. Until it mounts it shows
  * zeros, because the server cannot know the visitor's moment.
  */
-export function CountdownProvider({ config, children }: { config: CountdownConfig; children: React.ReactNode }) {
+export function CountdownProvider({
+  config,
+  enabled = true,
+  children,
+}: {
+  config: CountdownConfig;
+  /** False for a campaign with no deadline: every timer renders nothing. */
+  enabled?: boolean;
+  children: React.ReactNode;
+}) {
   const [parts, setParts] = useState<Parts>(PLACEHOLDER);
+  const showDays = config.endsAt.trim() !== "";
 
   useEffect(() => {
+    if (!enabled) return;
     const tick = () => setParts(splitSeconds(secondsLeft(config)));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config]);
+  }, [config, enabled]);
 
-  return <CountdownContext.Provider value={parts}>{children}</CountdownContext.Provider>;
+  return <CountdownContext.Provider value={enabled ? { parts, showDays } : null}>{children}</CountdownContext.Provider>;
 }
 
-export function useCountdown(): Parts {
+/** Null when the page has no countdown. */
+export function useCountdown(): Clock | null {
   return useContext(CountdownContext);
 }
 
-/** HH:MM:SS as text. Pass `className` for size and colour. */
-export function Timer({ className }: { className?: string }) {
-  const { hh, mm, ss } = useCountdown();
+type DayStyle = "short" | "word" | "small";
+
+/**
+ * HH:MM:SS as text, with days in front when the deadline is a fixed date.
+ * `short` reads "02d 05:12:33", `word` reads "02 दिन 05:12:33" and `small`
+ * sets the word in a smaller size beside large digits.
+ */
+export function Timer({ className, dayStyle = "short", dayWord = "दिन" }: { className?: string; dayStyle?: DayStyle; dayWord?: string }) {
+  const clock = useCountdown();
+  if (!clock) return null;
+  const { parts, showDays } = clock;
+
+  let days: React.ReactNode = null;
+  if (showDays) {
+    if (dayStyle === "short") days = <>{parts.dd}d </>;
+    else if (dayStyle === "word") days = <>{parts.dd} {dayWord} </>;
+    else
+      days = (
+        <>
+          {parts.dd}
+          <span className="text-[18px] text-[#a8a29e]"> {dayWord} </span>
+        </>
+      );
+  }
+
   return (
     <span className={`lp-timer ${className ?? ""}`} suppressHydrationWarning>
-      {hh}:{mm}:{ss}
+      {days}
+      {parts.hh}:{parts.mm}:{parts.ss}
     </span>
   );
 }
 
-/** The three-box countdown in the hero. */
-export function TimerBoxes({ units }: { units: [string, string, string] }) {
-  const { hh, mm, ss } = useCountdown();
-  const cells: Array<[string, string, boolean]> = [
-    [hh, units[0], false],
-    [mm, units[1], false],
-    [ss, units[2], true],
-  ];
+/**
+ * The countdown boxes in the hero: hours, minutes and seconds, plus days when
+ * the deadline is a fixed date. `units` holds the labels, days first.
+ */
+export function TimerBoxes({ units }: { units: string[] }) {
+  const clock = useCountdown();
+  if (!clock) return null;
+  const { parts, showDays } = clock;
+
+  // Four labels when days are shown, otherwise the last three.
+  const labels = showDays ? [units[units.length - 4] ?? "दिन", ...units.slice(-3)] : units.slice(-3);
+  const values = showDays ? [parts.dd, parts.hh, parts.mm, parts.ss] : [parts.hh, parts.mm, parts.ss];
+  const compact = values.length > 3;
 
   return (
-    <div className="flex items-start justify-center gap-2">
-      {cells.map(([value, label, accent], index) => (
-        <div key={label} className="flex items-start gap-2">
-          {index > 0 ? <div className="lp-timer text-[32px] leading-[60px] text-accent">:</div> : null}
+    <div className={`flex items-start justify-center ${compact ? "gap-1.5" : "gap-2"}`}>
+      {values.map((value, index) => (
+        <div key={index} className={`flex items-start ${compact ? "gap-1.5" : "gap-2"}`}>
+          {index > 0 ? <div className={`lp-timer text-accent ${compact ? "text-[28px] leading-[54px]" : "text-[32px] leading-[60px]"}`}>:</div> : null}
           <div className="flex flex-col items-center gap-1">
             <div
-              className={`lp-timer min-w-[78px] rounded-[10px] bg-[#2a2a2a] px-1.5 py-2.5 text-center text-[40px] leading-none ${
-                accent ? "text-accent" : "text-white"
-              }`}
+              className={`lp-timer rounded-[10px] bg-[#2a2a2a] text-center leading-none ${
+                compact ? "min-w-[62px] px-1 py-2.5 text-[34px]" : "min-w-[78px] px-1.5 py-2.5 text-[40px]"
+              } ${index === values.length - 1 ? "text-accent" : "text-white"}`}
               suppressHydrationWarning
             >
               {value}
             </div>
-            <div className="text-[13px] text-[#a8a29e]">{label}</div>
+            <div className="text-[13px] text-[#a8a29e]">{labels[index] ?? ""}</div>
           </div>
         </div>
       ))}

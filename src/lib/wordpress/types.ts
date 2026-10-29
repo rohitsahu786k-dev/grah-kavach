@@ -143,6 +143,7 @@ export const wpTestimonialSchema = z.object({
 
 /** One published WordPress page, as listed for the policy routes. */
 export const wpPageIndexSchema = z.object({
+  gkIsLanding: z.boolean().nullable().optional().transform((value) => value ?? false),
   databaseId: z.number(),
   slug: z.string().min(1),
   title: z.string().min(1),
@@ -192,6 +193,7 @@ export const wpYoastSeoSchema = z.object({
 });
 
 export const wpPageSchema = z.object({
+  gkIsLanding: z.boolean().nullable().optional().transform((value) => value ?? false),
   id: z.string().optional(),
   databaseId: z.number(),
   title: z.string().min(1),
@@ -256,6 +258,9 @@ const textRow = z.object({ text: z.string().min(1) });
 
 /** The /book-now campaign landing page. Every field is optional so a half-filled page still renders. */
 export const wpLandingSchema = z.object({
+  pageId: z.number().nullable().optional().transform((v) => v ?? 0),
+  productSlug: cmsString,
+  hideTimer: z.boolean().nullable().optional().transform((v) => v ?? false),
   topbarText: cmsString,
   endTime: cmsString,
   endsAt: cmsString,
@@ -275,6 +280,7 @@ export const wpLandingSchema = z.object({
   heroText: cmsString,
   heroImage: wpMediaSchema.nullable().optional(),
   heroImageTag: cmsString,
+  priceChip: cmsString,
   nowLabel: cmsString,
   nowNote: cmsString,
   laterLabel: cmsString,

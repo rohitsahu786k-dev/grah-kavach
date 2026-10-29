@@ -487,11 +487,55 @@ final class GK_Content_GraphQL {
 			'grahaKavachLanding',
 			array(
 				'type'        => 'GrahaKavachLanding',
-				'description' => __( 'Structured content of the /book-now campaign landing page.', 'grahakavach-headless-core' ),
-				'resolve'     => static function () {
-					$id = GK_Landing::page_id();
+				'description' => __( 'Structured content of a campaign landing page, by slug (default book-now). Null unless the page is published.', 'grahakavach-headless-core' ),
+				'args'        => array(
+					'slug' => array( 'type' => 'String' ),
+				),
+				'resolve'     => static function ( $root, $args ) {
+					$slug = ! empty( $args['slug'] ) ? (string) $args['slug'] : GK_Landing::SLUG;
+					$id   = GK_Landing::find( $slug, true );
 
-					return $id ? self::values( $id, GK_Landing::fields() ) : array();
+					if ( ! $id ) {
+						return null;
+					}
+
+					return array_merge( self::values( $id, GK_Landing::fields() ), array( '__id' => $id ) );
+				},
+			)
+		);
+
+		register_graphql_field(
+			'GrahaKavachLanding',
+			'pageId',
+			array(
+				'type'        => 'Int',
+				'description' => __( 'Database ID of the WordPress page, for reading its Yoast SEO data.', 'grahakavach-headless-core' ),
+				'resolve'     => static function ( $source ) {
+					return (int) ( $source['__id'] ?? 0 );
+				},
+			)
+		);
+
+		register_graphql_field(
+			'RootQuery',
+			'grahaKavachLandingSlugs',
+			array(
+				'type'        => array( 'list_of' => 'String' ),
+				'description' => __( 'Slugs of the published landing pages.', 'grahakavach-headless-core' ),
+				'resolve'     => static function () {
+					return GK_Landing::slugs();
+				},
+			)
+		);
+
+		// Lets the storefront keep landing pages out of its policy-page list and catch-all route.
+		register_graphql_field(
+			'Page',
+			'gkIsLanding',
+			array(
+				'type'    => 'Boolean',
+				'resolve' => static function ( $page ) {
+					return GK_Landing::is_landing( (int) ( $page->databaseId ?? 0 ) );
 				},
 			)
 		);

@@ -6,7 +6,7 @@ import { trackInitiateCheckout, trackPurchase } from "@/lib/analytics/meta-pixel
 import type { CountdownConfig } from "@/lib/landing/countdown";
 import { payWithRazorpay } from "@/lib/razorpay/client";
 import { INDIAN_STATES } from "@/lib/validation/checkout";
-import { CountdownProvider, Timer } from "./countdown";
+import { CountdownProvider, Timer, useCountdown } from "./countdown";
 import { ArrowIcon } from "./rich";
 
 export type BookingContent = {
@@ -43,7 +43,7 @@ type Method = "upi" | "card" | "netbanking";
 type Fields = { name: string; phone: string; pin: string; city: string; address: string; state: string };
 type Errors = Partial<Record<keyof Fields, string>>;
 
-const STORAGE_KEY = "gk_booking_done";
+const STORAGE_KEY_PREFIX = "gk_booking_done";
 const STORAGE_TTL_MS = 30 * 60 * 1000;
 
 const METHODS: Array<{ id: Method; label: string; hint?: string }> = [
@@ -78,6 +78,9 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function LockBar({ label }: { label: string }) {
+  const timer = useCountdown();
+  if (!timer || !label) return null;
+
   return (
     <div className="-mx-5 flex items-center justify-center gap-2.5 bg-foreground px-4 py-2 text-sm font-semibold text-white">
       <span>{label}</span>
@@ -139,10 +142,17 @@ function Field({ id, label, error, children }: { id: string; label: string; erro
 }
 
 export function BookingFlow({
+  slug,
+  landingHref,
+  hideTimer,
   content,
   money,
   countdown,
 }: {
+  /** The landing page this booking came from, saved on the order. */
+  slug: string;
+  landingHref: string;
+  hideTimer: boolean;
   content: BookingContent;
   money: BookingMoney;
   countdown: CountdownConfig;
@@ -157,6 +167,7 @@ export function BookingFlow({
   const [error, setError] = useState("");
   const [bookingId, setBookingId] = useState("");
 
+  const storageKey = `${STORAGE_KEY_PREFIX}:${slug}`;
   const idempotencyKey = useRef(newKey());
   const order = useRef<{ orderId: number; orderKey: string; orderNumber: string; razorpay: { keyId: string; orderId: string; amount: number; currency: string } | null } | null>(null);
   const cityTouched = useRef(false);
@@ -165,7 +176,7 @@ export function BookingFlow({
   // A refresh on the confirmation screen must not drop the customer back on an empty form.
   useEffect(() => {
     try {
-      const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? "null") as { id: string; at: number } | null;
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) ?? "null") as { id: string; at: number } | null;
       if (saved && Date.now() - saved.at < STORAGE_TTL_MS) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore from browser storage
         setBookingId(saved.id);
@@ -174,7 +185,7 @@ export function BookingFlow({
     } catch {
       // Storage can be blocked; the form simply starts empty.
     }
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -244,6 +255,7 @@ export function BookingFlow({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             source: "landing",
+            landing: slug,
             address: {
               firstName: nameParts[0],
               lastName: nameParts.slice(1).join(" "),
@@ -316,7 +328,7 @@ export function BookingFlow({
 
       trackPurchase({ orderId: current.orderNumber, value: money.priceMinor / 100, currency: money.currency, content_ids: [money.productId] });
       try {
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ id: current.orderNumber, at: Date.now() }));
+        sessionStorage.setItem(storageKey, JSON.stringify({ id: current.orderNumber, at: Date.now() }));
       } catch {
         // Not critical.
       }
@@ -327,7 +339,7 @@ export function BookingFlow({
     } finally {
       setBusy(false);
     }
-  }, [fields, method, money.currency, money.priceMinor, money.productId]);
+  }, [fields, method, money.currency, money.priceMinor, money.productId, slug, storageKey]);
 
   const phoneDigits = content.phone.replace(/\D/g, "").slice(-10);
   const priceBox = (
@@ -344,11 +356,11 @@ export function BookingFlow({
   );
 
   return (
-    <CountdownProvider config={countdown}>
+    <CountdownProvider config={countdown} enabled={!hideTimer}>
       {step === "details" ? (
         <Shell>
           <LockBar label={content.lockLabel} />
-          <Header logoUrl={content.logoUrl} logoAlt={content.logoAlt} backHref="/book-now" />
+          <Header logoUrl={content.logoUrl} logoAlt={content.logoAlt} backHref={landingHref} />
           <div className="flex flex-col gap-2">
             <Progress step={1} />
             <div className="text-[13px] font-semibold text-muted-foreground">चरण 1 / 3 · आपकी जानकारी</div>
@@ -522,10 +534,10 @@ export function BookingFlow({
               </div>
             ) : null}
             <Link
-              href="/book-now"
+              href={landingHref}
               onClick={() => {
                 try {
-                  sessionStorage.removeItem(STORAGE_KEY);
+                  sessionStorage.removeItem(storageKey);
                 } catch {
                   // Not critical.
                 }

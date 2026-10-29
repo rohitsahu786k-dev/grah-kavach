@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/config/site";
-import { getCmsPages, getPosts } from "@/lib/wordpress/adapters";
+import { getCmsPages, getLandingSlugs, getPosts } from "@/lib/wordpress/adapters";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.frontendUrl.replace(/\/$/, "");
 
-  const [posts, cmsPages] = await Promise.all([getPosts(100), getCmsPages()]);
+  const [posts, cmsPages, landingSlugs] = await Promise.all([getPosts(100), getCmsPages(), getLandingSlugs()]);
 
   /*
    * No `lastModified` on pages that have no real modification date. A date of
@@ -31,6 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((url) => !known.has(url))
     .map((url) => ({ url, changeFrequency: "yearly" as const, priority: 0.4 }));
 
+  // /book-now is listed above; every other landing page lives at /lp/<slug>.
+  const landingPages: MetadataRoute.Sitemap = landingSlugs
+    .filter((slug) => slug !== "book-now")
+    .map((slug) => ({ url: `${baseUrl}/lp/${slug}`, changeFrequency: "weekly" as const, priority: 0.6 }));
+
   const postPages: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.date),
@@ -39,5 +44,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
 
-  return [...staticPages, ...policyPages, ...postPages];
+  return [...staticPages, ...policyPages, ...landingPages, ...postPages];
 }

@@ -108,6 +108,7 @@ export const PAGE_BY_SLUG_QUERY = `
       frontendUri
       excerpt
       content
+      gkIsLanding
       ${yoastSeoFields}
     }
   }
@@ -230,13 +231,14 @@ export const HOMEPAGE_QUERY = `
 `;
 
 export const LANDING_QUERY = `
-  query Landing {
-    grahaKavachLanding {
+  query Landing($slug: String) {
+    grahaKavachLanding(slug: $slug) {
+      pageId productSlug hideTimer
       topbarText endTime endsAt timerLabel timerUnits stickyLabel lockLabel
       headerTagline ctaShort ctaLabel ctaSticky ctaOffer
       heroBadge heroTitleBefore heroTitleHighlight heroTitleAfter heroText
       heroImage { ${mediaFields} }
-      heroImageTag nowLabel nowNote laterLabel laterNote
+      heroImageTag priceChip nowLabel nowNote laterLabel laterNote
       heroTrust { text }
       ticker { text }
       whyEyebrow whyTitle statBig statText statSource
@@ -263,6 +265,23 @@ export const LANDING_QUERY = `
       doneTitle doneText
       doneSteps { text }
       doneWhatsappLabel whatsappKeyword doneHomeLabel
+    }
+  }
+`;
+
+export const LANDING_SLUGS_QUERY = `
+  query LandingSlugs {
+    grahaKavachLandingSlugs
+  }
+`;
+
+export const PAGE_SEO_BY_ID_QUERY = `
+  query PageSeoById($id: ID!) {
+    page(id: $id, idType: DATABASE_ID) {
+      databaseId
+      title
+      slug
+      ${yoastSeoFields}
     }
   }
 `;
@@ -387,6 +406,7 @@ export const PAGES_INDEX_QUERY = `
         slug
         title
         menuOrder
+        gkIsLanding
       }
     }
   }

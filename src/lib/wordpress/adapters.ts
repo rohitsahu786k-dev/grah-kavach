@@ -9,6 +9,8 @@ import {
   GLOBAL_SETTINGS_QUERY,
   HOMEPAGE_QUERY,
   LANDING_QUERY,
+  LANDING_SLUGS_QUERY,
+  PAGE_SEO_BY_ID_QUERY,
   PAGE_BY_SLUG_QUERY,
   PAGES_INDEX_QUERY,
   POST_BY_SLUG_QUERY,
@@ -309,20 +311,60 @@ export async function getHomePage() {
 }
 
 const landingResponseSchema = z.object({ grahaKavachLanding: wpLandingSchema.nullable() });
+const landingSlugsResponseSchema = z.object({ grahaKavachLandingSlugs: z.array(z.string()).nullable() });
+const pageSeoResponseSchema = z.object({ page: wpPageSchema.pick({ title: true, seo: true }).nullable() });
 
-/** Content of the /book-now landing page. Null when it cannot be loaded. */
-export async function getLanding() {
+/** Content of one landing page by slug. Null when it is missing, unpublished or cannot be loaded. */
+export async function getLanding(slug: string) {
   try {
     const data = await wpGraphql<z.infer<typeof landingResponseSchema>>({
       query: LANDING_QUERY,
+      variables: { slug },
       schema: landingResponseSchema,
-      tags: [CacheTag.page("book-now")],
+      tags: [CacheTag.page(slug), CacheTag.landings],
       revalidate: Revalidate.content,
     });
 
     return data.grahaKavachLanding;
   } catch (error) {
     console.warn("Failed to fetch landing page content:", error);
+    return null;
+  }
+}
+
+/** Slugs of every published landing page. */
+export async function getLandingSlugs(): Promise<string[]> {
+  try {
+    const data = await wpGraphql<z.infer<typeof landingSlugsResponseSchema>>({
+      query: LANDING_SLUGS_QUERY,
+      schema: landingSlugsResponseSchema,
+      tags: [CacheTag.landings],
+      revalidate: Revalidate.content,
+    });
+
+    return data.grahaKavachLandingSlugs ?? [];
+  } catch (error) {
+    console.warn("Failed to fetch landing page slugs:", error);
+    return [];
+  }
+}
+
+/** Yoast SEO data of a landing page, by its WordPress page ID. */
+export async function getLandingSeo(pageId: number, slug: string) {
+  if (!pageId) return null;
+
+  try {
+    const data = await wpGraphql<z.infer<typeof pageSeoResponseSchema>>({
+      query: PAGE_SEO_BY_ID_QUERY,
+      variables: { id: String(pageId) },
+      schema: pageSeoResponseSchema,
+      tags: [CacheTag.page(slug)],
+      revalidate: Revalidate.content,
+    });
+
+    return data.page;
+  } catch (error) {
+    console.warn("Failed to fetch landing page SEO:", error);
     return null;
   }
 }
@@ -455,7 +497,7 @@ export async function getCmsPages(): Promise<PolicyPage[]> {
     });
 
     return data.pages.nodes
-      .filter((page) => !RESERVED_PAGE_SLUGS.has(page.slug))
+      .filter((page) => !RESERVED_PAGE_SLUGS.has(page.slug) && !page.gkIsLanding)
       .map((page) => ({
         slug: page.slug,
         title: page.title,

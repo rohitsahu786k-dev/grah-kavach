@@ -35,7 +35,8 @@ export function secondsLeft(config: CountdownConfig, now = Date.now()): number {
 export function splitSeconds(total: number) {
   const two = (n: number) => String(n).padStart(2, "0");
   return {
-    hh: two(Math.floor(total / 3600)),
+    dd: two(Math.floor(total / 86400)),
+    hh: two(Math.floor((total % 86400) / 3600)),
     mm: two(Math.floor((total % 3600) / 60)),
     ss: two(total % 60),
   };

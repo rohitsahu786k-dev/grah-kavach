@@ -6,11 +6,11 @@ import { formatMinorUnitsToCurrency } from "@/lib/woocommerce/adapters";
 import { ArrowIcon, CheckIcon, Rich } from "./rich";
 import { Timer, TimerBoxes } from "./countdown";
 
-export const BOOK_HREF = "/book-now/details";
-
 type Props = {
   landing: WpLanding;
   pricing: LandingPricing;
+  /** Where the Book Now buttons go: the booking steps of this page. */
+  bookHref: string;
   logo: { url: string; alt: string };
 };
 
@@ -41,35 +41,40 @@ function Photo({
   );
 }
 
-function BookButton({ label, className = "" }: { label: string; className?: string }) {
+function BookButton({ label, href, className = "" }: { label: string; href: string; className?: string }) {
   return (
-    <Link href={BOOK_HREF} className={`lp-btn ${className}`}>
+    <Link href={href} className={`lp-btn ${className}`}>
       {label}
       <ArrowIcon />
     </Link>
   );
 }
 
-export function LandingView({ landing, pricing, logo }: Props) {
+export function LandingView({ landing, pricing, bookHref, logo }: Props) {
+  const timerOn = !landing.hideTimer;
   const t = (text: string) => fillTokens(text, pricing, landing.endTime);
   const money = (minor: number) => formatMinorUnitsToCurrency(Math.max(0, minor), pricing.currency);
 
-  const units = landing.timerUnits.split(",").map((u) => u.trim());
-  const timerUnits: [string, string, string] = [units[0] || "", units[1] || "", units[2] || ""];
+  const timerUnits = landing.timerUnits.split(",").map((u) => u.trim()).filter(Boolean);
+  const dayWord = timerUnits.length > 3 ? timerUnits[0] : "दिन";
+  const showDays = landing.endsAt.trim() !== "";
 
   const phone = localPhoneDigits(landing.phone);
   const bookLabel = t(landing.ctaLabel);
-  const timerNote = (
+  const timerNote = timerOn ? (
     <div className="text-center text-sm font-semibold text-primary">
-      {landing.timerLabel} <Timer />
+      {landing.timerLabel} <Timer dayStyle="word" dayWord={dayWord} />
     </div>
+  ) : null;
+  const hasWhere = Boolean(
+    landing.whereTitle || landing.whereImage || landing.whereTiles.length || landing.reviews.length || landing.trustBold || landing.trustText,
   );
   const eyebrow = "text-[13px] font-bold tracking-[0.04em] text-primary";
   const h2 = "m-0 text-[27px] leading-[1.2] font-extrabold";
 
   return (
     <div className="mx-auto max-w-[480px] bg-white text-[17px] leading-normal">
-      {landing.topbarText ? (
+      {timerOn && landing.topbarText ? (
         <div className="flex items-center justify-center gap-2.5 bg-foreground px-4 py-[9px] text-sm font-semibold text-white">
           <span className="lp-dot size-2 rounded-full bg-accent" />
           <span>{t(landing.topbarText)}</span>
@@ -85,7 +90,7 @@ export function LandingView({ landing, pricing, logo }: Props) {
             <div className="lp-display text-xs leading-[1.3] font-semibold text-muted-foreground">{landing.headerTagline}</div>
           ) : null}
         </div>
-        <Link href={BOOK_HREF} className="lp-btn !min-h-11 !px-[18px] !text-[15px]">
+        <Link href={bookHref} className="lp-btn !min-h-11 !px-[18px] !text-[15px]">
           {landing.ctaShort}
         </Link>
       </header>
@@ -116,6 +121,9 @@ export function LandingView({ landing, pricing, logo }: Props) {
                 </div>
               ) : null}
               <div className="absolute right-3 bottom-3 flex flex-col items-end rounded-[10px] bg-foreground px-3 py-2 leading-[1.1] text-white">
+                {landing.priceChip && pricing.mrpMinor > pricing.priceMinor ? (
+                  <div className="lp-display mb-1 rounded bg-accent px-1.5 py-0.5 text-[11px] font-extrabold text-foreground">{t(landing.priceChip)}</div>
+                ) : null}
                 {pricing.mrpMinor > pricing.priceMinor ? (
                   <div className="lp-display text-xs font-semibold text-[#a8a29e] line-through">{money(pricing.mrpMinor)}</div>
                 ) : null}
@@ -124,10 +132,12 @@ export function LandingView({ landing, pricing, logo }: Props) {
             </div>
           ) : null}
 
-          <div className="flex flex-col items-center gap-2.5 rounded-[14px] bg-foreground p-4 text-white">
-            <div className="text-sm font-semibold text-accent">{landing.timerLabel}</div>
-            <TimerBoxes units={timerUnits} />
-          </div>
+          {timerOn ? (
+            <div className="flex flex-col items-center gap-2.5 rounded-[14px] bg-foreground p-4 text-white">
+              <div className="text-sm font-semibold text-accent">{landing.timerLabel}</div>
+              <TimerBoxes units={timerUnits} />
+            </div>
+          ) : null}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-0.5 rounded-xl border border-red-200 bg-primary-subtle px-4 py-3.5">
@@ -142,7 +152,7 @@ export function LandingView({ landing, pricing, logo }: Props) {
             </div>
           </div>
 
-          <BookButton label={bookLabel} className="lp-pulse !min-h-[60px] !text-xl" />
+          <BookButton href={bookHref} label={bookLabel} className="lp-pulse !min-h-[60px] !text-xl" />
           {landing.heroTrust.length ? (
             <div className="flex flex-wrap justify-center gap-3 text-sm font-semibold text-foreground-muted">
               {landing.heroTrust.map((row) => (
@@ -167,6 +177,7 @@ export function LandingView({ landing, pricing, logo }: Props) {
         ) : null}
 
         {/* Why */}
+        {landing.whyTitle || landing.statBig || landing.whyPoints.length ? (
         <section className="flex flex-col gap-5 bg-white px-5 py-10">
           <div className="flex flex-col gap-1.5">
             <div className={eyebrow}>{landing.whyEyebrow}</div>
@@ -174,7 +185,7 @@ export function LandingView({ landing, pricing, logo }: Props) {
           </div>
           {landing.statBig ? (
             <div className="flex flex-col gap-2 rounded-[14px] bg-foreground px-5 py-[22px] text-white">
-              <div className="lp-display text-[44px] leading-none font-extrabold text-accent">{landing.statBig}</div>
+              <div className={`lp-display font-extrabold text-accent ${landing.statBig.length > 14 ? "text-[36px] leading-[1.15]" : "text-[44px] leading-none"}`}>{landing.statBig}</div>
               <div className="text-[17px] leading-[1.45]">{landing.statText}</div>
               <div className="text-[13px] text-[#a8a29e]">{landing.statSource}</div>
             </div>
@@ -193,12 +204,14 @@ export function LandingView({ landing, pricing, logo }: Props) {
             ))}
           </ol>
           <div className="flex flex-col gap-2.5">
-            <BookButton label={bookLabel} />
+            <BookButton href={bookHref} label={bookLabel} />
             {timerNote}
           </div>
         </section>
+        ) : null}
 
         {/* Kit */}
+        {landing.kitTitle || landing.kitItems.length ? (
         <section className="flex flex-col gap-5 bg-muted px-5 py-10">
           <div className="flex flex-col gap-1.5">
             <div className={eyebrow}>{landing.kitEyebrow}</div>
@@ -231,10 +244,11 @@ export function LandingView({ landing, pricing, logo }: Props) {
             </ul>
           ) : null}
           <div className="flex flex-col gap-2.5">
-            <BookButton label={bookLabel} />
+            <BookButton href={bookHref} label={bookLabel} />
             {timerNote}
           </div>
         </section>
+        ) : null}
 
         {/* Offer box */}
         {landing.offerPoints.length ? (
@@ -248,12 +262,24 @@ export function LandingView({ landing, pricing, logo }: Props) {
                 </li>
               ))}
             </ul>
-            {landing.offerNote ? <div className="text-base font-semibold text-orange-800">{t(landing.offerNote)}</div> : null}
-            <BookButton label={landing.ctaOffer || bookLabel} />
+            {landing.offerNote ? (
+              <div className="text-base font-semibold text-orange-800">
+                {t(landing.offerNote)
+                  .split("{timer}")
+                  .map((part, index, parts) => (
+                    <span key={index}>
+                      {part}
+                      {index < parts.length - 1 ? <Timer dayStyle="word" dayWord={dayWord} /> : null}
+                    </span>
+                  ))}
+              </div>
+            ) : null}
+            <BookButton href={bookHref} label={landing.ctaOffer || bookLabel} />
           </section>
         ) : null}
 
         {/* Steps */}
+        {landing.steps.length ? (
         <section className="flex flex-col gap-5 bg-white px-5 py-10">
           <h2 className={h2}>{landing.stepsTitle}</h2>
           <ol className="m-0 flex list-none flex-col gap-4 p-0">
@@ -270,14 +296,16 @@ export function LandingView({ landing, pricing, logo }: Props) {
             ))}
           </ol>
           <div className="flex flex-col gap-2.5">
-            <BookButton label={bookLabel} />
+            <BookButton href={bookHref} label={bookLabel} />
             {timerNote}
           </div>
         </section>
+        ) : null}
 
         {/* Where it goes, reviews, trust */}
+        {hasWhere ? (
         <section className="flex flex-col gap-5 bg-muted px-5 py-10">
-          <h2 className={h2}>{landing.whereTitle}</h2>
+          {landing.whereTitle ? <h2 className={h2}>{landing.whereTitle}</h2> : null}
           {landing.whereImage ? (
             <div className="relative overflow-hidden rounded-[14px] border border-border">
               <Photo media={landing.whereImage} sizes="(max-width: 480px) 100vw, 480px" className="aspect-square w-full object-cover" />
@@ -317,8 +345,9 @@ export function LandingView({ landing, pricing, logo }: Props) {
               <span className="font-bold text-foreground">{landing.trustBold}</span> {landing.trustText}
             </div>
           ) : null}
-          <BookButton label={bookLabel} />
+          <BookButton href={bookHref} label={bookLabel} />
         </section>
+        ) : null}
 
         {/* FAQ */}
         {landing.faqs.length ? (
@@ -328,7 +357,15 @@ export function LandingView({ landing, pricing, logo }: Props) {
               {landing.faqs.map((faq) => (
                 <div key={faq.q} className="flex flex-col gap-1 rounded-xl bg-muted p-4">
                   <h3 className="m-0 text-[17px] leading-[1.3] font-bold">{t(faq.q)}</h3>
-                  <p className="m-0 text-base leading-normal text-foreground-muted">{t(faq.a)}</p>
+                  <p className="m-0 text-base leading-normal text-foreground-muted">
+                    {t(faq.a)
+                      .split("{br}")
+                      .map((line, index) => (
+                        <span key={index} className="block">
+                          <Rich text={line} />
+                        </span>
+                      ))}
+                  </p>
                 </div>
               ))}
             </div>
@@ -337,11 +374,15 @@ export function LandingView({ landing, pricing, logo }: Props) {
 
         {/* Closing */}
         <section className="flex flex-col gap-4 bg-foreground px-5 pt-11 pb-10 text-center text-white">
-          <div className="text-sm font-semibold text-accent">{t(landing.finalKicker)}</div>
-          <Timer className="text-[52px] leading-none text-white" />
+          {timerOn ? (
+            <>
+              <div className="text-sm font-semibold text-accent">{t(landing.finalKicker)}</div>
+              <Timer dayStyle="small" dayWord={dayWord} className={`leading-none text-white ${showDays ? "text-[44px]" : "text-[52px]"}`} />
+            </>
+          ) : null}
           <div className="mt-1 text-[30px] leading-[1.2] font-extrabold">{landing.finalTitle}</div>
           <div className="text-base leading-normal text-[#a8a29e]">{landing.finalText}</div>
-          <BookButton label={bookLabel} className="lp-pulse mt-1 !min-h-[60px] !text-xl" />
+          <BookButton href={bookHref} label={bookLabel} className="lp-pulse mt-1 !min-h-[60px] !text-xl" />
           {phone ? (
             <div className="mt-1.5 text-base text-[#d6d3d1]">
               {landing.contactLabel}{" "}
@@ -356,11 +397,13 @@ export function LandingView({ landing, pricing, logo }: Props) {
 
       {/* Sticky bar */}
       <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 border-t border-border bg-white px-4 py-2.5 shadow-[0_-6px_20px_rgba(26,26,26,0.08)]">
-        <div className="flex flex-col">
-          <div className="text-xs leading-[1.3] font-bold text-primary">{t(landing.stickyLabel)}</div>
-          <Timer className="text-[22px] leading-[1.2] text-foreground" />
-        </div>
-        <Link href={BOOK_HREF} className="lp-btn lp-pulse !min-h-12 !px-5 !text-[17px]">
+        {timerOn ? (
+          <div className="flex flex-col">
+            <div className="text-xs leading-[1.3] font-bold text-primary">{t(landing.stickyLabel)}</div>
+            <Timer className="text-xl leading-[1.2] text-foreground" />
+          </div>
+        ) : null}
+        <Link href={bookHref} className={`lp-btn lp-pulse !min-h-12 !px-5 !text-[17px] ${timerOn ? "" : "w-full"}`}>
           {t(landing.ctaSticky || landing.ctaLabel)}
           <ArrowIcon size={20} />
         </Link>

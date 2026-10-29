@@ -12,6 +12,8 @@ export const CacheTag = {
   posts: "wp-posts",
   /** SEO redirect rules managed in wp-admin. */
   redirects: "wp-redirects",
+  /** The list of published landing pages. */
+  landings: "wp-landings",
   post: (slug: string) => `wp-post:${slug}`,
   page: (slug: string) => `wp-page:${slug}`,
   /** The list of published pages, which drives the CMS page routes. */

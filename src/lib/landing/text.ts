@@ -43,6 +43,11 @@ export function splitBold(text: string): Array<{ text: string; bold: boolean }> 
     .filter((part) => part.text !== "");
 }
 
+/** Text without **bold** markers and {br} line breaks, for structured data. */
+export function plainText(text: string): string {
+  return text.replace(/\{br\}/g, " ").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
+}
+
 /** Last ten digits, for tel: and wa.me links. */
 export function localPhoneDigits(raw: string): string {
   return raw.replace(/\D/g, "").slice(-10);
