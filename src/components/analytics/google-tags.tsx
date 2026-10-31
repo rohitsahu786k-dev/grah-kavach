@@ -1,6 +1,7 @@
 import Script from "next/script";
 
 const GA_ID = "G-W97ZE9921B";
+const ADS_ID = "AW-18499559326";
 const GTM_ID = "GTM-NSVRNJCR";
 
 /** Loads the Google tag (gtag.js) and Google Tag Manager scripts. */
@@ -17,6 +18,7 @@ export function GoogleTags() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_ID}');
+            gtag('config', '${ADS_ID}');
           `,
         }}
       />
