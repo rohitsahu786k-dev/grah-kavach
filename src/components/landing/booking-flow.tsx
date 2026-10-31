@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/analytics/meta-pixel";
+import { reportVerifiedPurchase } from "@/lib/analytics/google-purchase";
 import type { CountdownConfig } from "@/lib/landing/countdown";
 import { payWithRazorpay } from "@/lib/razorpay/client";
 import { INDIAN_STATES } from "@/lib/validation/checkout";
@@ -327,6 +328,7 @@ export function BookingFlow({
         throw new Error(`आपका भुगतान हो गया है, पर पुष्टि में देरी है। दोबारा भुगतान न करें। कृपया बुकिंग ID ${current.orderNumber} के साथ हमें कॉल कीजिए।`);
       }
 
+      void reportVerifiedPurchase(current.orderId, current.orderKey);
       trackPurchase({ orderId: current.orderNumber, value: money.priceMinor / 100, currency: money.currency, content_ids: [money.productId] });
       try {
         sessionStorage.setItem(storageKey, JSON.stringify({ id: current.orderNumber, at: Date.now() }));

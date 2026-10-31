@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "@/lib/cart/use-cart";
 import { trackPurchase } from "@/lib/analytics/meta-pixel";
+import { reportVerifiedPurchase } from "@/lib/analytics/google-purchase";
 
 type OrderConfirmationData = {
   orderNumber: string;
@@ -91,6 +92,8 @@ function OrderConfirmationContent() {
         // Online orders keep the cart until the payment is confirmed.
         if (!["pending", "failed", "cancelled"].includes(data.status)) {
           clearCart();
+          // Google Ads purchase: the server decides whether it is a paid, unreported order.
+          void reportVerifiedPurchase(data.orderId, key as string);
 
           const storageKey = `meta_purchase_tracked_${data.orderId}`;
           if (typeof window !== "undefined" && !sessionStorage.getItem(storageKey)) {
